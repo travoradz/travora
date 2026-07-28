@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<title>تجديد الاشتراك | Travora</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f5f7fb;
+    margin:0;
+}
+
+.container{
+    max-width:700px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+h1{
+    color:#0b3d91;
+    text-align:center;
+}
+
+.info{
+    background:#eef5ff;
+    padding:15px;
+    border-radius:10px;
+    margin:20px 0;
+    line-height:2;
+}
+
+.price{
+    background:#eef5ff;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    text-align:center;
+    font-size:18px;
+}
+
+.success{
+    background:#e8f5e9;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    color:#2e7d32;
+    text-align:center;
+    line-height:2;
+}
+
+textarea{
+    width:100%;
+    height:120px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:10px;
+    font-size:16px;
+}
+
+input[type=file]{
+    margin:20px 0;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    background:#0b3d91;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#082b66;
+}
+
+.note{
+    text-align:center;
+    color:#777;
+    margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💳 تجديد الاشتراك</h1>
+
+<div class="price">
+
+💰 <b>سعر الاشتراك الشهري</b>
+
+<br><br>
+
+<span style="color:#0b3d91;font-size:24px;">
+2500 دج
+</span>
+
+</div>
+
+<div class="info">
+
+<b>طريقة الدفع:</b>
+
+<br><br>
+
+🏦 CCP :
+000000000000000000
+
+<br>
+
+💳 البطاقة الذهبية :
+0000 0000 0000 0000
+
+<br><br>
+
+بعد الدفع قم بإرسال صورة الوصل مع رسالة.
+
+</div>
+
+<div class="success">
+
+✅ سيتم مراجعة وصل الدفع من طرف إدارة Travora.
+
+<br>
+
+⏱️ سيتم تفعيل اشتراكك خلال دقائق بعد التأكد من عملية الدفع.
+
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<textarea
+name="message"
+placeholder="اكتب رسالتك هنا..."
+required></textarea>
+
+<br><br>
+
+<label>
+📷 <b>صورة وصل الدفع</b>
+</label>
+
+<br>
+
+<input
+type="file"
+name="image"
+required>
+
+<button type="submit">
+
+📤 إرسال الوصل
+
+</button>
+
+</form>
+
+<p class="note">
+
+❗ لا يتم تفعيل الاشتراك إلا بعد إرسال صورة وصل الدفع.
+
+</p>
+
+</div>
+
+</body>
+
+</html>

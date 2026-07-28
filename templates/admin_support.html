@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>الدعم الفني</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f5f7fb;
+    padding:30px;
+}
+
+h1{
+    color:#0b3d91;
+}
+
+.user{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+a{
+    text-decoration:none;
+    color:#0b3d91;
+    font-weight:bold;
+    font-size:18px;
+    display:block;
+}
+
+a:hover{
+    color:#2563eb;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+💬 محادثات الوكالات
+</h1>
+
+{% for user in users %}
+
+<div class="user">
+
+<a href="{% url 'admin_chat' user.id %}">
+👤 {{ user.username }}
+</a>
+
+</div>
+
+{% empty %}
+
+<div class="user">
+لا توجد وكالات.
+</div>
+
+{% endfor %}
+
+</body>
+
+</html>

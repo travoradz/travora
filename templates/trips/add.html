@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Travora | إضافة رحلة</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
+body{
+background:#f4f7fb;
+padding:35px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+.card{
+
+background:white;
+padding:35px;
+border-radius:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.header h1{
+color:#0b3d91;
+font-size:32px;
+}
+
+.header p{
+margin-top:8px;
+color:#6b7280;
+}
+
+.back-btn{
+
+background:#64748b;
+color:white;
+text-decoration:none;
+padding:12px 20px;
+border-radius:12px;
+font-weight:bold;
+transition:.3s;
+
+}
+
+.back-btn:hover{
+
+background:#475569;
+
+}
+
+.section-title{
+
+margin:35px 0 18px;
+font-size:22px;
+font-weight:bold;
+color:#0b3d91;
+
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+
+}
+
+.input-group{
+
+display:flex;
+flex-direction:column;
+
+}
+
+.input-group label{
+
+margin-bottom:8px;
+font-weight:bold;
+color:#374151;
+
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea{
+
+padding:14px;
+border:1px solid #d1d5db;
+border-radius:12px;
+font-size:15px;
+outline:none;
+transition:.3s;
+
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus{
+
+border-color:#0b3d91;
+
+}
+
+textarea{
+
+height:120px;
+resize:none;
+
+}
+button{
+
+margin-top:35px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:14px;
+background:#0b3d91;
+color:white;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+
+}
+
+button:hover{
+
+background:#082b66;
+transform:translateY(-2px);
+
+}
+
+@media(max-width:768px){
+
+body{
+padding:15px;
+}
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+.header{
+
+flex-direction:column;
+align-items:flex-start;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="header">
+
+<div>
+
+<h1>✈️ إضافة رحلة جديدة</h1>
+
+<p>
+أدخل بيانات رحلة العمرة الجديدة.
+</p>
+
+</div>
+
+<a href="/trips/" class="back-btn">
+
+⬅️ الرجوع
+
+</a>
+
+</div>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<div class="section-title">
+
+📋 معلومات الرحلة
+
+</div>
+
+<div class="grid">
+
+<div class="input-group">
+    <label>اسم الرحلة</label>
+    <input type="text" name="name" required>
+</div>
+
+<div class="input-group">
+    <label>الوجهة</label>
+    <select name="destination">
+        <option value="مكة">مكة</option>
+        <option value="المدينة">المدينة</option>
+        <option value="مكة والمدينة">مكة والمدينة</option>
+    </select>
+</div>
+
+<div class="input-group">
+    <label>مدة الرحلة</label>
+    <input type="text" name="duration" placeholder="مثال: 15 يوم">
+</div>
+
+<div class="input-group">
+    <label>شركة الطيران</label>
+    <input type="text" name="airline" placeholder="Air Algérie">
+</div>
+
+<div class="input-group">
+    <label>نوع السفر</label>
+    <select name="trip_type" id="trip_type" onchange="toggleStopCity()">
+        <option value="مباشرة">🟢 مباشرة</option>
+        <option value="غير مباشرة">🔵 غير مباشرة</option>
+    </select>
+</div>
+
+<div class="input-group">
+    <label>اسم المرشد</label>
+    <input type="text" name="guide_name" placeholder="مثال: محمد بن علي">
+</div>
+
+<div class="input-group" id="stop_city_box" style="display:none;">
+    <label>مدينة التوقف</label>
+    <input type="text" name="stop_city" placeholder="مثال: إسطنبول">
+</div>
+
+<div class="input-group">
+    <label>اسم الفندق</label>
+    <input type="text" name="hotel">
+</div>
+
+<div class="input-group">
+    <label>عدد المقاعد</label>
+    <input type="number" name="seats">
+</div>
+
+<div class="input-group">
+    <label>تاريخ الانطلاق</label>
+    <input type="date" name="departure_date">
+</div>
+
+<div class="input-group">
+    <label>تاريخ العودة</label>
+    <input type="date" name="return_date">
+</div>
+
+</div>
+
+<div class="section-title">💰 أسعار الغرف</div>
+
+<div class="grid">
+
+<div class="input-group">
+    <label>السعر - غرفة ثنائية</label>
+    <input type="number" name="double_price" placeholder="مثال: 185000">
+</div>
+
+<div class="input-group">
+    <label>السعر - غرفة ثلاثية</label>
+    <input type="number" name="triple_price" placeholder="مثال: 170000">
+</div>
+
+<div class="input-group">
+    <label>السعر - غرفة رباعية</label>
+    <input type="number" name="quad_price" placeholder="مثال: 155000">
+</div>
+
+<div class="input-group">
+    <label>السعر - غرفة خماسية</label>
+    <input type="number" name="quint_price" placeholder="مثال: 145000">
+</div>
+
+</div>
+
+<div class="section-title">📝 ملاحظات</div>
+
+<div class="input-group">
+    <label>ملاحظات إضافية</label>
+    <textarea name="notes" placeholder="اكتب أي ملاحظات خاصة بالرحلة..."></textarea>
+</div>
+
+<div style="display:flex;gap:15px;margin-top:35px;flex-wrap:wrap;">
+    <button type="submit" style="flex:1;">💾 حفظ الرحلة</button>
+
+    <a href="/trips/" style="flex:1;background:#e5e7eb;color:#111827;text-decoration:none;padding:16px;border-radius:14px;text-align:center;font-weight:bold;">
+        ❌ إلغاء
+    </a>
+</div>
+</form>
+</div>
+</div>
+<script>
+function toggleStopCity() {
+    const type = document.getElementById("trip_type").value;
+    const box = document.getElementById("stop_city_box");
+
+    if (type === "غير مباشرة") {
+        box.style.display = "flex";
+    } else {
+        box.style.display = "none";
+    }
+}
+
+window.onload = toggleStopCity;
+</script>
+
+</body>
+</html>

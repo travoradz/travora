@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>انتهى الاشتراك | Travora</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Tahoma,sans-serif;
+        }
+
+        body{
+            background:#f5f7fb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .box{
+            background:white;
+            padding:40px;
+            border-radius:15px;
+            box-shadow:0 5px 20px rgba(0,0,0,.1);
+            text-align:center;
+            width:520px;
+        }
+
+        h1{
+            color:#dc2626;
+            margin-bottom:20px;
+        }
+
+        p{
+            font-size:18px;
+            margin-bottom:30px;
+            color:#555;
+            line-height:1.8;
+        }
+
+        .btn{
+            display:inline-block;
+            padding:14px 30px;
+            background:#0b3d91;
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            font-size:17px;
+            margin:10px;
+        }
+
+        .btn:hover{
+            background:#082b66;
+        }
+
+        .logout{
+            background:#dc2626;
+        }
+
+        .logout:hover{
+            background:#b91c1c;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>⚠️ انتهت مدة اشتراكك</h1>
+
+    <p>
+        لقد انتهت مدة اشتراك وكالتك في <b>Travora</b>.<br><br>
+
+        لتجديد الاشتراك اضغط على الزر بالأسفل،
+        ثم أرسل وصل الدفع داخل المحادثة،
+        وسيتم تفعيل اشتراكك بعد التأكد من الدفع.
+    </p>
+
+    <a href="{% url 'payment' %}" class="btn">
+        💳 تجديد الاشتراك
+    </a>
+
+    <a href="{% url 'logout' %}" class="btn logout">
+        🚪 تسجيل الخروج
+    </a>
+
+</div>
+
+</body>
+</html>

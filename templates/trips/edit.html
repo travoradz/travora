@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>تعديل رحلة | Travora</title>
+
+<style>
+
+body{
+margin:0;
+background:#f5f7fb;
+font-family:Tahoma,sans-serif;
+}
+
+.container{
+width:700px;
+margin:40px auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.1);
+}
+
+h2{
+text-align:center;
+color:#0b3d91;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+font-weight:bold;
+}
+
+input,
+select,
+textarea{
+
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+
+}
+
+textarea{
+height:100px;
+}
+
+button{
+
+width:100%;
+padding:14px;
+margin-top:25px;
+background:#0b3d91;
+color:white;
+border:none;
+border-radius:8px;
+font-size:17px;
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#082b66;
+
+}
+
+a{
+
+display:block;
+text-align:center;
+margin-top:20px;
+text-decoration:none;
+color:#0b3d91;
+font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>تعديل الرحلة</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>اسم الرحلة</label>
+<input
+type="text"
+name="name"
+value="{{ trip.name }}"
+required>
+
+<label>الوجهة</label>
+
+<select name="destination">
+
+<option value="مكة" {% if trip.destination == "مكة" %}selected{% endif %}>
+مكة
+</option>
+
+<option value="المدينة" {% if trip.destination == "المدينة" %}selected{% endif %}>
+المدينة
+</option>
+
+<option value="مكة والمدينة" {% if trip.destination == "مكة والمدينة" %}selected{% endif %}>
+مكة والمدينة
+</option>
+
+</select>
+
+<label>مدة الرحلة</label>
+
+<input
+type="text"
+name="duration"
+value="{{ trip.duration }}">
+
+<label>شركة الطيران</label>
+
+<input
+type="text"
+name="airline"
+value="{{ trip.airline }}">
+<label>نوع السفر</label>
+
+<select
+name="trip_type"
+id="trip_type"
+onchange="toggleStopCity()">
+
+<option value="مباشرة"
+{% if trip.trip_type == "مباشرة" %}
+selected
+{% endif %}>
+🟢 مباشرة
+</option>
+
+<option value="غير مباشرة"
+{% if trip.trip_type == "غير مباشرة" %}
+selected
+{% endif %}>
+🔵 غير مباشرة
+</option>
+
+</select>
+
+<label>اسم المرشد</label>
+
+<input
+type="text"
+name="guide_name"
+value="{{ trip.guide_name }}">
+
+<div
+id="stop_city_box">
+
+<label>مدينة التوقف</label>
+
+<input
+type="text"
+name="stop_city"
+value="{{ trip.stop_city }}"
+placeholder="مثال: إسطنبول">
+
+</div>
+
+<label>اسم الفندق</label>
+
+<input
+type="text"
+name="hotel"
+value="{{ trip.hotel }}">
+
+<label>تاريخ الانطلاق</label>
+
+<input
+type="date"
+name="departure_date"
+value="{{ trip.departure_date|date:'Y-m-d' }}">
+
+<label>تاريخ العودة</label>
+
+<input
+type="date"
+name="return_date"
+value="{{ trip.return_date|date:'Y-m-d' }}">
+
+<label>عدد المقاعد</label>
+
+<input
+type="number"
+name="seats"
+value="{{ trip.seats }}">
+<h3 style="color:#0b3d91;margin-top:25px;">
+💰 أسعار الغرف
+</h3>
+
+<label>سعر الغرفة الثنائية</label>
+<input
+type="number"
+name="double_price"
+value="{{ trip.double_price }}">
+
+<label>سعر الغرفة الثلاثية</label>
+<input
+type="number"
+name="triple_price"
+value="{{ trip.triple_price }}">
+
+<label>سعر الغرفة الرباعية</label>
+<input
+type="number"
+name="quad_price"
+value="{{ trip.quad_price }}">
+
+<label>سعر الغرفة الخماسية</label>
+<input
+type="number"
+name="quint_price"
+value="{{ trip.quint_price }}">
+
+<label>ملاحظات</label>
+
+<textarea
+name="notes">{{ trip.notes }}</textarea>
+
+<button type="submit">
+
+💾 حفظ التعديلات
+
+</button>
+
+</form>
+
+<a href="/trips/">
+
+⬅️ الرجوع إلى الرحلات
+
+</a>
+
+</div>
+
+<script>
+
+function toggleStopCity(){
+
+const type=document.getElementById("trip_type").value;
+
+const box=document.getElementById("stop_city_box");
+
+if(type==="غير مباشرة"){
+
+box.style.display="block";
+
+}else{
+
+box.style.display="none";
+
+}
+
+}
+
+window.onload=toggleStopCity;
+
+</script>
+</body>
+</html>

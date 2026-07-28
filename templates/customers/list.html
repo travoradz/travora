@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>الزبائن | Travora</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Tahoma,sans-serif;
+}
+
+body{
+background:#f5f7fb;
+padding:30px;
+}
+
+.container{
+max-width:1400px;
+margin:auto;
+}
+
+.header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+margin-bottom:30px;
+
+}
+
+.header h1{
+
+color:#0b3d91;
+font-size:32px;
+
+}
+
+.back-btn{
+
+background:#64748b;
+color:white;
+text-decoration:none;
+padding:12px 18px;
+border-radius:12px;
+font-weight:bold;
+transition:.3s;
+
+}
+
+.back-btn:hover{
+
+background:#475569;
+
+}
+
+.search{
+
+margin-bottom:25px;
+
+}
+
+.search input{
+
+width:100%;
+padding:15px;
+border:1px solid #d1d5db;
+border-radius:14px;
+font-size:16px;
+
+}
+
+.card{
+
+background:white;
+padding:25px;
+border-radius:18px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+margin-bottom:30px;
+
+}
+
+.section-title{
+
+font-size:24px;
+color:#0b3d91;
+margin-bottom:20px;
+
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+
+}
+
+label{
+
+font-weight:bold;
+margin-bottom:8px;
+display:block;
+
+}
+
+input,
+select{
+
+width:100%;
+padding:13px;
+border:1px solid #d1d5db;
+border-radius:12px;
+font-size:15px;
+
+}
+
+button{
+
+margin-top:25px;
+width:100%;
+padding:15px;
+background:#0b3d91;
+color:white;
+border:none;
+border-radius:12px;
+font-size:17px;
+cursor:pointer;
+transition:.3s;
+
+}
+
+button:hover{
+
+background:#082b66;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+background:white;
+overflow:hidden;
+border-radius:15px;
+
+}
+
+th{
+
+background:#0b3d91;
+color:white;
+padding:15px;
+
+}
+
+td{
+
+padding:14px;
+text-align:center;
+border-bottom:1px solid #eee;
+
+}
+
+tr:hover{
+
+background:#f8fbff;
+
+}
+
+.edit{
+
+color:#2563eb;
+text-decoration:none;
+font-weight:bold;
+
+}
+
+.delete{
+
+color:#dc2626;
+text-decoration:none;
+font-weight:bold;
+
+}
+
+@media(max-width:900px){
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+table{
+
+font-size:13px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>👥 الزبائن</h1>
+
+<a href="/dashboard/" class="back-btn">
+
+🏠 لوحة التحكم
+
+</a>
+
+</div>
+
+<div class="search">
+
+<input
+type="text"
+id="searchInput"
+onkeyup="searchCustomer()"
+placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
+
+</div>
+
+<div class="card">
+
+<div class="section-title">
+
+➕ إضافة زبون جديد
+
+</div>
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="grid">
+
+        <div>
+            <label>اسم الزبون</label>
+            <input
+                type="text"
+                name="full_name"
+                placeholder="مثال: أحمد بن علي"
+                required>
+        </div>
+
+        <div>
+            <label>رقم الهاتف</label>
+            <input
+                type="text"
+                name="phone"
+                placeholder="0550xxxxxx"
+                required>
+        </div>
+
+        <div>
+            <label>نوع الغرفة</label>
+            <select name="room_type" required>
+                <option value="ثنائية">ثنائية</option>
+                <option value="ثلاثية">ثلاثية</option>
+                <option value="رباعية">رباعية</option>
+                <option value="خماسية">خماسية</option>
+            </select>
+        </div>
+
+        <div>
+            <label>👥 رقم المجموعة</label>
+            <input
+                type="text"
+                name="group_code"
+                placeholder="مثال: A1 أو FAMILY1">
+        </div>
+<label>الرحلة</label>
+
+<select name="trip">
+
+{% for trip in trips %}
+
+<option value="{{ trip.id }}">
+
+{{ trip.name }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+<div>
+
+<label>نوع الغرفة</label>
+
+<select name="room_type">
+
+<option value="ثنائية">🛏️ ثنائية</option>
+
+<option value="ثلاثية">🛏️ ثلاثية</option>
+
+<option value="رباعية">🛏️ رباعية</option>
+
+<option value="خماسية">🛏️ خماسية</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label>المبلغ المدفوع</label>
+
+<input
+type="number"
+name="amount_paid"
+placeholder="مثال: 50000"
+required>
+
+</div>
+
+<div>
+
+<label>&nbsp;</label>
+
+<button type="submit">
+
+➕ إضافة الزبون
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+
+<table id="customersTable">
+
+<tr>
+
+<th>الاسم</th>
+
+<th>الهاتف</th>
+
+<th>الرحلة</th>
+
+<th>الغرفة</th>
+
+<th>الإجمالي</th>
+
+<th>المدفوع</th>
+
+<th>المتبقي</th>
+
+<th>الحالة</th>
+
+<th>الإجراءات</th>
+
+</tr>
+{% for customer in customers %}
+
+<tr>
+
+<td>{{ customer.full_name }}</td>
+
+<td>{{ customer.phone }}</td>
+
+<td>{{ customer.trip.name }}</td>
+
+<td>{{ customer.room_type }}</td>
+
+<td>{{ customer.total_price }} دج</td>
+
+<td>{{ customer.amount_paid }} دج</td>
+
+<td>
+
+<strong style="color:#dc2626;">
+
+{{ customer.remaining_amount }} دج
+
+</strong>
+
+</td>
+
+<td>
+
+{% if customer.amount_paid == 0 %}
+
+<span style="
+background:#fee2e2;
+color:#dc2626;
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;">
+
+🔴 غير مدفوع
+
+</span>
+
+{% elif customer.remaining_amount == 0 %}
+
+<span style="
+background:#dcfce7;
+color:#16a34a;
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;">
+
+🟢 مدفوع
+
+</span>
+
+{% else %}
+
+<span style="
+background:#fef3c7;
+color:#d97706;
+padding:6px 12px;
+border-radius:20px;
+font-weight:bold;">
+
+🟡 دفع جزئي
+
+</span>
+
+{% endif %}
+
+</td>
+<td>
+
+<a class="edit"
+href="{% url 'edit_customer' customer.id %}">
+✏️ تعديل
+</a>
+
+|
+
+<a class="delete"
+href="{% url 'delete_customer' customer.id %}"
+onclick="return confirm('هل تريد حذف هذا الزبون؟');">
+🗑 حذف
+</a>
+
+|<a
+style="color:#16a34a;font-weight:bold;text-decoration:none;"
+target="_blank"
+href="https://wa.me/213{{ customer.phone|slice:'1:' }}?text=🌹 السلام عليكم {{ customer.full_name }}%0A%0Aيسعدنا تذكيركم بتفاصيل رحلتكم مع *{{ settings.agency_name }}* ✈️%0A%0A📍 الرحلة: {{ customer.trip.name }}%0A🛫 نوع الرحلة: {{ customer.trip.get_trip_type_display }}%0A👨‍✈️ المرشد: {{ customer.trip.guide_name }}%0A🏨 الفندق: {{ customer.trip.hotel }}%0A📅 الانطلاق: {{ customer.trip.departure_date|date:'d/m/Y' }}%0A📅 العودة: {{ customer.trip.return_date|date:'d/m/Y' }}%0A🛏️ نوع الغرفة: {{ customer.room_type }}%0A💰 المبلغ المتبقي: {{ customer.remaining_amount }} دج%0A%0A📞 لأي استفسار نحن في خدمتكم.%0Aنسأل الله لكم عمرة مباركة وتقبلًا صالحًا 🤲">
+💬 واتساب
+</a>
+|
+
+|
+
+<a
+href="{% url 'print_customer' customer.id %}"
+target="_blank"
+style="
+color:#0b3d91;
+font-weight:bold;
+text-decoration:none;">
+
+🖨️ طباعة
+
+</a>
+
+</td>
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="9">
+
+لا يوجد زبائن حتى الآن.
+
+</td>
+
+</tr>
+
+{% endfor %}
+</table>
+
+</div>
+
+<script>
+
+function searchCustomer(){
+
+let input=document
+.getElementById("searchInput")
+.value
+.toLowerCase();
+
+let table=document
+.getElementById("customersTable");
+
+let rows=table.getElementsByTagName("tr");
+
+for(let i=1;i<rows.length;i++){
+
+let text=rows[i]
+.innerText
+.toLowerCase();
+
+if(text.includes(input)){
+
+rows[i].style.display="";
+
+}else{
+
+rows[i].style.display="none";
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

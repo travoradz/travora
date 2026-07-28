@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>كشف التسكين</title>
+
+<style>
+
+body{
+font-family:Tahoma;
+padding:30px;
+background:white;
+}
+
+h1,h2{
+text-align:center;
+margin:0;
+}
+
+.info{
+margin:25px 0;
+font-size:18px;
+}
+
+.room{
+border:2px solid #000;
+padding:15px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+.room h3{
+margin:0 0 10px 0;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+table th,
+table td{
+border:1px solid #000;
+padding:10px;
+text-align:center;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+font-size:15px;
+}
+
+@media print{
+
+button{
+display:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<button onclick="window.print()">
+
+🖨️ طباعة
+
+</button>
+
+<h1>
+
+Travora
+
+</h1>
+
+<h2>
+
+كشف تسكين الرحلة
+
+</h2>
+
+<div class="info">
+
+<b>الرحلة :</b>
+{{ trip.name }}
+
+<br><br>
+
+<b>الوجهة :</b>
+{{ trip.destination }}
+
+<br><br>
+
+<b>الفندق :</b>
+{{ trip.hotel }}
+
+<br><br>
+
+<b>تاريخ الانطلاق :</b>
+{{ trip.departure_date }}
+
+<br>
+
+<b>تاريخ العودة :</b>
+{{ trip.return_date }}
+
+</div>
+
+{% for room in rooms %}
+
+<div class="room">
+
+<h3>
+
+🏨 غرفة {{ room.room_number }}
+
+({{ room.room_type }})
+
+</h3>
+
+<table>
+
+<tr>
+
+<th>#</th>
+
+<th>الاسم</th>
+
+<th>الهاتف</th>
+
+</tr>
+
+{% for customer in room.customers.all %}
+
+<tr>
+
+<td>
+
+{{ forloop.counter }}
+
+</td>
+
+<td>
+
+{{ customer.full_name }}
+
+</td>
+
+<td>
+
+{{ customer.phone }}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="3">
+
+لا يوجد زبائن
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endfor %}
+
+<div class="footer">
+
+تم إنشاء هذا الكشف بواسطة
+
+<b>Travora</b>
+
+</div>
+
+</body>
+
+</html>

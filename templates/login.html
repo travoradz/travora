@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travora | تسجيل الدخول</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Tahoma,sans-serif;
+        }
+
+        body{
+            background:linear-gradient(135deg,#0b3d91,#16c5d8);
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .card{
+            background:white;
+            width:420px;
+            padding:35px;
+            border-radius:18px;
+            text-align:center;
+            box-shadow:0 10px 30px rgba(0,0,0,.2);
+        }
+
+        .logo{
+            font-size:34px;
+            color:#0b3d91;
+            font-weight:bold;
+            margin-bottom:15px;
+        }
+
+        h1{
+            color:#0b3d91;
+            margin-bottom:8px;
+        }
+
+        p{
+            color:#666;
+            margin-bottom:20px;
+        }
+
+        input{
+            width:100%;
+            padding:14px;
+            margin-bottom:15px;
+            border:1px solid #ddd;
+            border-radius:10px;
+            font-size:15px;
+        }
+
+        button{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            background:#0b3d91;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#082d69;
+        }
+
+        a{
+            text-decoration:none;
+            color:#0b3d91;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="logo">TRAVORA</div>
+
+    <h1>تسجيل الدخول</h1>
+
+    <p>منصة إدارة وكالات العمرة والسفر</p>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input
+            type="email"
+            name="email"
+            placeholder="البريد الإلكتروني"
+            required
+        >
+
+        <input
+            type="password"
+            name="password"
+            placeholder="كلمة المرور"
+            required
+        >
+
+        <button type="submit">دخول</button>
+    </form>
+
+    <br>
+
+    <a href="/signup/">إنشاء حساب جديد</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>محادثة الوكالة</title>
+
+<style>
+
+body{
+font-family:Tahoma;
+background:#f5f7fb;
+margin:0;
+padding:20px;
+}
+
+.header{
+background:#0b3d91;
+color:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.chat{
+background:white;
+padding:20px;
+border-radius:15px;
+height:500px;
+overflow-y:auto;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.user{
+background:#e5f3ff;
+padding:12px;
+border-radius:10px;
+margin-bottom:15px;
+width:70%;
+}
+
+.admin{
+background:#d1fae5;
+padding:12px;
+border-radius:10px;
+margin-bottom:15px;
+margin-right:auto;
+width:70%;
+}
+
+img{
+max-width:250px;
+margin-top:10px;
+border-radius:10px;
+}
+
+form{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
+
+textarea{
+flex:1;
+padding:12px;
+border-radius:10px;
+}
+
+button{
+background:#0b3d91;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>محادثة الوكالة</title>
+
+<style>
+
+body{
+font-family:Tahoma;
+background:#f5f7fb;
+margin:0;
+padding:20px;
+}
+
+.header{
+background:#0b3d91;
+color:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.info{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.chat{
+background:white;
+padding:20px;
+border-radius:15px;
+height:500px;
+overflow-y:auto;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.user{
+background:#dbeafe;
+padding:12px;
+border-radius:10px;
+margin-bottom:15px;
+width:70%;
+}
+
+.admin{
+background:#dcfce7;
+padding:12px;
+border-radius:10px;
+margin-bottom:15px;
+margin-right:auto;
+width:70%;
+}
+
+img{
+max-width:250px;
+margin-top:10px;
+border-radius:10px;
+}
+
+form{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
+
+textarea{
+flex:1;
+padding:12px;
+border-radius:10px;
+}
+
+button{
+background:#0b3d91;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.activate{
+display:inline-block;
+background:#16a34a;
+color:white;
+padding:10px 20px;
+border-radius:10px;
+text-decoration:none;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+💬 محادثة مع
+
+<b>{{ agency.username }}</b>
+
+</div>
+
+<div class="info">
+
+<p>
+<p>
+📅 بداية الاشتراك:
+<b>{{ start_date_ar }}</b>
+</p>
+
+<p>
+📅 نهاية الاشتراك:
+<b>{{ end_date_ar }}</b>
+</p>
+
+{% if subscription.is_active %}
+
+<p style="color:green;">
+✅ الاشتراك مفعل
+</p>
+
+{% else %}
+
+<p style="color:red;">
+❌ الاشتراك غير مفعل
+</p>
+
+{% endif %}
+{% if subscription.is_active %}
+
+<button
+style="
+background:#16a34a;
+color:white;
+padding:10px 20px;
+border:none;
+border-radius:10px;
+cursor:default;
+">
+
+✅ الاشتراك مفعل
+
+</button>
+
+{% else %}
+
+<a
+href="{% url 'activate_subscription' agency.id %}"
+class="activate">
+
+✅ تفعيل الاشتراك
+
+</a>
+
+{% endif %}
+
+</div>
+
+<div class="chat">
+
+{% for message in messages %}
+
+{% if message.is_admin %}
+
+<div class="admin">
+
+<b>Travora</b>
+
+<br><br>
+
+{{ message.message }}
+
+</div>
+
+{% else %}
+
+<div class="user">
+
+<b>{{ agency.username }}</b>
+
+<br><br>
+
+{{ message.message }}
+
+{% if message.image %}
+
+<br>
+
+<img src="{{ message.image.url }}">
+
+{% endif %}
+
+</div>
+
+{% endif %}
+
+{% endfor %}
+
+</div>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<textarea
+name="message"
+placeholder="اكتب الرد..."
+required></textarea>
+
+<button type="submit">
+
+إرسال
+
+</button>
+
+</form>
+
+</body>
+
+</html>

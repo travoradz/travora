@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>نقل الزبون</title>
+
+<style>
+
+body{
+font-family:Tahoma;
+background:#f5f7fb;
+padding:30px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+h2{
+color:#0b3d91;
+margin-bottom:25px;
+}
+
+label{
+display:block;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:25px;
+}
+
+button{
+background:#10b981;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+a{
+margin-right:15px;
+text-decoration:none;
+color:#555;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>
+🔄 نقل الزبون
+</h2>
+
+<p>
+
+<strong>{{ customer.full_name }}</strong>
+
+</p>
+
+<p>
+
+نوع الغرفة :
+
+<strong>{{ customer.room_type }}</strong>
+
+</p>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>
+
+اختر الغرفة الجديدة
+
+</label>
+
+<select name="room_id">
+
+{% for room in rooms %}
+
+<option value="{{ room.id }}">
+
+غرفة {{ room.room_number }}
+
+</option>
+
+{% endfor %}
+
+</select>
+
+<button type="submit">
+
+💾 حفظ النقل
+
+</button>
+
+<a href="{% url 'rooming' customer.trip.id %}">
+
+⬅ رجوع
+
+</a>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

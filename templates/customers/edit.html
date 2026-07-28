@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>تعديل الزبون | Travora</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Tahoma,sans-serif;
+    background:#f5f7fb;
+}
+
+.container{
+    width:700px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    color:#0b3d91;
+    margin-bottom:25px;
+}
+
+label{
+    display:block;
+    margin-top:12px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background:#0b3d91;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#082b66;
+}
+
+a{
+    display:block;
+    text-align:center;
+    margin-top:20px;
+    text-decoration:none;
+    color:#0b3d91;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>تعديل الزبون</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>اسم الزبون</label>
+
+<input
+type="text"
+name="full_name"
+value="{{ customer.full_name }}"
+required>
+
+<label>رقم الهاتف</label>
+
+<input
+type="text"
+name="phone"
+value="{{ customer.phone }}"
+required>
+
+<label>الرحلة</label>
+
+<select name="trip">
+
+{% for trip in trips %}
+
+<option value="{{ trip.id }}"
+{% if trip.id == customer.trip.id %}selected{% endif %}>
+{{ trip.name }}
+</option>
+
+{% endfor %}
+
+</select>
+<label>نوع الغرفة</label>
+
+<select name="room_type">
+
+<option value="ثنائية" {% if customer.room_type == "ثنائية" %}selected{% endif %}>
+ثنائية
+</option>
+
+<option value="ثلاثية" {% if customer.room_type == "ثلاثية" %}selected{% endif %}>
+ثلاثية
+</option>
+
+<option value="رباعية" {% if customer.room_type == "رباعية" %}selected{% endif %}>
+رباعية
+</option>
+
+<option value="خماسية" {% if customer.room_type == "خماسية" %}selected{% endif %}>
+خماسية
+</option>
+
+</select>
+
+<label>المبلغ المدفوع</label>
+
+<input
+type="number"
+name="amount_paid"
+value="{{ customer.amount_paid }}"
+required>
+
+<button type="submit">
+💾 حفظ التعديلات
+</button>
+
+</form>
+
+<a href="{% url 'customers' %}">
+⬅️ الرجوع إلى صفحة الزبائن
+</a>
+
+</div>
+
+</body>
+
+</html>

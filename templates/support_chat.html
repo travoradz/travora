@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>الدعم الفني</title>
+
+<style>
+
+body{
+font-family:Tahoma;
+background:#eef2f7;
+margin:0;
+}
+
+.header{
+background:#0b3d91;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+.info{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.chat{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:15px;
+height:450px;
+overflow-y:auto;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.user{
+background:#dbeafe;
+padding:12px;
+border-radius:12px;
+margin-bottom:12px;
+text-align:right;
+}
+
+.admin{
+background:#dcfce7;
+padding:12px;
+border-radius:12px;
+margin-bottom:12px;
+text-align:left;
+}
+
+.send-box{
+background:white;
+margin:20px;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+textarea{
+width:100%;
+height:90px;
+padding:10px;
+border-radius:10px;
+}
+
+button{
+background:#0b3d91;
+color:white;
+border:none;
+padding:12px 25px;
+border-radius:10px;
+cursor:pointer;
+margin-top:10px;
+}
+
+img{
+max-width:200px;
+margin-top:10px;
+border-radius:10px;
+}
+.ideas-box{
+background:#ffffff;
+margin:20px;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.quick-buttons{
+margin-top:15px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.quick-buttons button{
+background:#0b3d91;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.quick-buttons button:hover{
+background:#2563eb;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>💬 الدعم الفني و الاشتراك</h2>
+
+</div>
+
+<div class="info">
+
+<b>💎 الاشتراك الشهري:</b>
+
+2500 دج
+
+<br><br>
+
+<b>📮 CCP:</b>
+
+xxxxxxxxxxxxxxxx
+
+<br><br>
+
+<b>💳 البطاقة الذهبية:</b>
+
+xxxxxxxxxxxxxxxx
+
+<br><br>
+
+📷 أرسل صورة وصل الدفع هنا.
+
+</div>
+<div class="ideas-box">
+
+<h3>💡 ساعدنا في تطوير Travora</h3>
+
+<p>
+إذا كانت لديك فكرة أو ميزة تريد إضافتها إلى Travora،
+اكتبها في الرسالة بالأسفل.
+</p>
+
+<div class="quick-buttons">
+
+<button type="button" onclick="quickMessage('💡 اقتراح ميزة: ')">
+💡 اقتراح
+</button>
+
+<button type="button" onclick="quickMessage('🐞 يوجد خطأ: ')">
+🐞 تبليغ عن خطأ
+</button>
+
+<button type="button" onclick="quickMessage('💳 أرسلت وصل الدفع.')">
+💳 تأكيد الدفع
+</button>
+
+<button type="button" onclick="quickMessage('❓ لدي سؤال: ')">
+❓ سؤال
+</button>
+
+</div>
+
+</div>
+<div class="chat" id="chat-box">
+
+{% for message in messages %}
+
+    {% if message.is_admin %}
+
+        <div class="admin">
+            <b>🛡️ Travora</b><br><br>
+
+            {{ message.message }}
+
+            {% if message.image %}
+                <br><br>
+                <img src="{{ message.image.url }}">
+            {% endif %}
+
+            <br><br>
+            <small>{{ message.created_at|date:"d/m/Y H:i" }}</small>
+        </div>
+
+    {% else %}
+
+        <div class="user">
+            <b>👤 أنت</b><br><br>
+
+            {{ message.message }}
+
+            {% if message.image %}
+                <br><br>
+                <img src="{{ message.image.url }}">
+            {% endif %}
+
+            <br><br>
+            <small>{{ message.created_at|date:"d/m/Y H:i" }}</small>
+        </div>
+
+    {% endif %}
+
+{% empty %}
+
+    <p style="text-align:center;">
+        لا توجد رسائل بعد.
+    </p>
+
+{% endfor %}
+
+</div>
+
+<div class="send-box">
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<textarea
+name="message"
+placeholder="اكتب رسالتك أو اقتراحك..."></textarea>
+
+<br><br>
+
+<input type="file" name="image">
+
+<br>
+
+<button type="submit">
+
+📤 إرسال
+
+</button>
+
+</form>
+
+</div>
+<script>
+
+function quickMessage(text){
+
+document.querySelector("textarea").value = text;
+
+document.querySelector("textarea").focus();
+
+}
+
+</script>
+<script>
+
+const chat = document.getElementById("chat-box");
+
+chat.scrollTop = chat.scrollHeight;
+
+</script>
+<script>
+
+const chat = document.getElementById("chat-box");
+
+if(chat){
+    chat.scrollTop = chat.scrollHeight;
+}
+
+setInterval(function(){
+
+    const textarea = document.querySelector("textarea");
+
+    if(document.activeElement !== textarea){
+        location.reload();
+    }
+
+},5000);
+
+</script>
+</body>
+
+</html>
