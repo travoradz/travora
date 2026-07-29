@@ -78,7 +78,7 @@ def dashboard_view(request):
     if days_left < 0:
         days_left = 0
 
-    trips = Trip.objects.all()
+    trips = Trip.objects.filter(user=request.user)
     customers = Customer.objects.filter(user=request.user)
 
     trips_count = trips.count()
@@ -109,22 +109,20 @@ def dashboard_view(request):
 
     expiring_subscription = days_left <= 5
 
-    # توزيع الغرف
     double_rooms = customers.filter(room_type="ثنائية").count()
     triple_rooms = customers.filter(room_type="ثلاثية").count()
     quad_rooms = customers.filter(room_type="رباعية").count()
     quint_rooms = customers.filter(room_type="خماسية").count()
 
-    # إشعارات الدعم
     unread_support = SupportMessage.objects.filter(
         user=request.user,
         is_admin=True,
         is_read=False
     ).count()
 
-    # إحصائيات
     today_bookings = customers.count()
     month_bookings = customers.count()
+
     full_trips_count = trips.filter(seats=0).count()
     total_seats = trips.aggregate(Sum("seats"))["seats__sum"] or 0
 
@@ -156,10 +154,10 @@ def dashboard_view(request):
             "total_seats": total_seats,
         },
     )
+
+
 def logout_view(request):
-
     logout(request)
-
     return redirect("/")
 def subscription_expired(request):
 
