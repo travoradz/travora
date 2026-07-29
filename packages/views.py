@@ -91,10 +91,12 @@ def delete_trip(request, trip_id):
 @login_required
 @subscription_required
 def customers_list(request):
-
     if request.method == "POST":
+        trip = Trip.objects.get(
+            id=request.POST["trip"],
+            user=request.user
+        )
 
-        trip = Trip.objects.get(id=request.POST["trip"])
         room_type = request.POST["room_type"]
 
         if room_type == "ثنائية":
@@ -113,7 +115,7 @@ def customers_list(request):
             phone=request.POST["phone"],
             room_type=room_type,
             total_price=total_price,
-              group_code=request.POST.get("group_code", ""),
+            group_code=request.POST.get("group_code", ""),
             amount_paid=request.POST["amount_paid"],
         )
 
@@ -130,12 +132,14 @@ def customers_list(request):
             full_name__icontains=search
         )
 
+    trips = Trip.objects.filter(user=request.user)
+
     return render(
         request,
         "customers/list.html",
         {
             "customers": customers,
-            "trips": Trip.objects.all(),
+            "trips": trips,
         },
     )
 
