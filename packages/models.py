@@ -77,7 +77,25 @@ class Trip(models.Model):
 
     def str(self):
         return self.name
+class Expense(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
 
+    title = models.CharField(max_length=200)
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    date = models.DateField(auto_now_add=True)
+
+    notes = models.TextField(blank=True)
+
+    def str(self):
+        return self.title
 class Room(models.Model):
     trip = models.ForeignKey(
         Trip,

@@ -1,15 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.utils import timezone
 from accounts.decorators import subscription_required
-from packages.models import Trip, Customer
+from packages.models import Trip, Customer, Expense
 from accounts.models import Subscription
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, F
-from django.utils import timezone
+
 def login_view(request):
 
     if request.method == "POST":
@@ -155,7 +154,45 @@ def dashboard_view(request):
         },
     )
 
+@login_required
+@subscription_required
+def profit_loss(request):
+    if request.method == "POST":
+        Expense.objects.create(
+            user=request.user,
+            title=request.POST["title"],
+            amount=request.POST["amount"],
+            notes=request.POST.get("notes", ""),
+        )
 
+        return redirect("profit_loss")
+
+    expenses = Expense.objects.filter(
+        user=request.user
+    ).order_by("-date")
+
+    total_expenses = (
+        expenses.aggregate(total=Sum("amount"))["total"] or 0
+    )
+
+    total_income = (
+        Customer.objects.filter(
+            user=request.user
+        ).aggregate(total=Sum("amount_paid"))["total"] or 0
+    )
+
+    profit = total_income - total_expenses
+
+    return render(
+        request,
+        "profit_loss.html",
+        {
+            "expenses": expenses,
+            "total_income": total_income,
+            "total_expenses": total_expenses,
+            "profit": profit,
+        },
+    )
 def logout_view(request):
     logout(request)
     return redirect("/")

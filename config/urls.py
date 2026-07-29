@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 from accounts import views
 from packages import views as package_views
-
+from accounts.views import profit_loss
 urlpatterns = [
     path("admin/", admin.site.urls),
 
@@ -63,6 +63,7 @@ urlpatterns = [
         "trips/",
         include("packages.urls"),
     ),
+    path("profit-loss/", profit_loss, name="profit_loss"),
 ]
 
 if settings.DEBUG:
