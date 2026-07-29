@@ -9,23 +9,22 @@ from django.utils.formats import date_format
 @login_required
 @subscription_required
 def trips_list(request):
-
-    trips = Trip.objects.all()
-
+    trips = Trip.objects.filter(user=request.user)
     return render(
         request,
         "trips/list.html",
         {
             "trips": trips,
-        }
+        },
     )
+
 
 @login_required
 @subscription_required
 def add_trip(request):
-
     if request.method == "POST":
         Trip.objects.create(
+            user=request.user,
             name=request.POST["name"],
             destination=request.POST["destination"],
             duration=request.POST["duration"],
@@ -43,39 +42,33 @@ def add_trip(request):
             quint_price=request.POST["quint_price"],
             notes=request.POST["notes"],
         )
-
         return redirect("trips")
 
     return render(request, "trips/add.html")
+
+
 @login_required
 @subscription_required
 def edit_trip(request, trip_id):
-
-    trip = Trip.objects.get(id=trip_id)
+    trip = Trip.objects.get(id=trip_id, user=request.user)
 
     if request.method == "POST":
-
         trip.name = request.POST["name"]
         trip.destination = request.POST["destination"]
         trip.duration = request.POST["duration"]
         trip.airline = request.POST["airline"]
-
         trip.trip_type = request.POST["trip_type"]
         trip.guide_name = request.POST["guide_name"]
         trip.stop_city = request.POST["stop_city"]
-
         trip.hotel = request.POST["hotel"]
         trip.departure_date = request.POST["departure_date"]
         trip.return_date = request.POST["return_date"]
         trip.seats = request.POST["seats"]
-
         trip.double_price = request.POST["double_price"]
         trip.triple_price = request.POST["triple_price"]
         trip.quad_price = request.POST["quad_price"]
         trip.quint_price = request.POST["quint_price"]
-
         trip.notes = request.POST["notes"]
-
         trip.save()
 
         return redirect("trips")
@@ -87,14 +80,13 @@ def edit_trip(request, trip_id):
             "trip": trip,
         },
     )
+
+
 @login_required
 @subscription_required
 def delete_trip(request, trip_id):
-
-    trip = Trip.objects.get(id=trip_id)
-
+    trip = Trip.objects.get(id=trip_id, user=request.user)
     trip.delete()
-
     return redirect("trips")
 @login_required
 @subscription_required

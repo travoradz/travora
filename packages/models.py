@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+from django.contrib.auth.models import User
+
 class Trip(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     DESTINATIONS = [
         ("مكة", "مكة"),
@@ -72,7 +75,7 @@ class Trip(models.Model):
 
     notes = models.TextField(blank=True)
 
-    def __str__(self):
+    def str(self):
         return self.name
 
 class Room(models.Model):
