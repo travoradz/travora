@@ -3,9 +3,7 @@ from django.contrib.auth.models import User
 from datetime import timedelta
 from django.utils import timezone
 
-
 class Subscription(models.Model):
-
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
@@ -23,9 +21,18 @@ class Subscription(models.Model):
         default=True
     )
 
+    # كلمة السر الخاصة بالصفحة المالية
+    # يتم تخزينها لاحقًا بشكل Hash وليس كنص عادي
+    financial_password = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True
+    )
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.end_date = self.start_date + timedelta(days=14)
+
         super().save(*args, **kwargs)
 
     def str(self):

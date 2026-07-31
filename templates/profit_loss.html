@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>المالية | Travora</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f5f8fc;
+            color: #1f2937;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1250px;
+            margin: 30px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            color: #1769aa;
+        }
+
+        .header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #1769aa;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .cards.second-row {
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .sales {
+            border-top: 5px solid #1769aa;
+        }
+
+        .received {
+            border-top: 5px solid #10b981;
+        }
+
+        .remaining {
+            border-top: 5px solid #f59e0b;
+        }
+
+        .expense {
+            border-top: 5px solid #ef4444;
+        }
+
+        .cash {
+            border-top: 5px solid #8b5cf6;
+        }
+
+        .profit {
+            border-top: 5px solid #0ea5e9;
+        }
+
+        .positive {
+            color: #10b981;
+        }
+
+        .negative {
+            color: #ef4444;
+        }
+
+        .warning {
+            color: #f59e0b;
+        }
+
+        .section {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #1769aa;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #d7dee8;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1769aa;
+        }
+
+        textarea {
+            min-height: 95px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            margin-top: 18px;
+            border: none;
+            background: #1769aa;
+            color: white;
+            padding: 13px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf0f4;
+            text-align: right;
+        }
+
+        th {
+            background: #f0f6fc;
+            color: #1769aa;
+            white-space: nowrap;
+        }
+
+        tr:hover td {
+            background: #fafcff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #eef6ff;
+            color: #1769aa;
+            font-size: 13px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 30px 10px;
+        }
+
+        .note-box {
+            background: #f8fafc;
+            border-right: 4px solid #1769aa;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 950px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .container {
+                width: 95%;
+                margin: 18px auto;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            .card-value {
+                font-size: 24px;
+            }
+
+            .header {
+                align-items: stretch;
+            }
+
+            .back-btn {
+                text-align: center;
+            }
+        }
+        @media (max-width: 650px) {
+    .section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- العنوان -->
+    <div class="header">
+        <div>
+            <h1>💰 الإدارة المالية</h1>
+            <p>ملخص مالي خاص بوكالتك فقط</p>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="back-btn">
+            ← العودة إلى لوحة التحكم
+        </a>
+    </div>
+    <!-- ========================================= -->
+<!-- الملخص المالي الذكي -->
+<!-- ========================================= -->
+
+<div class="cards">
+
+    <!-- إجمالي الديون -->
+    <div class="card remaining">
+
+        <div class="card-title">
+            📌 إجمالي المبالغ المتبقية
+        </div>
+
+        <div class="card-value warning">
+            {{ total_remaining }} دج
+        </div>
+
+        <small>
+            مبالغ ما زالت مستحقة على الزبائن
+        </small>
+
+    </div>
+
+
+    <!-- أفضل شهر -->
+    <div class="card profit">
+
+        <div class="card-title">
+            🏆 أفضل شهر ربحًا
+        </div>
+
+        {% if best_month %}
+
+            <div class="card-value positive">
+                {{ best_month.profit }} دج
+            </div>
+
+            <small>
+                {{ best_month.month_ar }} {{ best_month.year }}
+            </small>
+
+        {% else %}
+
+            <div class="card-value">
+                0 دج
+            </div>
+
+            <small>
+                لا توجد بيانات كافية
+            </small>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- أفضل رحلة -->
+    <div class="card sales">
+
+        <div class="card-title">
+            ✈️ أكثر رحلة ربحًا
+        </div>
+
+        {% if best_trip %}
+
+            <div class="card-value positive">
+                {{ best_trip.profit }} دج
+            </div>
+
+            <small>
+                {{ best_trip.trip.name }}
+            </small>
+
+        {% else %}
+
+            <div class="card-value">
+                0 دج
+            </div>
+
+            <small>
+                لا توجد بيانات كافية
+            </small>
+
+        {% endif %}
+
+    </div>
+
+</div>
+<div class="section">
+    <div class="section">
+
+    <h2>📅 الفترة المالية</h2>
+
+    <p style="
+        color:#6b7280;
+        margin-bottom:20px;
+        line-height:1.7;
+    ">
+        اختاري فترة جاهزة أو حددي التاريخ الذي تريدينه يدويًا.
+    </p>
+
+    <!-- الفترات السريعة -->
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(4, 1fr);
+        gap:12px;
+        margin-bottom:25px;
+    ">
+
+        <a
+            href="{% url 'profit_loss' %}?preset=this_month"
+            style="
+                display:block;
+                text-align:center;
+                text-decoration:none;
+                background:#1769aa;
+                color:white;
+                padding:13px 10px;
+                border-radius:12px;
+                font-weight:bold;
+            "
+        >
+            📅 هذا الشهر
+        </a>
+
+        <a
+            href="{% url 'profit_loss' %}?preset=last_month"
+            style="
+                display:block;
+                text-align:center;
+                text-decoration:none;
+                background:#1769aa;
+                color:white;
+                padding:13px 10px;
+                border-radius:12px;
+                font-weight:bold;
+            "
+        >
+            📅 الشهر الماضي
+        </a>
+
+        <a
+            href="{% url 'profit_loss' %}?preset=this_year"
+            style="
+                display:block;
+                text-align:center;
+                text-decoration:none;
+                background:#1769aa;
+                color:white;
+                padding:13px 10px;
+                border-radius:12px;
+                font-weight:bold;
+            "
+        >
+            📅 هذه السنة
+        </a>
+
+        <a
+            href="{% url 'profit_loss' %}"
+            style="
+                display:block;
+                text-align:center;
+                text-decoration:none;
+                background:#eef6ff;
+                color:#1769aa;
+                border:1px solid #cfe3f5;
+                padding:12px 10px;
+                border-radius:12px;
+                font-weight:bold;
+            "
+        >
+            📊 كل الفترة
+        </a>
+
+    </div>
+
+    <!-- فترة مخصصة -->
+    <form method="GET">
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label for="start_date">من تاريخ</label>
+
+                <input
+                    id="start_date"
+                    type="date"
+                    name="start_date"
+                    value="{{ start_date }}"
+                >
+            </div>
+
+            <div class="field">
+                <label for="end_date">إلى تاريخ</label>
+
+                <input
+                    id="end_date"
+                    type="date"
+                    name="end_date"
+                    value="{{ end_date }}"
+                >
+            </div>
+
+            <div class="field full">
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+                    🔍 عرض الفترة المحددة
+                </button>
+
+            </div>
+
+        </div>
+<div class="field full">
+
+    <a
+        href="{% url 'export_financial_excel' %}?preset={{ preset }}&start_date={{ start_date }}&end_date={{ end_date }}"
+        style="
+            display:block;
+            width:100%;
+            text-align:center;
+            text-decoration:none;
+            background:#10b981;
+            color:white;
+            padding:13px;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:bold;
+            box-sizing:border-box;
+        "
+    >
+        📊 تحميل التقرير Excel
+    </a>
+
+</div>
+<div class="field full">
+
+    <a
+        href="{% url 'export_financial_pdf' %}?preset={{ preset }}&start_date={{ start_date }}&end_date={{ end_date }}"
+        style="
+            display:block;
+            width:100%;
+            text-align:center;
+            text-decoration:none;
+            background:#ef4444;
+            color:white;
+            padding:13px;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:bold;
+            box-sizing:border-box;
+            margin-top:10px;
+        "
+    >
+        📄 تحميل التقرير PDF
+    </a>
+
+</div>
+    </form>
+
+</div>
+    <!-- المبيعات / المحصل / المتبقي -->
+    <div class="cards">
+
+        <div class="card sales">
+            <div class="card-title">إجمالي المبيعات</div>
+
+            <div class="card-value">
+                {{ total_sales }} دج
+            </div>
+        </div>
+
+        <div class="card received">
+            <div class="card-title">المبلغ المحصل فعليًا</div>
+
+            <div class="card-value positive">
+                {{ total_received }} دج
+            </div>
+        </div>
+
+        <div class="card remaining">
+            <div class="card-title">المبلغ المتبقي عند الزبائن</div>
+
+            <div class="card-value warning">
+                {{ total_remaining }} دج
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- المصاريف / السيولة / الربح -->
+    <div class="cards second-row">
+
+        <div class="card expense">
+            <div class="card-title">إجمالي المصاريف</div>
+
+            <div class="card-value negative">
+                {{ total_expenses }} دج
+            </div>
+        </div>
+
+        <div class="card cash">
+            <div class="card-title">السيولة الصافية</div>
+
+            <div class="card-value
+                {% if net_cash >= 0 %}
+                    positive
+                {% else %}
+                    negative
+                {% endif %}
+            ">
+                {{ net_cash }} دج
+            </div>
+        </div>
+
+        <div class="card profit">
+            <div class="card-title">الربح التقديري</div>
+
+            <div class="card-value
+                {% if estimated_profit >= 0 %}
+                    positive
+                {% else %}
+                    negative
+                {% endif %}
+            ">
+                {{ estimated_profit }} دج
+            </div>
+        </div>
+
+    </div>
+    <!-- توضيح -->
+    <div class="section">
+
+        <div class="note-box">
+            <strong>ملاحظة محاسبية:</strong>
+            المبلغ المحصل يختلف عن إجمالي المبيعات، لأن بعض الزبائن قد يكون لديهم مبلغ متبقي.
+            أما السيولة الصافية فهي المبلغ المحصل فعليًا ناقص المصاريف المسجلة.
+            والربح المعروض حاليًا هو ربح تقديري حسب المبيعات والمصاريف المدخلة.
+        </div>
+
+    </div>
+
+
+    <!-- إضافة مصروف -->
+    <div class="section">
+
+        <h2>➕ تسجيل مصروف جديد</h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>اسم المصروف</label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="مثال: تذكرة طيران"
+                        required
+                    >
+                </div>
+
+
+                <div class="field">
+                    <label>فئة المصروف</label>
+
+                    <select name="category" required>
+
+                        <option value="طيران">✈️ طيران</option>
+                        <option value="فندق">🏨 فندق</option>
+                        <option value="نقل">🚌 نقل</option>
+                        <option value="فيزا">🛂 فيزا</option>
+                        <option value="إشهار">📢 إشهار</option>
+                        <option value="رواتب">👥 رواتب</option>
+                        <option value="مكتب">🏢 مكتب</option>
+                        <option value="أخرى">📦 أخرى</option>
+
+                    </select>
+                </div>
+
+
+                <div class="field">
+                    <label>الرحلة المرتبطة بالمصروف</label>
+
+                    <select name="trip">
+
+                        <option value="">
+                            -- مصروف عام --
+                        </option>
+
+                        {% for trip in trips %}
+                            <option value="{{ trip.id }}">
+                                {{ trip.name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+
+                <div class="field">
+                    <label>المبلغ (دج)</label>
+
+                    <input
+                        type="number"
+                        name="amount"
+                        step="0.01"
+                        min="0"
+                        placeholder="مثال: 50000"
+                        required
+                    >
+                </div>
+
+
+                <div class="field full">
+                    <label>ملاحظات</label>
+
+                    <textarea
+                        name="notes"
+                        placeholder="أدخل أي تفاصيل إضافية عن المصروف..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="submit-btn">
+                💾 حفظ المصروف
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- قائمة المصاريف -->
+    <div class="section">
+
+        <h2>📋 المصاريف المسجلة</h2>
+
+        <div class="table-wrapper">
+
+            {% if expenses %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>المصروف</th>
+                        <th>الفئة</th>
+                        <th>الرحلة</th>
+                        <th>المبلغ</th>
+                        <th>التاريخ</th>
+                        <th>الملاحظات</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for expense in expenses %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ expense.title }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge">
+                                {{ expense.category }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if expense.trip %}
+                                {{ expense.trip.name }}
+                            {% else %}
+                                مصروف عام
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <strong>{{ expense.amount }} دج</strong>
+                        </td>
+
+                        <td>
+                            {{ expense.date }}
+                        </td>
+
+                        <td>
+                            {{ expense.notes|default:"-" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                لا توجد مصاريف مسجلة حاليًا.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+<!-- الربح حسب الرحلة -->
+<div class="section">
+<!-- ========================================= -->
+<!-- الربح حسب الرحلة -->
+<!-- ========================================= -->
+
+<div class="section">
+
+    <h2>✈️ الربح حسب الرحلة</h2>
+
+    <div class="table-wrapper">
+
+        {% if trip_reports %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>الرحلة</th>
+                    <th>إجمالي المبيعات</th>
+                    <th>المحصل</th>
+                    <th>المتبقي</th>
+                    <th>المصاريف</th>
+                    <th>الربح التقديري</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for report in trip_reports %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ report.trip.name }}</strong>
+                    </td>
+
+                    <td>
+                        {{ report.sales }} دج
+                    </td>
+
+                    <td class="positive">
+                        {{ report.received }} دج
+                    </td>
+
+                    <td class="warning">
+                        {{ report.remaining }} دج
+                    </td>
+
+                    <td class="negative">
+                        {{ report.expenses }} دج
+                    </td>
+
+                    <td>
+                        <strong
+                            class="{% if report.profit >= 0 %}positive{% else %}negative{% endif %}"
+                        >
+                            {{ report.profit }} دج
+                        </strong>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            لا توجد بيانات رحلات ضمن الفترة المحددة.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- التطور المالي الشهري -->
+<!-- ========================================= -->
+<!-- ========================================= -->
+<!-- التطور المالي الشهري -->
+<!-- ========================================= -->
+
+<div class="section">
+
+    <h2>📊 التطور المالي الشهري</h2>
+
+    <p style="
+        color:#6b7280;
+        margin-bottom:25px;
+        line-height:1.7;
+    ">
+        مقارنة المبيعات والمصاريف والربح حسب الأشهر خلال الفترة المالية المختارة.
+    </p>
+
+    {% if monthly_report %}
+
+    <!-- الرسم -->
+    <div style="
+        width:100%;
+        overflow-x:auto;
+        padding:20px 10px 10px;
+    ">
+
+        <div style="
+            min-width:650px;
+            height:360px;
+            display:flex;
+            align-items:flex-end;
+            gap:25px;
+            padding:20px 15px 10px;
+            border-bottom:2px solid #e5e7eb;
+        ">
+
+            {% for month in monthly_report %}
+
+            <div
+                class="month-chart"
+                data-sales="{{ month.sales }}"
+                data-expenses="{{ month.expenses }}"
+                data-profit="{{ month.profit }}"
+                style="
+                    flex:1;
+                    min-width:95px;
+                    height:100%;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:flex-end;
+                    align-items:center;
+                "
+            >
+
+                <!-- الأعمدة -->
+                <div style="
+                    width:100%;
+                    height:280px;
+                    display:flex;
+                    align-items:flex-end;
+                    justify-content:center;
+                    gap:5px;
+                ">
+
+                    <!-- المبيعات -->
+                    <div
+                        class="chart-bar sales-bar"
+                        style="
+                            width:24px;
+                            height:0;
+                            background:#1769aa;
+                            border-radius:7px 7px 0 0;
+                            transition:height .6s ease;
+                        "
+                        title="المبيعات"
+                    ></div>
+
+                    <!-- المصاريف -->
+                    <div
+                        class="chart-bar expenses-bar"
+                        style="
+                            width:24px;
+                            height:0;
+                            background:#ef4444;
+                            border-radius:7px 7px 0 0;
+                            transition:height .6s ease;
+                        "
+                        title="المصاريف"
+                    ></div>
+
+                    <!-- الربح -->
+                    <div
+                        class="chart-bar profit-bar"
+                        style="
+                            width:24px;
+                            height:0;
+                            background:#10b981;
+                            border-radius:7px 7px 0 0;
+                            transition:height .6s ease;
+                        "
+                        title="الربح"
+                    ></div>
+
+                </div>
+
+
+                <!-- اسم الشهر -->
+                <div style="
+                    margin-top:12px;
+                    font-weight:bold;
+                    color:#1769aa;
+                    text-align:center;
+                    white-space:nowrap;
+                ">
+                    {{ month.month_ar }}
+                    {{ month.year }}
+                </div>
+
+
+                <!-- أرقام الشهر -->
+                <div style="
+                    margin-top:8px;
+                    text-align:center;
+                    font-size:12px;
+                    line-height:1.8;
+                    color:#6b7280;
+                ">
+
+                    <div>
+                        💰 {{ month.sales }} دج
+                    </div>
+
+                    <div>
+                        💸 {{ month.expenses }} دج
+                    </div>
+                    <div
+                        class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}"
+                    >
+                        📈 {{ month.profit }} دج
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- مفتاح الرسم -->
+    <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:25px;
+        flex-wrap:wrap;
+        margin-top:20px;
+        font-size:14px;
+        color:#4b5563;
+    ">
+
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#1769aa;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            المبيعات
+        </span>
+
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#ef4444;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            المصاريف
+        </span>
+
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#10b981;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            الربح
+        </span>
+
+    </div>
+
+
+    {% else %}
+
+    <div class="empty">
+        لا توجد بيانات مالية كافية خلال الفترة المحددة.
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- JavaScript للرسم -->
+<!-- ========================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const charts = document.querySelectorAll(".month-chart");
+
+    if (!charts.length) {
+        return;
+    }
+
+    let maxValue = 0;
+
+    /* نبحث عن أكبر قيمة في كل الأشهر */
+    charts.forEach(function (chart) {
+
+        const sales =
+            Math.abs(parseFloat(chart.dataset.sales) || 0);
+
+        const expenses =
+            Math.abs(parseFloat(chart.dataset.expenses) || 0);
+
+        const profit =
+            Math.abs(parseFloat(chart.dataset.profit) || 0);
+
+        maxValue = Math.max(
+            maxValue,
+            sales,
+            expenses,
+            profit
+        );
+    });
+
+
+    /* إذا كل القيم صفر */
+    if (maxValue === 0) {
+        return;
+    }
+
+
+    const maxHeight = 250;
+
+
+    /* ضبط ارتفاع الأعمدة */
+    charts.forEach(function (chart) {
+
+        const sales =
+            Math.abs(parseFloat(chart.dataset.sales) || 0);
+
+        const expenses =
+            Math.abs(parseFloat(chart.dataset.expenses) || 0);
+
+        const profit =
+            Math.abs(parseFloat(chart.dataset.profit) || 0);
+
+
+        const salesBar =
+            chart.querySelector(".sales-bar");
+
+        const expensesBar =
+            chart.querySelector(".expenses-bar");
+
+        const profitBar =
+            chart.querySelector(".profit-bar");
+
+
+        const salesHeight =
+            (sales / maxValue) * maxHeight;
+
+        const expensesHeight =
+            (expenses / maxValue) * maxHeight;
+
+        const profitHeight =
+            (profit / maxValue) * maxHeight;
+
+
+        salesBar.style.height =
+            (sales > 0 ? Math.max(salesHeight, 4) : 0) + "px";
+
+        expensesBar.style.height =
+            (expenses > 0 ? Math.max(expensesHeight, 4) : 0) + "px";
+
+        profitBar.style.height =
+            (profit > 0 ? Math.max(profitHeight, 4) : 0) + "px";
+
+    });
+
+});
+</script>
+
+
+</div>
+
+</body>
+</html>

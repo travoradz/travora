@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>فتح الإدارة المالية | Travora</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f8fc;
+            font-family: Arial, Tahoma, sans-serif;
+        }
+
+        .box {
+            width: 92%;
+            max-width: 420px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .icon {
+            text-align: center;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            color: #1769aa;
+            text-align: center;
+        }
+
+        p {
+            color: #6b7280;
+            text-align: center;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d7dee8;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #1769aa;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            border: 0;
+            border-radius: 10px;
+            background: #1769aa;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 11px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .setup-link {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #1769aa;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="icon">🔐</div>
+
+    <h1>الإدارة المالية</h1>
+
+    <p>
+        هذه الصفحة محمية بكلمة سر مالية خاصة بالمدير.
+        أدخل كلمة السر للمتابعة.
+    </p>
+
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="password">كلمة السر المالية</label>
+
+        <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="أدخل كلمة السر"
+            required
+            autofocus
+        >
+
+        <button type="submit">
+            🔓 فتح الإدارة المالية
+        </button>
+    </form>
+
+    <a
+        href="{% url 'set_financial_password' %}"
+        class="setup-link"
+    >
+        تغيير / إعداد كلمة السر المالية
+    </a>
+
+</div>
+
+</body>
+</html>

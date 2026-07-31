@@ -310,6 +310,11 @@ max-height:320px;
         <span>الزبائن</span>
     </a>
 
+    <a href="{% url 'profit_loss' %}" class="quick-btn">
+        💰
+        <span>الإدارة المالية</span>
+    </a>
+
     <a href="/subscription-plans/" class="quick-btn">
         💳
         <span>الاشتراك</span>
@@ -320,32 +325,37 @@ max-height:320px;
         <span>الإعدادات</span>
     </a>
 
-    <a href="{% url 'support_chat' %}" class="quick-btn" style="position:relative;">
+    <a
+        href="{% url 'support_chat' %}"
+        class="quick-btn"
+        style="position:relative;"
+    >
+        {% if unread_support > 0 %}
+        <span style="
+            position:absolute;
+            top:8px;
+            left:12px;
+            background:#dc2626;
+            color:white;
+            width:24px;
+            height:24px;
+            border-radius:50%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:13px;
+            font-weight:bold;
+        ">
+            {{ unread_support }}
+        </span>
+        {% endif %}
 
-    {% if unread_support > 0 %}
-    <span style="
-        position:absolute;
-        top:8px;
-        left:12px;
-        background:#dc2626;
-        color:white;
-        width:24px;
-        height:24px;
-        border-radius:50%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-size:13px;
-        font-weight:bold;">
-        {{ unread_support }}
-    </span>
-    {% endif %}
+        💬
+        <span>الدعم الفني</span>
+    </a>
 
-    💬
-    <span>الدعم الفني</span>
-
-</a>
 </div>
+
 
 <div class="cards">
 
@@ -383,7 +393,6 @@ max-height:320px;
             <p style="color:#dc2626;">❌ منتهي</p>
             <small>قم بتجديد الاشتراك</small>
         {% endif %}
-
     </div>
 
 </div>

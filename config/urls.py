@@ -10,8 +10,11 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("", views.login_view, name="login"),
+
     path("signup/", views.signup_view, name="signup"),
+
     path("dashboard/", views.dashboard_view, name="dashboard"),
+
     path("logout/", views.logout_view, name="logout"),
 
     path(
@@ -58,12 +61,40 @@ urlpatterns = [
         name="admin_support",
     ),
 
-    # صفحات الرحلات
+    # ✈️ صفحات الرحلات
     path(
         "trips/",
         include("packages.urls"),
     ),
-    path("profit-loss/", profit_loss, name="profit_loss"),
+
+    # 💰 الإدارة المالية
+    path(
+        "set-financial-password/",
+        views.set_financial_password,
+        name="set_financial_password",
+    ),
+
+    path(
+        "financial-unlock/",
+        views.financial_unlock,
+        name="financial_unlock",
+    ),
+
+    path(
+        "profit-loss/",
+        profit_loss,
+        name="profit_loss",
+    ),
+    path(
+    "financial/export/excel/",
+    views.export_financial_excel,
+    name="export_financial_excel",
+),
+path(
+    "financial/export/pdf/",
+    views.export_financial_pdf,
+    name="export_financial_pdf",
+),
 ]
 
 if settings.DEBUG:

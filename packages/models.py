@@ -78,16 +78,41 @@ class Trip(models.Model):
     def str(self):
         return self.name
 class Expense(models.Model):
+    CATEGORY_CHOICES = [
+        ("طيران", "طيران"),
+        ("فندق", "فندق"),
+        ("نقل", "نقل"),
+        ("فيزا", "فيزا"),
+        ("إشهار", "إشهار"),
+        ("رواتب", "رواتب"),
+        ("مكتب", "مكتب"),
+        ("أخرى", "أخرى"),
+    ]
+
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+    )
+
+    trip = models.ForeignKey(
+        Trip,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="expenses",
     )
 
     title = models.CharField(max_length=200)
 
+    category = models.CharField(
+        max_length=30,
+        choices=CATEGORY_CHOICES,
+        default="أخرى",
+    )
+
     amount = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
     )
 
     date = models.DateField(auto_now_add=True)
@@ -167,7 +192,6 @@ class Customer(models.Model):
         default="رباعية",
     )
 
-    # 👥 رقم المجموعة
     group_code = models.CharField(
         max_length=20,
         blank=True,
@@ -185,7 +209,8 @@ class Customer(models.Model):
         default=0,
     )
 
-    # 🏨 الغرفة التي تم تسكين الزبون فيها
+    created_at = models.DateField(auto_now_add=True)
+
     room = models.ForeignKey(
         Room,
         on_delete=models.SET_NULL,
@@ -197,6 +222,8 @@ class Customer(models.Model):
     def remaining_amount(self):
         return self.total_price - self.amount_paid
 
+    def str(self):
+        return self.full_name
     def str(self):
         return self.full_name
 
