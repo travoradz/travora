@@ -523,7 +523,6 @@ max-height:320px;
 
 <script>
 const moneyChart = document.getElementById("moneyChart");
-
 new Chart(moneyChart,{
     type:"pie",
     data:{
@@ -536,14 +535,22 @@ new Chart(moneyChart,{
             backgroundColor:[
                 "#10b981",
                 "#f59e0b"
-            ]
+            ],
+            borderColor:"#ffffff",
+            borderWidth:4,
+            hoverOffset:12
         }]
     },
     options:{
         responsive:true,
         plugins:{
             legend:{
-                position:"bottom"
+                position:"bottom",
+                labels:{
+                    usePointStyle:true,
+                    pointStyle:"circle",
+                    padding:20
+                }
             }
         }
     }
