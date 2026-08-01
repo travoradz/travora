@@ -527,19 +527,22 @@ new Chart(moneyChart,{
     type:"pie",
     data:{
         labels:["💰 المدفوع","⏳ المتبقي"],
-        datasets:[{
-            data:[
-                {{ total_received }},
-                {{ total_remaining }}
-            ],
-            backgroundColor:[
-                "#10b981",
-                "#f59e0b"
-            ],
-            borderColor:"#ffffff",
-            borderWidth:4,
-            hoverOffset:12
-        }]
+        datasets: [{
+    data: [
+        {{ total_received }},
+        {{ total_remaining }}
+    ],
+    backgroundColor: [
+        "#16a34a",
+        "#f59e0b"
+    ],
+    borderColor: [
+        "#ffffff",
+        "#ffffff"
+    ],
+    borderWidth: 3,
+    hoverOffset: 10
+}]
     },
     options:{
         responsive:true,
