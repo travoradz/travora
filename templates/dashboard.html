@@ -292,7 +292,7 @@ max-height:320px;
 </div>
 
 <div>
-📅 متبقي {{ days_left }} يوم
+متبقي {{ remaining_days }} يوم
 </div>
 
 </div>
@@ -388,7 +388,7 @@ max-height:320px;
 
         {% if subscription.is_active %}
             <p style="color:#16a34a;">✅ نشط</p>
-            <small>متبقي {{ days_left }} يوم</small>
+            <small>متبقي {{ remaining_days }} يوم</small>
         {% else %}
             <p style="color:#dc2626;">❌ منتهي</p>
             <small>قم بتجديد الاشتراك</small>

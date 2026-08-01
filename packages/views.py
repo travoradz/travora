@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from .models import Trip, Customer, AgencySettings
 from accounts.decorators import subscription_required
 from django.utils.formats import date_format
+
 @login_required
 @subscription_required
 def trips_list(request):

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>محادثة الاشتراك</title>
+
+    <style>
+        body{
+            font-family:Tahoma;
+            background:#f5f7fb;
+            padding:40px;
+        }
+
+        .chat{
+            max-width:700px;
+            margin:auto;
+            background:white;
+            border-radius:18px;
+            padding:30px;
+            box-shadow:0 5px 20px rgba(0,0,0,.1);
+        }
+
+        h2{
+            color:#0b3d91;
+            text-align:center;
+            margin-bottom:25px;
+        }
+
+        .msg{
+            background:#eef6ff;
+            padding:18px;
+            border-radius:12px;
+            margin-bottom:25px;
+            line-height:2;
+            text-align:center;
+        }
+
+        .btn{
+            display:block;
+            width:100%;
+            margin-top:20px;
+            padding:15px;
+            background:#16a34a;
+            color:white;
+            text-align:center;
+            text-decoration:none;
+            border-radius:10px;
+            font-size:18px;
+            font-weight:bold;
+        }
+
+        .btn:hover{
+            background:#15803d;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="chat">
+
+    <h2>💳 الاشتراك في Travora</h2>
+
+    <div class="msg">
+        🎉 تحصل على <b>14 يومًا مجانًا</b> عند إنشاء الحساب.<br><br>
+
+        بعد انتهاء الفترة المجانية يمكنك الاشتراك في
+        <b>Travora</b> مقابل <b>8000 دج</b> فقط.<br><br>
+
+        ✅ دفع مرة واحدة فقط.<br>
+        ✅ اشتراك مدى الحياة.<br>
+        ✅ جميع التحديثات مجانية.
+    </div>
+
+    <a href="{% url 'support_chat' %}" class="btn">
+        💬 التواصل مع الإدارة لإتمام الاشتراك
+    </a>
+
+</div>
+
+</body>
+</html>

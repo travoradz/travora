@@ -110,49 +110,72 @@ def signup_view(request):
 @login_required
 @subscription_required
 def dashboard_view(request):
+    from decimal import Decimal
+    from datetime import timedelta
+    from django.db.models import Sum, F
+    from django.utils import timezone
+
     request.session.pop("financial_access", None)
+
     subscription = Subscription.objects.get(user=request.user)
 
+    # حساب الأيام المتبقية من الاشتراك التجريبي
+    end_date = subscription.start_date + timedelta(days=14)
     today = timezone.now().date()
 
-    if subscription.end_date < today:
-        subscription.is_active = False
-        subscription.save()
+    remaining_days = (end_date - today).days
 
-    days_left = (subscription.end_date - today).days
-    if days_left < 0:
-        days_left = 0
+    if remaining_days < 0:
+        remaining_days = 0
 
-    trips = Trip.objects.filter(user=request.user)
+    trips = Trip.objects.filter(user=request.user).order_by("-id")
     customers = Customer.objects.filter(user=request.user)
 
     trips_count = trips.count()
     customers_count = customers.count()
 
-    total_received = (
-        customers.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
-    )
+    total_received = customers.aggregate(
+        total=Sum("amount_paid")
+    )["total"] or Decimal("0")
 
     total_remaining = sum(
-        customer.remaining_amount()
-        for customer in customers
+        (customer.remaining_amount() for customer in customers),
+        Decimal("0"),
     )
 
     latest_customers = customers.order_by("-id")[:5]
     latest_trips = trips.order_by("-id")[:5]
 
-    low_seats_trips = trips.filter(
-        seats__lte=5,
-        seats__gt=0
-    ).order_by("seats")
+    trip_seats = []
+    total_available_seats = 0
+    low_seats_trips = []
+    full_trips = []
 
-    full_trips = trips.filter(seats=0)
+    for trip in trips:
+        booked_customers = customers.filter(trip=trip).count()
+
+        available_seats = max(
+            trip.seats - booked_customers,
+            0,
+        )
+
+        trip_seats.append({
+            "trip": trip,
+            "available_seats": available_seats,
+            "booked_customers": booked_customers,
+        })
+
+        total_available_seats += available_seats
+
+        if available_seats == 0:
+            full_trips.append(trip)
+
+        elif available_seats <= 5:
+            low_seats_trips.append(trip)
 
     unpaid_customers = customers.exclude(
         amount_paid__gte=F("total_price")
     )
-
-    expiring_subscription = days_left <= 5
 
     double_rooms = customers.filter(room_type="ثنائية").count()
     triple_rooms = customers.filter(room_type="ثلاثية").count()
@@ -162,21 +185,40 @@ def dashboard_view(request):
     unread_support = SupportMessage.objects.filter(
         user=request.user,
         is_admin=True,
-        is_read=False
+        is_read=False,
     ).count()
 
-    today_bookings = customers.count()
-    month_bookings = customers.count()
+    today = timezone.now().date()
 
-    full_trips_count = trips.filter(seats=0).count()
-    total_seats = trips.aggregate(Sum("seats"))["seats__sum"] or 0
+    today_bookings = customers.filter(
+        created_at=today
+    ).count()
+
+    month_bookings = customers.filter(
+        created_at__year=today.year,
+        created_at__month=today.month,
+    ).count()
+
+    full_trips_count = len(full_trips)
+
+    paid_customers = customers.filter(
+        amount_paid__gte=F("total_price")
+    ).count()
+
+    remaining_customers = customers.filter(
+        amount_paid__lt=F("total_price")
+    ).count()
+
+    total_capacity = trips.aggregate(
+        total=Sum("seats")
+    )["total"] or 0
 
     return render(
         request,
         "dashboard.html",
         {
             "subscription": subscription,
-            "days_left": days_left,
+            "remaining_days": remaining_days,
             "trips_count": trips_count,
             "customers_count": customers_count,
             "total_received": total_received,
@@ -185,9 +227,8 @@ def dashboard_view(request):
             "latest_trips": latest_trips,
             "low_seats_trips": low_seats_trips,
             "full_trips": full_trips,
+            "full_trips_count": full_trips_count,
             "unpaid_customers": unpaid_customers,
-            "expiring_subscription": expiring_subscription,
-            "subscription_days": days_left,
             "double_rooms": double_rooms,
             "triple_rooms": triple_rooms,
             "quad_rooms": quad_rooms,
@@ -195,8 +236,11 @@ def dashboard_view(request):
             "unread_support": unread_support,
             "today_bookings": today_bookings,
             "month_bookings": month_bookings,
-            "full_trips_count": full_trips_count,
-            "total_seats": total_seats,
+            "total_seats": total_available_seats,
+            "total_capacity": total_capacity,
+            "paid_customers": paid_customers,
+            "remaining_customers": remaining_customers,
+            "trip_seats": trip_seats,
         },
     )
 def financial_period(request):
@@ -260,7 +304,8 @@ def export_financial_excel(request):
 
     agency_name = (
         agency_settings.agency_name.strip()
-        if agency_settings and agency_settings.agency_name
+        if agency_settings
+        and agency_settings.agency_name
         else "الوكالة"
     )
 
@@ -280,14 +325,11 @@ def export_financial_excel(request):
         user=request.user
     ).select_related("trip")
 
-    trips = Trip.objects.filter(
-        user=request.user
-    ).order_by("-id")
-
     # ---------------------------------
-    # تطبيق الفترة
+    # تطبيق الفترة المالية
     # ---------------------------------
     if start_date:
+
         customers = customers.filter(
             created_at__gte=start_date
         )
@@ -297,6 +339,7 @@ def export_financial_excel(request):
         )
 
     if end_date:
+
         customers = customers.filter(
             created_at__lte=end_date
         )
@@ -305,6 +348,37 @@ def export_financial_excel(request):
             date__lte=end_date
         )
 
+    # ---------------------------------
+    # الرحلات المرتبطة فعليًا
+    # بالحجوزات والمصاريف داخل الفترة
+    # ---------------------------------
+    customer_trip_ids = set(
+        customers
+        .exclude(trip_id__isnull=True)
+        .values_list(
+            "trip_id",
+            flat=True
+        )
+    )
+
+    expense_trip_ids = set(
+        expenses
+        .exclude(trip_id__isnull=True)
+        .values_list(
+            "trip_id",
+            flat=True
+        )
+    )
+
+    relevant_trip_ids = (
+        customer_trip_ids
+        | expense_trip_ids
+    )
+
+    trips = Trip.objects.filter(
+        user=request.user,
+        id__in=relevant_trip_ids
+    ).order_by("-id")
     # ---------------------------------
     # الحسابات المالية
     # ---------------------------------
@@ -1620,8 +1694,9 @@ def profit_loss(request):
                 ),
                 "expenses": Decimal("0"),
             }
-
+# ---------------------------------
     # المصاريف الشهرية
+    # ---------------------------------
     for item in monthly_expenses:
 
         if item["month"]:
@@ -1643,6 +1718,9 @@ def profit_loss(request):
                 or Decimal("0")
             )
 
+    # ---------------------------------
+    # التقرير الشهري
+    # ---------------------------------
     monthly_report = []
 
     for item in monthly_data.values():
@@ -1658,6 +1736,7 @@ def profit_loss(request):
         )
 
         item["year"] = year
+
         item["month_number"] = month_number
 
         item["month_ar"] = (
@@ -1676,18 +1755,31 @@ def profit_loss(request):
     # ---------------------------------
     # الملخص المالي الذكي
     # ---------------------------------
+
+    # أفضل شهر نحسبوه فقط من الأشهر
+    # اللي فيها مبيعات فعلية
+    months_with_sales = [
+        item
+        for item in monthly_report
+        if item["sales"] > Decimal("0")
+    ]
+
     best_month = None
 
-    if monthly_report:
+    if months_with_sales:
 
         best_month = max(
-            monthly_report,
+            months_with_sales,
             key=lambda item: item["profit"]
         )
 
+    # ---------------------------------
+    # أفضل رحلة
+    # ---------------------------------
     best_trip = None
 
     if trip_reports:
+
         best_trip = max(
             trip_reports,
             key=lambda item: item["profit"]
@@ -1701,23 +1793,35 @@ def profit_loss(request):
         "profit_loss.html",
         {
             "expenses": expenses,
+
             "trips": trips,
+
             "trip_reports": trip_reports,
+
             "monthly_report": monthly_report,
 
             "total_sales": total_sales,
+
             "total_received": total_received,
+
             "total_remaining": total_remaining,
+
             "total_expenses": total_expenses,
+
             "net_cash": net_cash,
+
             "estimated_profit": estimated_profit,
 
             "best_month": best_month,
+
             "best_trip": best_trip,
 
             "start_date": start_date_str,
+
             "end_date": end_date_str,
+
             "today": today,
+
             "preset": preset,
         },
     )
@@ -1868,3 +1972,7 @@ def financial_unlock(request):
         )
 
     return render(request, "financial_unlock.html")
+@login_required
+@subscription_required
+def subscription_chat(request):
+    return render(request, "subscription_chat.html")

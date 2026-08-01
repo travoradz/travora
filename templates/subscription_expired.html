@@ -2,70 +2,94 @@
 <html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>انتهى الاشتراك | Travora</title>
 
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Tahoma,sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body{
-            background:#f5f7fb;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
+<title>انتهت الفترة المجانية | Travora</title>
 
-        .box{
-            background:white;
-            padding:40px;
-            border-radius:15px;
-            box-shadow:0 5px 20px rgba(0,0,0,.1);
-            text-align:center;
-            width:520px;
-        }
+<style>
 
-        h1{
-            color:#dc2626;
-            margin-bottom:20px;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Tahoma,sans-serif;
+}
 
-        p{
-            font-size:18px;
-            margin-bottom:30px;
-            color:#555;
-            line-height:1.8;
-        }
+body{
+    background:#f5f7fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
 
-        .btn{
-            display:inline-block;
-            padding:14px 30px;
-            background:#0b3d91;
-            color:white;
-            text-decoration:none;
-            border-radius:8px;
-            font-size:17px;
-            margin:10px;
-        }
+.box{
+    background:white;
+    width:550px;
+    padding:40px;
+    border-radius:18px;
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+    text-align:center;
+}
 
-        .btn:hover{
-            background:#082b66;
-        }
+h1{
+    color:#dc2626;
+    margin-bottom:20px;
+}
 
-        .logout{
-            background:#dc2626;
-        }
+p{
+    color:#555;
+    font-size:18px;
+    line-height:2;
+    margin-bottom:30px;
+}
 
-        .logout:hover{
-            background:#b91c1c;
-        }
-    </style>
+.price{
+    background:#eef5ff;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:25px;
+    font-size:20px;
+}
+
+.price span{
+    display:block;
+    font-size:36px;
+    color:#0b3d91;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.btn{
+    display:inline-block;
+    padding:15px 28px;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    margin:8px;
+}
+
+.subscribe{
+    background:#0b3d91;
+}
+
+.subscribe:hover{
+    background:#082b66;
+}
+
+.logout{
+    background:#dc2626;
+}
+
+.logout:hover{
+    background:#b91c1c;
+}
+
+</style>
 
 </head>
 
@@ -73,23 +97,44 @@
 
 <div class="box">
 
-    <h1>⚠️ انتهت مدة اشتراكك</h1>
+<h1>⏳ انتهت الفترة المجانية</h1>
 
-    <p>
-        لقد انتهت مدة اشتراك وكالتك في <b>Travora</b>.<br><br>
+<p>
 
-        لتجديد الاشتراك اضغط على الزر بالأسفل،
-        ثم أرسل وصل الدفع داخل المحادثة،
-        وسيتم تفعيل اشتراكك بعد التأكد من الدفع.
-    </p>
+لقد انتهت مدة التجربة المجانية (14 يوم).
 
-    <a href="{% url 'payment' %}" class="btn">
-        💳 تجديد الاشتراك
-    </a>
+<br><br>
 
-    <a href="{% url 'logout' %}" class="btn logout">
-        🚪 تسجيل الخروج
-    </a>
+يمكنك الآن تفعيل اشتراكك في Travora
+بدفعة واحدة فقط والاستفادة من جميع المزايا مدى الحياة.
+
+</p>
+
+<div class="price">
+
+💎 اشتراك مدى الحياة
+
+<span>
+
+8000 دج
+
+</span>
+
+♾️ تدفع مرة واحدة فقط
+
+</div>
+
+<a href="{% url 'payment' %}" class="btn subscribe">
+
+💳 تفعيل الاشتراك
+
+</a>
+
+<a href="{% url 'logout' %}" class="btn logout">
+
+🚪 تسجيل الخروج
+
+</a>
 
 </div>
 

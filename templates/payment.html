@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>تجديد الاشتراك | Travora</title>
+<title>الاشتراك | Travora</title>
 
 <style>
 
@@ -27,65 +27,72 @@ h1{
     text-align:center;
 }
 
-.info{
-    background:#eef5ff;
-    padding:15px;
-    border-radius:10px;
-    margin:20px 0;
-    line-height:2;
-}
-
 .price{
     background:#eef5ff;
     padding:15px;
     border-radius:10px;
-    margin-bottom:20px;
     text-align:center;
-    font-size:18px;
+    margin-bottom:20px;
+}
+
+.info{
+    background:#eef5ff;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    line-height:2;
 }
 
 .success{
     background:#e8f5e9;
+    color:#15803d;
     padding:15px;
     border-radius:10px;
     margin-bottom:20px;
-    color:#2e7d32;
     text-align:center;
-    line-height:2;
+    font-weight:bold;
 }
 
-textarea{
+.request-btn{
+    display:block;
     width:100%;
-    height:120px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    padding:10px;
-    font-size:16px;
-}
-
-input[type=file]{
-    margin:20px 0;
-}
-
-button{
-    width:100%;
-    padding:15px;
+    padding:14px;
+    margin-bottom:15px;
     background:#0b3d91;
     color:white;
+    text-decoration:none;
     border:none;
     border-radius:10px;
-    font-size:18px;
+    font-size:17px;
     cursor:pointer;
 }
 
-button:hover{
+.request-btn:hover{
     background:#082b66;
+}
+
+.support-btn{
+    display:block;
+    width:100%;
+    padding:15px;
+    background:#16a34a;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+    font-size:18px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.support-btn:hover{
+    background:#15803d;
 }
 
 .note{
     text-align:center;
-    color:#777;
+    color:#666;
     margin-top:20px;
+    line-height:2;
 }
 
 </style>
@@ -96,88 +103,87 @@ button:hover{
 
 <div class="container">
 
-<h1>💳 تجديد الاشتراك</h1>
+<h1>💳 الاشتراك في Travora</h1>
+
+<div class="success">
+🎁 جميع الوكالات تستفيد من <b>14 يوم مجانية</b> لتجربة النظام بالكامل.
+</div>
 
 <div class="price">
 
-💰 <b>سعر الاشتراك الشهري</b>
+💎 <b>اشتراك مدى الحياة</b>
 
 <br><br>
 
-<span style="color:#0b3d91;font-size:24px;">
-2500 دج
+<span style="font-size:35px;color:#0b3d91;">
+8000 دج
 </span>
+
+<br><br>
+
+♾️ دفعة واحدة فقط
 
 </div>
 
 <div class="info">
 
-<b>طريقة الدفع:</b>
+<b>طريقة التفعيل:</b>
 
 <br><br>
 
-🏦 CCP :
-000000000000000000
+1️⃣ جرّب Travora مجانا لمدة <b>14 يوم</b>.
 
 <br>
 
-💳 البطاقة الذهبية :
-0000 0000 0000 0000
+2️⃣ بعد انتهاء التجربة اضغط على أحد الزرين لطلب معلومات الدفع.
 
-<br><br>
+<br>
 
-بعد الدفع قم بإرسال صورة الوصل مع رسالة.
+3️⃣ بعد تحويل مبلغ <b>8000 دج</b> أرسل صورة وصل الدفع داخل المحادثة.
+
+<br>
+
+4️⃣ سيتم تفعيل اشتراكك <b>مدى الحياة</b>.
 
 </div>
 
-<div class="success">
+<button
+type="button"
+class="request-btn"
+onclick="alert('تم إرسال طلب رقم CCP إلى الإدارة، سيتم الرد عليك داخل المحادثة.')">
 
-✅ سيتم مراجعة وصل الدفع من طرف إدارة Travora.
-
-<br>
-
-⏱️ سيتم تفعيل اشتراكك خلال دقائق بعد التأكد من عملية الدفع.
-
-</div>
-
-<form method="POST" enctype="multipart/form-data">
-
-{% csrf_token %}
-
-<textarea
-name="message"
-placeholder="اكتب رسالتك هنا..."
-required></textarea>
-
-<br><br>
-
-<label>
-📷 <b>صورة وصل الدفع</b>
-</label>
-
-<br>
-
-<input
-type="file"
-name="image"
-required>
-
-<button type="submit">
-
-📤 إرسال الوصل
+🏦 طلب رقم CCP
 
 </button>
 
-</form>
+<button
+type="button"
+class="request-btn"
+onclick="alert('تم إرسال طلب البطاقة الذهبية إلى الإدارة، سيتم الرد عليك داخل المحادثة.')">
+
+💳 طلب البطاقة الذهبية
+
+</button>
+
+<hr style="margin:25px 0;">
+
+<a href="{% url 'support_chat' %}" class="support-btn">
+
+💬 التواصل مع الإدارة لإتمام الاشتراك
+
+</a>
 
 <p class="note">
 
-❗ لا يتم تفعيل الاشتراك إلا بعد إرسال صورة وصل الدفع.
+❗ يتم تفعيل الاشتراك بعد التحقق من عملية الدفع.
+
+<br>
+
+🚀 بعد التفعيل يمكنك استعمال Travora مدى الحياة دون أي اشتراك شهري.
 
 </p>
 
 </div>
 
 </body>
-
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
 
         .plan{
             background:white;
-            width:420px;
+            width:450px;
             padding:35px;
             border-radius:18px;
             box-shadow:0 5px 15px rgba(0,0,0,.1);
@@ -62,7 +63,7 @@
         }
 
         .price{
-            font-size:42px;
+            font-size:45px;
             font-weight:bold;
             color:#16a34a;
             margin-bottom:10px;
@@ -74,13 +75,13 @@
             margin-bottom:25px;
         }
 
-        .plan ul{
+        ul{
             list-style:none;
             text-align:right;
             margin-bottom:30px;
         }
 
-        .plan li{
+        li{
             padding:12px 0;
             border-bottom:1px solid #eee;
         }
@@ -99,7 +100,6 @@
         .btn:hover{
             background:#082b66;
         }
-
     </style>
 
 </head>
@@ -109,42 +109,47 @@
 <h1>💳 اشتراك Travora</h1>
 
 <p class="subtitle">
-خطة واحدة بسيطة ومناسبة لجميع وكالات العمرة.
+🎁 استمتع بـ <strong>14 يوم مجانية</strong> لتجربة جميع ميزات Travora، ثم فعّل اشتراكك مرة واحدة فقط.
 </p>
 
 <div class="container">
 
-    <div class="plan">
+<div class="plan">
 
-        <div class="badge">
-            الخطة المتوفرة
-        </div>
+<div class="badge">
+🔥 العرض الحالي
+</div>
 
-        <h2>الاشتراك الشهري</h2>
+<h2>
+💎 اشتراك مدى الحياة
+</h2>
 
-        <div class="price">
-            2500 دج
-        </div>
+<div class="price">
+8000 دج
+</div>
 
-        <div class="period">
-            شهريًا
-        </div>
+<div class="period">
+دفعة واحدة فقط ♾️
+</div>
 
-        <ul>
-            <li>✅ جميع ميزات Travora</li>
-            <li>✅ إدارة الرحلات</li>
-            <li>✅ إدارة الزبائن</li>
-            <li>✅ لوحة تحكم احترافية</li>
-            <li>✅ إعدادات الوكالة</li>
-            <li>✅ تحديثات مجانية</li>
-            <li>✅ دعم فني</li>
-        </ul>
+<ul>
+    <li>🎁 14 يوم مجانية للتجربة</li>
+    <li>♾️ اشتراك مدى الحياة</li>
+    <li>✅ جميع ميزات Travora</li>
+    <li>✅ إدارة الرحلات</li>
+    <li>✅ إدارة الزبائن</li>
+    <li>✅ لوحة تحكم احترافية</li>
+    <li>✅ الإدارة المالية</li>
+    <li>✅ إعدادات الوكالة</li>
+    <li>✅ تحديثات مجانية مدى الحياة</li>
+    <li>✅ دعم فني مجاني</li>
+</ul>
 
-        <a href="/payment/" class="btn">
-            اشترك الآن
-        </a>
+<a href="{% url 'subscription_chat' %}" class="btn">
+🚀 تفعيل الاشتراك مدى الحياة
+</a>
 
-    </div>
+</div>
 
 </div>
 

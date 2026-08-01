@@ -95,6 +95,11 @@ path(
     views.export_financial_pdf,
     name="export_financial_pdf",
 ),
+path(
+    "subscription/chat/",
+    views.subscription_chat,
+    name="subscription_chat",
+),
 ]
 
 if settings.DEBUG:
