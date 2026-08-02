@@ -93,25 +93,27 @@
         <p style="color:red;">{{ error }}</p>
     {% endif %}
 
-    <form method="POST">
-        {% csrf_token %}
+   <form method="POST">
+    {% csrf_token %}
 
-        <input
-            type="email"
-            name="email"
-            placeholder="البريد الإلكتروني"
-            required
-        >
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-        <input
-            type="password"
-            name="password"
-            placeholder="كلمة المرور"
-            required
-        >
+    <input
+        type="email"
+        name="email"
+        placeholder="البريد الإلكتروني"
+        required
+    >
 
-        <button type="submit">دخول</button>
-    </form>
+    <input
+        type="password"
+        name="password"
+        placeholder="كلمة المرور"
+        required
+    >
+
+    <button type="submit">دخول</button>
+</form>
 
     <br>
 

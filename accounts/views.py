@@ -69,7 +69,7 @@ def login_view(request):
             request.session.pop("admin_panel_access", None)
             login(request, user)
 
-            next_url = request.GET.get("next")
+            next_url = request.POST.get("next")
             if next_url:
                 return redirect(next_url)
 
