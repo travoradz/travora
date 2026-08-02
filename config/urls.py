@@ -117,6 +117,11 @@ path(
     name="agencies",
 ),
 path(
+    "admin-panel/login/",
+    views.admin_panel_login,
+    name="admin_panel_login",
+),
+path(
     "admin-panel/statistics/",
     views.admin_statistics,
     name="admin_statistics",

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>حماية لوحة الإدارة</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f7fb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .card{
+            width:350px;
+            background:#fff;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 10px 25px rgba(0,0,0,.15);
+            text-align:center;
+        }
+
+        h2{
+            color:#0d6efd;
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin:15px 0;
+            border:1px solid #ccc;
+            border-radius:8px;
+            font-size:16px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:8px;
+            background:#0d6efd;
+            color:white;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#0b5ed7;
+        }
+
+        .error{
+            color:red;
+            margin-top:10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <h2>🔒 لوحة الإدارة</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input
+            type="password"
+            name="password"
+            placeholder="أدخل كلمة مرور الإدارة"
+            required
+        >
+
+        <button type="submit">
+            دخول
+        </button>
+
+    </form>
+
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

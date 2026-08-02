@@ -1978,6 +1978,9 @@ def admin_panel(request):
     if not request.user.is_superuser:
         return redirect("dashboard")
 
+    if not request.session.get("admin_panel_access"):
+        return redirect("admin_panel_login")
+
     return render(request, "admin_panel.html")
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -2042,3 +2045,25 @@ def agencies(request):
 @login_required
 def admin_statistics(request):
     return render(request, "admin_statistics.html")
+from django.contrib.auth.hashers import check_password
+from django.shortcuts import render, redirect
+
+ADMIN_PASSWORD = "اكتبي_هنا_كلمة_سر_قوية"
+
+@login_required
+def admin_panel_login(request):
+    if not request.user.is_superuser:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        password = request.POST.get("password")
+
+        if password == ADMIN_PASSWORD:
+            request.session["admin_panel_access"] = True
+            return redirect("admin_panel")
+
+        return render(request, "admin_panel_login.html", {
+            "error": "كلمة المرور غير صحيحة."
+        })
+
+    return render(request, "admin_panel_login.html")
