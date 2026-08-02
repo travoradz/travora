@@ -96,5 +96,9 @@ class PaymentInfoRequest(models.Model):
         default=False
     )
 
+    approved = models.BooleanField(
+        default=False
+    )
+
     def str(self):
         return f"{self.user.username} - {self.method}"

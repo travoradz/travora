@@ -100,6 +100,28 @@ path(
     views.subscription_chat,
     name="subscription_chat",
 ),
+path("admin-panel/", views.admin_panel, name="admin_panel"),
+path(
+    "admin-panel/subscriptions/",
+    views.subscription_requests,
+    name="subscription_requests",
+),
+path(
+    "admin-panel/messages/",
+    views.support_messages,
+    name="support_messages",
+),
+path(
+    "admin-panel/agencies/",
+    views.agencies,
+    name="agencies",
+),
+path(
+    "admin-panel/statistics/",
+    views.admin_statistics,
+    name="admin_statistics",
+),
+
 ]
 
 if settings.DEBUG:

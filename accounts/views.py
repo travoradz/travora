@@ -111,21 +111,18 @@ def signup_view(request):
 @subscription_required
 def dashboard_view(request):
     from decimal import Decimal
-    from datetime import timedelta
-    from django.db.models import Sum, F
+    from django.db.models import Sum
     from django.utils import timezone
 
     request.session.pop("financial_access", None)
 
     subscription = Subscription.objects.get(user=request.user)
 
-    # حساب الأيام المتبقية من الاشتراك التجريبي
-    end_date = subscription.start_date + timedelta(days=14)
-    today = timezone.now().date()
+    # حساب الأيام المتبقية
+    remaining_days = subscription.days_left
 
-    remaining_days = (end_date - today).days
-
-    if remaining_days < 0:
+    # إذا كان الاشتراك مدى الحياة
+    if remaining_days != "مدى الحياة" and remaining_days < 0:
         remaining_days = 0
 
     trips = Trip.objects.filter(user=request.user).order_by("-id")
@@ -1976,3 +1973,69 @@ def financial_unlock(request):
 @subscription_required
 def subscription_chat(request):
     return render(request, "subscription_chat.html")
+@login_required
+def admin_panel(request):
+    return render(request, "admin_panel.html")
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import PaymentInfoRequest, Subscription
+
+@login_required
+def subscription_requests(request):
+
+    if request.method == "POST":
+        request_id = request.POST.get("request_id")
+
+        payment_request = get_object_or_404(
+            PaymentInfoRequest,
+            id=request_id
+        )
+
+        payment_request.approved = True
+        payment_request.save()
+
+        subscription, created = Subscription.objects.get_or_create(
+            user=payment_request.user
+        )
+
+        subscription.lifetime = True
+        subscription.save()
+
+        return redirect("subscription_requests")
+
+    requests = PaymentInfoRequest.objects.all().order_by("-created_at")
+
+    return render(
+        request,
+        "subscription_requests.html",
+        {
+            "requests": requests
+        }
+    )
+from .models import SupportMessage
+
+@login_required
+def support_messages(request):
+
+    messages = SupportMessage.objects.select_related("user").order_by("-created_at")
+
+    return render(
+        request,
+        "support_messages.html",
+        {
+            "messages": messages,
+        },
+    )
+@login_required
+def agencies(request):
+    agencies = User.objects.all().order_by("-id")
+    return render(
+        request,
+        "agencies.html",
+        {
+            "agencies": agencies,
+        },
+    )
+@login_required
+def admin_statistics(request):
+    return render(request, "admin_statistics.html")

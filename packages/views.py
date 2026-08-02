@@ -495,7 +495,8 @@ def admin_chat(request, user_id):
     }
 
     start = subscription.start_date.strftime("%d %B %Y")
-    end = subscription.end_date.strftime("%d %B %Y")
+   
+    end = f"متبقي {subscription.days_left} يوم"
 
     for en, ar in months.items():
         start = start.replace(en, ar)
@@ -525,6 +526,7 @@ def admin_chat(request, user_id):
             "end_date_ar": end,
         },
     )
+
 
 
 from django.utils import timezone

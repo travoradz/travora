@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<title>رسائل الوكالات</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f5f7fb;
+}
+
+.container{
+    max-width:1000px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+}
+
+h1{
+    color:#0b3d91;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#eef5ff;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+.btn{
+    display:inline-block;
+    background:#0b3d91;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+.btn:hover{
+    background:#082b66;
+}
+
+img{
+    max-width:220px;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💬 رسائل الوكالات</h1>
+
+{% for message in messages %}
+
+<div class="card">
+
+<b>👤 الوكالة:</b>
+{{ message.user.username }}
+
+<br><br>
+
+<b>💬 الرسالة:</b>
+
+<br>
+
+{{ message.message }}
+
+{% if message.image %}
+<br><br>
+<img src="{{ message.image.url }}">
+{% endif %}
+
+<br><br>
+
+<b>📅 التاريخ:</b>
+{{ message.created_at }}
+
+<br><br>
+
+<a href="{% url 'admin_chat' message.user.id %}" class="btn">
+فتح المحادثة
+</a>
+
+</div>
+
+{% empty %}
+
+<div class="card">
+لا توجد رسائل حاليا.
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+
+</html>

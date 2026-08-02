@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الوكالات</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f5f7fb;
+}
+
+.container{
+    max-width:1100px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:15px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#0b3d91;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>👥 الوكالات</h2>
+
+<table>
+
+<tr>
+<th>اسم المستخدم</th>
+<th>البريد</th>
+</tr>
+
+{% for agency in agencies %}
+
+<tr>
+
+<td>{{ agency.username }}</td>
+
+<td>{{ agency.email }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+
+</html>
