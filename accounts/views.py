@@ -1823,8 +1823,9 @@ def profit_loss(request):
         },
     )
 def logout_view(request):
+    request.session.pop("admin_panel_access", None)
     logout(request)
-    return redirect("/")
+    return redirect("login")
 def subscription_expired(request):
 
     return render(
