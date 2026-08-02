@@ -2050,6 +2050,8 @@ from django.shortcuts import render, redirect
 
 ADMIN_PASSWORD = "اكتبي_هنا_كلمة_سر_قوية"
 
+from django.contrib.auth import authenticate
+
 @login_required
 def admin_panel_login(request):
     if not request.user.is_superuser:
@@ -2058,12 +2060,20 @@ def admin_panel_login(request):
     if request.method == "POST":
         password = request.POST.get("password")
 
-        if password == ADMIN_PASSWORD:
+        user = authenticate(
+            request,
+            username=request.user.username,
+            password=password,
+        )
+
+        if user is not None:
             request.session["admin_panel_access"] = True
             return redirect("admin_panel")
 
-        return render(request, "admin_panel_login.html", {
-            "error": "كلمة المرور غير صحيحة."
-        })
+        return render(
+            request,
+            "admin_panel_login.html",
+            {"error": "كلمة المرور غير صحيحة."},
+        )
 
     return render(request, "admin_panel_login.html")
