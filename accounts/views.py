@@ -1975,6 +1975,9 @@ def subscription_chat(request):
     return render(request, "subscription_chat.html")
 @login_required
 def admin_panel(request):
+    if not request.user.is_superuser:
+        return redirect("dashboard")
+
     return render(request, "admin_panel.html")
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
