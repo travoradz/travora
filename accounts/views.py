@@ -55,9 +55,7 @@ from reportlab.platypus import (
     TableStyle,
 )
 def login_view(request):
-
     if request.method == "POST":
-
         email = request.POST["email"]
         password = request.POST["password"]
 
@@ -68,6 +66,9 @@ def login_view(request):
         )
 
         if user is not None:
+            # حذف صلاحية لوحة الإدارة عند كل تسجيل دخول
+            request.session.pop("admin_panel_access", None)
+
             login(request, user)
             return redirect("/dashboard/")
 
@@ -76,8 +77,6 @@ def login_view(request):
         })
 
     return render(request, "login.html")
-
-
 def signup_view(request):
 
     if request.method == "POST":

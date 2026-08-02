@@ -52,14 +52,32 @@ body{
 .btn:hover{
     background:#082b66;
 }
+.logout{
+    position:absolute;
+    top:20px;
+    left:20px;
+    background:#dc3545;
+    color:white;
+    padding:10px 18px;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.logout:hover{
+    background:#b02a37;
+}
 </style>
 
 </head>
-
 <body>
 
+<a href="{% url 'logout' %}" class="logout">
+    🚪 تسجيل الخروج
+</a>
+
 <div class="header">
-    <h1>🛡️ لوحة إدارة Travora</h1>
+    <h1>🛡 لوحة إدارة Travora</h1>
 </div>
 
 <div class="container">
