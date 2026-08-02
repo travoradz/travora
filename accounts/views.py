@@ -1972,45 +1972,62 @@ def financial_unlock(request):
         )
 
     return render(request, "financial_unlock.html")
-@login_required
-@subscription_required
-def subscription_chat(request):
-    return render(request, "subscription_chat.html")
-@login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from .models import PaymentInfoRequest, Subscription, SupportMessage
+
+from django.contrib.auth import authenticate
+from django.shortcuts import render, redirect
+
+
+def admin_panel_login(request):
+
+    if request.method == "POST":
+
+        password = request.POST.get("password")
+
+        username = request.POST.get("username")
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None and user.is_superuser:
+
+            request.session["admin_panel_access"] = True
+
+            return redirect("admin_panel")
+
+        return render(
+            request,
+            "admin_panel_login.html",
+            {
+                "error": "بيانات الدخول غير صحيحة"
+            }
+        )
+
+    return render(
+        request,
+        "admin_panel_login.html"
+    )
+
+# لوحة الإدارة
 def admin_panel(request):
-    if not request.user.is_superuser:
-        return redirect("dashboard")
 
     if not request.session.get("admin_panel_access"):
         return redirect("admin_panel_login")
 
     return render(request, "admin_panel.html")
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import PaymentInfoRequest, Subscription
 
-@login_required
+
+# طلبات الاشتراك
 def subscription_requests(request):
 
-    if request.method == "POST":
-        request_id = request.POST.get("request_id")
-
-        payment_request = get_object_or_404(
-            PaymentInfoRequest,
-            id=request_id
-        )
-
-        payment_request.approved = True
-        payment_request.save()
-
-        subscription, created = Subscription.objects.get_or_create(
-            user=payment_request.user
-        )
-
-        subscription.lifetime = True
-        subscription.save()
-
-        return redirect("subscription_requests")
+    if not request.session.get("admin_panel_access"):
+        return redirect("admin_panel_login")
 
     requests = PaymentInfoRequest.objects.all().order_by("-created_at")
 
@@ -2021,62 +2038,56 @@ def subscription_requests(request):
             "requests": requests
         }
     )
-from .models import SupportMessage
 
-@login_required
+
+# رسائل الدعم
 def support_messages(request):
 
-    messages = SupportMessage.objects.select_related("user").order_by("-created_at")
+    if not request.session.get("admin_panel_access"):
+        return redirect("admin_panel_login")
+
+    messages = SupportMessage.objects.all().order_by("-created_at")
 
     return render(
         request,
         "support_messages.html",
         {
-            "messages": messages,
-        },
+            "messages": messages
+        }
     )
-@login_required
+
+
+# الوكالات
 def agencies(request):
+
+    if not request.session.get("admin_panel_access"):
+        return redirect("admin_panel_login")
+
     agencies = User.objects.all().order_by("-id")
+
     return render(
         request,
         "agencies.html",
         {
-            "agencies": agencies,
-        },
+            "agencies": agencies
+        }
     )
-@login_required
+
+
+# إحصائيات
 def admin_statistics(request):
-    return render(request, "admin_statistics.html")
-from django.contrib.auth.hashers import check_password
-from django.shortcuts import render, redirect
 
-ADMIN_PASSWORD = "اكتبي_هنا_كلمة_سر_قوية"
+    if not request.session.get("admin_panel_access"):
+        return redirect("admin_panel_login")
 
-from django.contrib.auth import authenticate
+    return render(
+        request,
+        "admin_statistics.html"
+    )
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
 
 @login_required
-def admin_panel_login(request):
-    if not request.user.is_superuser:
-        return redirect("dashboard")
-
-    if request.method == "POST":
-        password = request.POST.get("password")
-
-        user = authenticate(
-            request,
-            username=request.user.username,
-            password=password,
-        )
-
-        if user is not None:
-            request.session["admin_panel_access"] = True
-            return redirect("admin_panel")
-
-        return render(
-            request,
-            "admin_panel_login.html",
-            {"error": "كلمة المرور غير صحيحة."},
-        )
-
-    return render(request, "admin_panel_login.html")
+def subscription_chat(request):
+    return render(request, "subscription_chat.html")

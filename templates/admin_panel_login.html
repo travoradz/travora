@@ -62,21 +62,18 @@
 
     <h2>🔒 لوحة الإدارة</h2>
 
-    <form method="post">
-        {% csrf_token %}
+    <form method="POST">
+    {% csrf_token %}
 
-        <input
-            type="password"
-            name="password"
-            placeholder="أدخل كلمة مرور الإدارة"
-            required
-        >
+    <input type="text" name="username" placeholder="اسم المستخدم">
 
-        <button type="submit">
-            دخول
-        </button>
+    <input type="password" name="password" placeholder="كلمة السر">
 
-    </form>
+    <button type="submit">
+        دخول
+    </button>
+
+</form>
 
     {% if error %}
         <div class="error">

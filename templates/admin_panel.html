@@ -72,10 +72,14 @@ body{
 </head>
 <body>
 
+<h3>
+المستخدم: {{ request.user.username }} |
+Superuser: {{ request.user.is_superuser }}
+</h3>
+
 <a href="{% url 'logout' %}" class="logout">
     🚪 تسجيل الخروج
 </a>
-
 <div class="header">
     <h1>🛡 لوحة إدارة Travora</h1>
 </div>
