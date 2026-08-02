@@ -62,15 +62,18 @@ def login_view(request):
         user = authenticate(
             request,
             username=email,
-            password=password
+            password=password,
         )
 
         if user is not None:
-            # حذف صلاحية لوحة الإدارة عند كل تسجيل دخول
             request.session.pop("admin_panel_access", None)
-
             login(request, user)
-            return redirect("/dashboard/")
+
+            next_url = request.GET.get("next")
+            if next_url:
+                return redirect(next_url)
+
+            return redirect("dashboard")
 
         return render(request, "login.html", {
             "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
