@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travora | تسجيل الدخول</title>
-{% load static %}
 
-<link rel="manifest" href="{% static 'manifest.json' %}">
+    <title>Travora | تسجيل الدخول</title>
+
+    {% load static %}
+
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+
     <style>
         *{
             margin:0;
@@ -79,8 +83,8 @@
             font-weight:bold;
         }
     </style>
-    
 </head>
+
 
 <body>
 
@@ -92,72 +96,109 @@
 
     <p>منصة إدارة وكالات العمرة والسفر</p>
 
+
     {% if error %}
         <p style="color:red;">{{ error }}</p>
     {% endif %}
 
-   <form method="POST">
-    {% csrf_token %}
 
-    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    <form method="POST" autocomplete="on">
 
-    <input
-        type="email"
-        name="email"
-        placeholder="البريد الإلكتروني"
-        required
-    >
+        {% csrf_token %}
 
-    <input
-        type="password"
-        name="password"
-        placeholder="كلمة المرور"
-        required
-    >
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-    <button type="submit">دخول</button>
-</form>
+
+        <input
+            type="email"
+            name="email"
+            placeholder="البريد الإلكتروني"
+            autocomplete="email"
+            required
+        >
+
+
+        <input
+            type="password"
+            name="password"
+            placeholder="كلمة المرور"
+            autocomplete="current-password"
+            required
+        >
+
+
+        <button type="submit">
+            دخول
+        </button>
+
+    </form>
+
 
     <br>
 
-    <a href="/signup/">إنشاء حساب جديد</a>
-<button id="installBtn" style="display:none;">
-    📲 تثبيت Travora
-</button>
+    <a href="/signup/">
+        إنشاء حساب جديد
+    </a>
+
+
+    <button id="installBtn" style="display:none; margin-top:15px;">
+        📲 تثبيت Travora
+    </button>
+
+
 </div>
+
+
+
 <script>
+
 if ("serviceWorker" in navigator) {
+
     navigator.serviceWorker.register(
         "{% static 'service-worker.js' %}"
     );
+
 }
-</script>
-<script>
+
+
 let deferredPrompt;
 
+
 window.addEventListener("beforeinstallprompt", (e) => {
+
     e.preventDefault();
+
     deferredPrompt = e;
 
-    const installBtn = document.getElementById("installBtn");
+
+    const installBtn =
+        document.getElementById("installBtn");
+
 
     if (installBtn) {
+
         installBtn.style.display = "block";
 
-        installBtn.addEventListener("click", async () => {
+
+        installBtn.onclick = async () => {
+
             deferredPrompt.prompt();
 
-            const result = await deferredPrompt.userChoice;
-
-            if (result.outcome === "accepted") {
-                console.log("Travora installed");
-            }
+            await deferredPrompt.userChoice;
 
             deferredPrompt = null;
+
             installBtn.style.display = "none";
-        });
+
+        };
+
     }
+
 });
+
 </script>
+
+
 </body>
+
 </html>
