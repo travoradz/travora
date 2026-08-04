@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travora | تسجيل الدخول</title>
+{% load static %}
 
+<link rel="manifest" href="{% static 'manifest.json' %}">
     <style>
         *{
             margin:0;
@@ -77,6 +79,7 @@
             font-weight:bold;
         }
     </style>
+    
 </head>
 
 <body>
@@ -118,8 +121,43 @@
     <br>
 
     <a href="/signup/">إنشاء حساب جديد</a>
-
+<button id="installBtn" style="display:none;">
+    📲 تثبيت Travora
+</button>
 </div>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register(
+        "{% static 'service-worker.js' %}"
+    );
+}
+</script>
+<script>
+let deferredPrompt;
 
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    const installBtn = document.getElementById("installBtn");
+
+    if (installBtn) {
+        installBtn.style.display = "block";
+
+        installBtn.addEventListener("click", async () => {
+            deferredPrompt.prompt();
+
+            const result = await deferredPrompt.userChoice;
+
+            if (result.outcome === "accepted") {
+                console.log("Travora installed");
+            }
+
+            deferredPrompt = null;
+            installBtn.style.display = "none";
+        });
+    }
+});
+</script>
 </body>
 </html>
