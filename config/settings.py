@@ -39,15 +39,19 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+import os
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CSRF_TRUSTED_ORIGINS",
-        ""
+        "https://travora.onrender.coms"
     ).split(",")
     if origin.strip()
 ]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # =========================================================
