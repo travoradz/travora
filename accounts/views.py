@@ -56,28 +56,45 @@ from reportlab.platypus import (
 )
 def login_view(request):
     if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
 
-        user = authenticate(
-            request,
-            username=email,
-            password=password,
-        )
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        try:
+            user_obj = User.objects.get(email=email)
+
+            user = authenticate(
+                request,
+                username=user_obj.username,
+                password=password
+            )
+
+        except User.DoesNotExist:
+            user = None
+
 
         if user is not None:
+
             request.session.pop("admin_panel_access", None)
+
             login(request, user)
 
             next_url = request.POST.get("next")
+
             if next_url:
                 return redirect(next_url)
 
             return redirect("dashboard")
 
-        return render(request, "login.html", {
-            "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
-        })
+
+        return render(
+            request,
+            "login.html",
+            {
+                "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+            }
+        )
+
 
     return render(request, "login.html")
 def signup_view(request):
