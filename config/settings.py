@@ -45,7 +45,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CSRF_TRUSTED_ORIGINS",
-        "https://travora.onrender.coms"
+        "https://https://travora-06bt.onrender.coms"
     ).split(",")
     if origin.strip()
 ]
