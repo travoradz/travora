@@ -528,23 +528,41 @@ def admin_chat(request, user_id):
     )
 
 
-
 from django.utils import timezone
-from datetime import timedelta
+
+from django.contrib.auth.models import User
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404, redirect
+
 from accounts.models import Subscription
+
 
 @staff_member_required
 def activate_subscription(request, user_id):
 
-    agency = get_object_or_404(User, id=user_id)
+    agency = get_object_or_404(
+        User,
+        id=user_id
+    )
 
     subscription, created = Subscription.objects.get_or_create(
         user=agency
     )
 
+    # بداية الاشتراك
     subscription.start_date = timezone.now().date()
-    subscription.end_date = timezone.now().date() + timedelta(days=30)
-    subscription.is_active = True
+
+    # اشتراك مدى الحياة
+    subscription.lifetime = True
+
+    # لا نضع:
+    # subscription.is_active = True
+    #
+    # لأن is_active عندك property محسوبة تلقائياً.
+
     subscription.save()
 
-    return redirect("admin_chat", user_id=agency.id)
+    return redirect(
+        "admin_chat",
+        user_id=agency.id
+    )

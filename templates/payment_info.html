@@ -2,78 +2,209 @@
 <html lang="ar" dir="rtl">
 
 <head>
-<meta charset="UTF-8">
-<title>الدفع</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <title>طلب الاشتراك | Travora</title>
 
-body{
-font-family:Tahoma;
-background:#f5f7fb;
-padding:40px;
-text-align:center;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-.box{
-background:white;
-max-width:600px;
-margin:auto;
-padding:30px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
+        body {
+            margin: 0;
+            font-family: Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0b3d91, #16c5d8);
+            min-height: 100vh;
 
-h2{
-color:#0b3d91;
-margin-bottom:20px;
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-p{
-font-size:18px;
-margin:12px 0;
-}
+            padding: 20px;
+        }
 
-a{
-display:inline-block;
-margin-top:20px;
-padding:12px 25px;
-background:#0b3d91;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
+        .box {
+            background: white;
+            width: 100%;
+            max-width: 600px;
 
-</style>
+            padding: 35px;
 
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.20);
+
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #0b3d91;
+
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #0b3d91;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 10px 0;
+        }
+
+        .info {
+            background: #f5f7fb;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 25px 0;
+        }
+
+        .phone {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0b3d91;
+        }
+
+        .email {
+            font-size: 16px;
+            color: #0b3d91;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button,
+        a {
+            display: block;
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 10px;
+
+            font-size: 16px;
+            font-family: Tahoma, sans-serif;
+
+            text-decoration: none;
+
+            cursor: pointer;
+        }
+
+        .send {
+            background: #0b3d91;
+            color: white;
+        }
+
+        .send:hover {
+            background: #082d69;
+        }
+
+        .back {
+            background: #eef2f7;
+            color: #0b3d91;
+        }
+
+        .back:hover {
+            background: #e2e8f0;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="box">
 
-<h2>💳 الاشتراك في Travora</h2>
+    <div class="logo">
+        TRAVORA
+    </div>
 
-<p>
-يرجى تحويل مبلغ الاشتراك إلى حسابنا.
-</p>
+    <h2>
+        💳 الاشتراك في Travora
+    </h2>
 
-<p>
-بعد التحويل تواصل معنا عبر واتساب لإرسال إثبات الدفع.
-</p>
+    <p>
+        يرجى تحويل مبلغ الاشتراك إلى حسابنا.
+    </p>
 
-<p>
-📞 0555 55 55 55
-</p>
+    <p>
+        بعد التحويل، اضغط على زر
+        <strong>إرسال طلب الاشتراك</strong>
+        للتواصل معنا وتأكيد اشتراك وكالتك.
+    </p>
 
-<p>
-📧 contact@travora.com
-</p>
+    <div class="info">
 
-<a href="/dashboard/">
-العودة إلى لوحة التحكم
-</a>
+        <p>
+            📞 رقم الهاتف
+        </p>
+
+        <p class="phone">
+            0555 55 55 55
+        </p>
+
+        <p>
+            📧 البريد الإلكتروني
+        </p>
+
+        <p class="email">
+            contact@travora.com
+        </p>
+
+    </div>
+
+
+    <!-- إرسال طلب الاشتراك -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="buttons">
+
+            <button
+                type="submit"
+                class="send"
+            >
+                📩 إرسال طلب الاشتراك
+            </button>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="back"
+            >
+                العودة إلى لوحة التحكم
+            </a>
+
+        </div>
+
+    </form>
+
+
+    <p class="note">
+        بعد إرسال الطلب، سيظهر طلبك لدى إدارة Travora لمراجعته وتفعيل الاشتراك.
+    </p>
 
 </div>
 
 </body>
+
 </html>

@@ -56,24 +56,58 @@ from reportlab.platypus import (
 )
 def login_view(request):
     if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
 
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+
+        if not email or not password:
+            return render(
+                request,
+                "login.html",
+                {
+                    "error": "يرجى إدخال البريد الإلكتروني وكلمة المرور."
+                }
+            )
+
+        # البحث عن الحساب بواسطة البريد الإلكتروني
+        user_obj = User.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if user_obj is None:
+            return render(
+                request,
+                "login.html",
+                {
+                    "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+                }
+            )
+
+        # التحقق من كلمة المرور باستعمال username الحقيقي للحساب
         user = authenticate(
             request,
-            username=email,
+            username=user_obj.username,
             password=password
         )
 
         if user is not None:
+
             login(request, user)
+
             return redirect("dashboard")
 
-        return render(request, "login.html", {
-            "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
-        })
+        return render(
+            request,
+            "login.html",
+            {
+                "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+            }
+        )
 
-    return render(request, "login.html")
+    return render(
+        request,
+        "login.html"
+    )
 def signup_view(request):
 
     if request.method == "POST":
@@ -1822,57 +1856,141 @@ def logout_view(request):
     request.session.pop("admin_panel_access", None)
     logout(request)
     return redirect("login")
-def subscription_expired(request):
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import make_password, check_password
+
+from .models import (
+    PaymentInfoRequest,
+    Subscription,
+    SupportMessage,
+)
+
+
+# =========================================================
+# الاشتراك
+# =========================================================
+
+@login_required
+def subscription_expired(request):
     return render(
         request,
         "subscription_expired.html"
     )
-def subscription_plans(request):
 
+
+@login_required
+def subscription_plans(request):
     return render(
         request,
         "subscription_plans.html"
     )
+
+
+# =========================================================
+# طلب الاشتراك
+# =========================================================
+
+@login_required
 def payment_info(request):
-    return render(request, "payment_info.html")
+
+    if request.method == "POST":
+
+        # إنشاء طلب اشتراك جديد
+        PaymentInfoRequest.objects.create(
+            user=request.user
+        )
+
+        # بعد إرسال الطلب نرسل الوكالة لصفحة الانتظار
+        return redirect("subscription_chat")
+
+    return render(
+        request,
+        "payment_info.html"
+    )
+
+
+# =========================================================
+# تغيير كلمة المرور
+# =========================================================
+
 @login_required
 def change_password(request):
 
     if request.method == "POST":
 
-        current_password = request.POST["current_password"]
-        new_password = request.POST["new_password"]
-        confirm_password = request.POST["confirm_password"]
+        current_password = request.POST.get("current_password", "")
+        new_password = request.POST.get("new_password", "")
+        confirm_password = request.POST.get("confirm_password", "")
 
         if not request.user.check_password(current_password):
-            return render(request, "change_password.html", {
-                "error": "كلمة المرور الحالية غير صحيحة."
-            })
+
+            return render(
+                request,
+                "change_password.html",
+                {
+                    "error": "كلمة المرور الحالية غير صحيحة."
+                }
+            )
 
         if new_password != confirm_password:
-            return render(request, "change_password.html", {
-                "error": "كلمتا المرور غير متطابقتين."
-            })
+
+            return render(
+                request,
+                "change_password.html",
+                {
+                    "error": "كلمتا المرور غير متطابقتين."
+                }
+            )
 
         request.user.set_password(new_password)
         request.user.save()
 
-        update_session_auth_hash(request, request.user)
+        update_session_auth_hash(
+            request,
+            request.user
+        )
 
-        return render(request, "change_password.html", {
-            "success": "تم تغيير كلمة المرور بنجاح."
-        })
+        return render(
+            request,
+            "change_password.html",
+            {
+                "success": "تم تغيير كلمة المرور بنجاح."
+            }
+        )
 
-    return render(request, "change_password.html")
+    return render(
+        request,
+        "change_password.html"
+    )
+
+
+# =========================================================
+# صفحة الدفع
+# =========================================================
+
+@login_required
 def payment_page(request):
-    return render(request, "payment.html")
-from .models import SupportMessage
-from django.contrib.auth.decorators import login_required
+
+    return render(
+        request,
+        "payment.html"
+    )
+
+
+# =========================================================
+# محادثة الدعم
+# =========================================================
+
 @login_required
 def support_chat(request):
 
     if request.method == "POST":
+
         SupportMessage.objects.create(
             user=request.user,
             message=request.POST.get("message"),
@@ -1890,7 +2008,9 @@ def support_chat(request):
     messages.filter(
         is_admin=True,
         is_read=False
-    ).update(is_read=True)
+    ).update(
+        is_read=True
+    )
 
     return render(
         request,
@@ -1899,55 +2019,97 @@ def support_chat(request):
             "messages": messages,
         },
     )
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 
-@login_required
-def payment_page(request):
-    return render(request, "payment.html")
+
+# =========================================================
+# كلمة السر المالية
+# =========================================================
+
 @login_required
 @subscription_required
 def set_financial_password(request):
-    subscription = Subscription.objects.get(user=request.user)
+
+    subscription = Subscription.objects.get(
+        user=request.user
+    )
 
     if request.method == "POST":
-        password = request.POST.get("password", "")
-        confirm_password = request.POST.get("confirm_password", "")
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
+        confirm_password = request.POST.get(
+            "confirm_password",
+            ""
+        )
 
         if not password:
+
             return render(
                 request,
                 "set_financial_password.html",
-                {"error": "يرجى إدخال كلمة السر."},
+                {
+                    "error": "يرجى إدخال كلمة السر."
+                },
             )
 
         if len(password) < 6:
+
             return render(
                 request,
                 "set_financial_password.html",
-                {"error": "كلمة السر يجب أن تكون 6 أحرف على الأقل."},
+                {
+                    "error": "كلمة السر يجب أن تكون 6 أحرف على الأقل."
+                },
             )
 
         if password != confirm_password:
+
             return render(
                 request,
                 "set_financial_password.html",
-                {"error": "كلمتا السر غير متطابقتين."},
+                {
+                    "error": "كلمتا السر غير متطابقتين."
+                },
             )
 
-        subscription.financial_password = make_password(password)
-        subscription.save(update_fields=["financial_password"])
+        subscription.financial_password = make_password(
+            password
+        )
 
-        return redirect("financial_unlock")
+        subscription.save(
+            update_fields=["financial_password"]
+        )
 
-    return render(request, "set_financial_password.html")
+        return redirect(
+            "financial_unlock"
+        )
+
+    return render(
+        request,
+        "set_financial_password.html"
+    )
+
+
+# =========================================================
+# فتح الإدارة المالية
+# =========================================================
+
 @login_required
 @subscription_required
 def financial_unlock(request):
-    subscription = Subscription.objects.get(user=request.user)
+
+    subscription = Subscription.objects.get(
+        user=request.user
+    )
 
     if request.method == "POST":
-        password = request.POST.get("password", "")
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
 
         if (
             subscription.financial_password
@@ -1956,32 +2118,42 @@ def financial_unlock(request):
                 subscription.financial_password
             )
         ):
+
             request.session["financial_access"] = True
-            return redirect("profit_loss")
+
+            return redirect(
+                "profit_loss"
+            )
 
         return render(
             request,
             "financial_unlock.html",
-            {"error": "كلمة السر المالية غير صحيحة."},
+            {
+                "error": "كلمة السر المالية غير صحيحة."
+            },
         )
 
-    return render(request, "financial_unlock.html")
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from .models import PaymentInfoRequest, Subscription, SupportMessage
+    return render(
+        request,
+        "financial_unlock.html"
+    )
 
-from django.contrib.auth import authenticate
-from django.shortcuts import render, redirect
 
+# =========================================================
+# دخول لوحة الإدارة
+# =========================================================
 
 def admin_panel_login(request):
 
     if request.method == "POST":
 
-        password = request.POST.get("password")
+        username = request.POST.get(
+            "username"
+        )
 
-        username = request.POST.get("username")
+        password = request.POST.get(
+            "password"
+        )
 
         user = authenticate(
             request,
@@ -1991,9 +2163,13 @@ def admin_panel_login(request):
 
         if user is not None and user.is_superuser:
 
-            request.session["admin_panel_access"] = True
+            request.session[
+                "admin_panel_access"
+            ] = True
 
-            return redirect("admin_panel")
+            return redirect(
+                "admin_panel"
+            )
 
         return render(
             request,
@@ -2008,22 +2184,60 @@ def admin_panel_login(request):
         "admin_panel_login.html"
     )
 
-# لوحة الإدارة
+
+# =========================================================
+# لوحة الإدارة الرئيسية
+# =========================================================
+
 def admin_panel(request):
 
-    if not request.session.get("admin_panel_access"):
-        return redirect("admin_panel_login")
+    if not request.session.get(
+        "admin_panel_access"
+    ):
 
-    return render(request, "admin_panel.html")
+        return redirect(
+            "admin_panel_login"
+        )
+
+    return render(
+        request,
+        "admin_panel.html"
+    )
 
 
+# =========================================================
 # طلبات الاشتراك
+# =========================================================
+
 def subscription_requests(request):
 
     if not request.session.get("admin_panel_access"):
         return redirect("admin_panel_login")
 
-    requests = PaymentInfoRequest.objects.all().order_by("-created_at")
+    if request.method == "POST":
+
+        request_id = request.POST.get("request_id")
+
+        payment_request = get_object_or_404(
+            PaymentInfoRequest,
+            id=request_id
+        )
+
+        payment_request.approved = True
+        payment_request.save()
+
+        subscription, created = Subscription.objects.get_or_create(
+            user=payment_request.user
+        )
+
+        subscription.lifetime = True
+        subscription.save()
+
+        return redirect("subscription_requests")
+
+    requests = PaymentInfoRequest.objects.all().order_by(
+        "-created_at"
+    )
 
     return render(
         request,
@@ -2032,15 +2246,23 @@ def subscription_requests(request):
             "requests": requests
         }
     )
-
-
+# =========================================================
 # رسائل الدعم
+# =========================================================
+
 def support_messages(request):
 
-    if not request.session.get("admin_panel_access"):
-        return redirect("admin_panel_login")
+    if not request.session.get(
+        "admin_panel_access"
+    ):
 
-    messages = SupportMessage.objects.all().order_by("-created_at")
+        return redirect(
+            "admin_panel_login"
+        )
+
+    messages = SupportMessage.objects.all().order_by(
+        "-created_at"
+    )
 
     return render(
         request,
@@ -2051,13 +2273,23 @@ def support_messages(request):
     )
 
 
+# =========================================================
 # الوكالات
+# =========================================================
+
 def agencies(request):
 
-    if not request.session.get("admin_panel_access"):
-        return redirect("admin_panel_login")
+    if not request.session.get(
+        "admin_panel_access"
+    ):
 
-    agencies = User.objects.all().order_by("-id")
+        return redirect(
+            "admin_panel_login"
+        )
+
+    agencies = User.objects.all().order_by(
+        "-id"
+    )
 
     return render(
         request,
@@ -2068,20 +2300,34 @@ def agencies(request):
     )
 
 
-# إحصائيات
+# =========================================================
+# إحصائيات الإدارة
+# =========================================================
+
 def admin_statistics(request):
 
-    if not request.session.get("admin_panel_access"):
-        return redirect("admin_panel_login")
+    if not request.session.get(
+        "admin_panel_access"
+    ):
+
+        return redirect(
+            "admin_panel_login"
+        )
 
     return render(
         request,
         "admin_statistics.html"
     )
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 
+
+# =========================================================
+# محادثة الاشتراك
+# =========================================================
 
 @login_required
 def subscription_chat(request):
-    return render(request, "subscription_chat.html")
+
+    return render(
+        request,
+        "subscription_chat.html"
+    )

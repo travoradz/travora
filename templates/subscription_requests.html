@@ -1,105 +1,207 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<title>طلبات الاشتراك</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-    font-family:Tahoma;
-    background:#f5f7fb;
-}
+    <title>طلبات الاشتراك | Travora</title>
 
-.container{
-    max-width:1000px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:15px;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-h1{
-    color:#0b3d91;
-    margin-bottom:25px;
-}
+        body {
+            margin: 0;
+            font-family: Tahoma, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
 
-.card{
-    background:#eef5ff;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:20px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 25px;
+        }
 
-button{
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-left:10px;
-}
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        }
 
-.accept{
-    background:#16a34a;
-    color:white;
-}
+        h1 {
+            margin: 0;
+            color: #0b3d91;
+        }
 
-.reject{
-    background:#dc2626;
-    color:white;
-}
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+            border-right: 5px solid #0b3d91;
+        }
 
-.info{
-    margin-bottom:15px;
-    line-height:2;
-}
-</style>
+        .info {
+            line-height: 2;
+            margin-bottom: 20px;
+        }
 
+        .info b {
+            color: #0b3d91;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .approved {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: Tahoma, sans-serif;
+            font-size: 15px;
+        }
+
+        .accept {
+            background: #16a34a;
+            color: white;
+        }
+
+        .accept:hover {
+            background: #15803d;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            color: #777;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>📩 طلبات الاشتراك</h1>
+    <div class="header">
+        <h1>📩 طلبات الاشتراك</h1>
+    </div>
 
-{% for request in requests %}
 
-<div class="card">
+    {% for request in requests %}
 
-<div class="info">
-<b>الوكالة:</b> {{ request.user.username }}<br>
-<b>طريقة الدفع:</b> {{ request.get_method_display }}<br>
-<b>التاريخ:</b> {{ request.created_at }}<br>
-<b>الحالة:</b>
-{% if request.approved %}
-✅ مفعل
-{% else %}
-⏳ بانتظار التفعيل
-{% endif %}
-</div>
+    <div class="card">
 
-{% if not request.approved %}
-<form method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="request_id" value="{{ request.id }}">
+        <div class="info">
 
-    <button type="submit" class="accept">
-        ✅ تفعيل الاشتراك
-    </button>
-</form>
-{% endif %}
+            <div>
+                <b>الوكالة:</b>
+                {{ request.user.username }}
+            </div>
 
-</div>
+            {% if request.user.email %}
+            <div>
+                <b>البريد الإلكتروني:</b>
+                {{ request.user.email }}
+            </div>
+            {% endif %}
 
-{% empty %}
+            <div>
+                <b>التاريخ:</b>
+                {{ request.created_at|date:"Y-m-d H:i" }}
+            </div>
 
-<div class="card">
-لا توجد طلبات اشتراك حاليا.
-</div>
+            <div>
+                <b>الحالة:</b>
 
-{% endfor %}
+                {% if request.approved %}
+
+                    <span class="status approved">
+                        ✅ تم تفعيل الاشتراك
+                    </span>
+
+                {% else %}
+
+                    <span class="status pending">
+                        ⏳ بانتظار التفعيل
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% if not request.approved %}
+
+        <div class="actions">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="request_id"
+                    value="{{ request.id }}"
+                >
+
+                <button
+                    type="submit"
+                    class="accept"
+                >
+                    ✅ تفعيل الاشتراك
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    {% empty %}
+
+    <div class="empty">
+        📭 لا توجد طلبات اشتراك حاليا.
+    </div>
+
+    {% endfor %}
 
 </div>
 
 </body>
+
 </html>
