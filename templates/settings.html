@@ -2,136 +2,236 @@
 <html lang="ar" dir="rtl">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>إعدادات الوكالة | Travora</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <title>إعدادات الوكالة | Travora</title>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Tahoma,sans-serif;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Tahoma, sans-serif;
+        }
 
-body{
-background:#f5f7fb;
-}
+        body {
+            background: #f5f7fb;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-.container{
-width:700px;
-margin:40px auto;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
+        .container {
+            width: 700px;
+            max-width: 100%;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
+        }
 
-h2{
-text-align:center;
-color:#0b3d91;
-margin-bottom:25px;
-}
+        h2 {
+            text-align: center;
+            color: #0b3d91;
+            margin-bottom: 25px;
+        }
 
-label{
-display:block;
-margin-top:15px;
-margin-bottom:5px;
-font-weight:bold;
-}
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
 
-input{
-width:100%;
-padding:12px;
-border:1px solid #ccc;
-border-radius:8px;
-font-size:15px;
-}
+        input[type="text"],
+        input[type="email"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fff;
+        }
 
-button{
-width:100%;
-margin-top:25px;
-padding:14px;
-background:#0b3d91;
-color:white;
-border:none;
-border-radius:8px;
-font-size:17px;
-cursor:pointer;
-}
+        input:focus {
+            outline: none;
+            border-color: #0b3d91;
+        }
 
-button:hover{
-background:#082b66;
-}
+        .logo-preview {
+            display: block;
+            width: 170px;
+            height: 170px;
+            object-fit: contain;
+            margin: 15px auto;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
 
-.back{
-display:block;
-text-align:center;
-margin-top:20px;
-text-decoration:none;
-font-weight:bold;
-color:#0b3d91;
-}
+        .save-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background: #0b3d91;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-</style>
+        .save-btn:hover {
+            background: #082b66;
+        }
 
+        .change-password {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 13px 20px;
+            background: #16a34a;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .change-password:hover {
+            background: #15803d;
+        }
+
+        .dashboard-btn {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 13px 20px;
+            background: #0b3d91;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .dashboard-btn:hover {
+            background: #082b66;
+        }
+
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<h2>إعدادات الوكالة</h2>
+        <h2>⚙️ إعدادات الوكالة</h2>
 
-<form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data">
 
-{% csrf_token %}
+            {% csrf_token %}
 
-<label>اسم الوكالة</label>
-<input type="text" name="agency_name" value="{{ settings.agency_name }}" required>
+            <label>اسم الوكالة</label>
 
-<label>رقم الهاتف</label>
-<input type="text" name="phone" value="{{ settings.phone }}">
+            <input
+                type="text"
+                name="agency_name"
+                value="{{ settings.agency_name }}"
+                required
+            >
 
-<label>البريد الإلكتروني</label>
-<input type="email" name="email" value="{{ settings.email }}">
 
-<label>العنوان</label>
-<input type="text" name="address" value="{{ settings.address }}">
+            <label>رقم الهاتف</label>
 
-<label>المدينة</label>
-<input type="text" name="city" value="{{ settings.city }}">
+            <input
+                type="text"
+                name="phone"
+                value="{{ settings.phone }}"
+            >
 
-<label>شعار الوكالة</label>
-<input type="file" name="logo">
 
-{% if settings.logo %}
-<br><br>
-<img src="{{ settings.logo.url }}"
-width="170"
-style="border-radius:10px;border:1px solid #ddd;">
-{% endif %}
+            <label>البريد الإلكتروني</label>
 
-<button type="submit">
-💾 حفظ التغييرات
-</button>
+            <input
+                type="email"
+                name="email"
+                value="{{ settings.email }}"
+            >
 
-<br><br>
 
-<a
-href="/change-password/"
-style="display:inline-block;background:#16a34a;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;">
-🔒 تغيير كلمة المرور
-</a>
+            <label>العنوان</label>
 
-</form>
+            <input
+                type="text"
+                name="address"
+                value="{{ settings.address }}"
+            >
 
-<a class="back" href="/dashboard/">
-⬅️ الرجوع إلى لوحة التحكم
-</a>
 
-</div>
+            <label>المدينة</label>
+
+            <input
+                type="text"
+                name="city"
+                value="{{ settings.city }}"
+            >
+
+
+            <label>شعار الوكالة</label>
+            <input
+                type="file"
+                name="logo"
+                accept="image/*"
+            >
+
+
+            {% if settings.logo %}
+
+                <img
+                    src="{{ settings.logo.url }}"
+                    class="logo-preview"
+                    alt="شعار الوكالة"
+                >
+
+            {% endif %}
+
+
+            <button
+                type="submit"
+                class="save-btn"
+            >
+                💾 حفظ التغييرات
+            </button>
+
+        </form>
+
+
+        <!-- تغيير كلمة المرور -->
+
+        <a
+            href="{% url 'change_password' %}"
+            class="change-password"
+        >
+            🔒 تغيير كلمة المرور
+        </a>
+
+
+        <!-- العودة إلى لوحة التحكم -->
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="dashboard-btn"
+        >
+            🏠 لوحة التحكم
+        </a>
+
+    </div>
 
 </body>
+
 </html>

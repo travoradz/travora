@@ -2,156 +2,267 @@
 <html lang="ar" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>اشتراك Travora</title>
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Tahoma,sans-serif;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Tahoma, sans-serif;
         }
 
-        body{
-            background:#f5f7fb;
-            padding:40px;
+        body {
+            background: #f5f7fb;
+            padding: 40px 20px;
         }
 
-        h1{
-            text-align:center;
-            color:#0b3d91;
-            margin-bottom:10px;
+        h1 {
+            text-align: center;
+            color: #0b3d91;
+            margin-bottom: 10px;
         }
 
-        .subtitle{
-            text-align:center;
-            color:#555;
-            margin-bottom:40px;
-            font-size:18px;
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 18px;
+            line-height: 1.8;
         }
 
-        .container{
-            display:flex;
-            justify-content:center;
+        /* زر لوحة التحكم */
+
+        .dashboard-btn {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 30px auto;
+            padding: 12px 25px;
+            background: #0b3d91;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.2s;
         }
 
-        .plan{
-            background:white;
-            width:450px;
-            padding:35px;
-            border-radius:18px;
-            box-shadow:0 5px 15px rgba(0,0,0,.1);
-            text-align:center;
-            border:3px solid #16a34a;
+        .dashboard-btn:hover {
+            background: #082b66;
         }
 
-        .badge{
-            background:#16a34a;
-            color:white;
-            display:inline-block;
-            padding:8px 18px;
-            border-radius:20px;
-            margin-bottom:20px;
-            font-weight:bold;
+        .container {
+            display: flex;
+            justify-content: center;
         }
 
-        .plan h2{
-            color:#0b3d91;
-            margin-bottom:20px;
+        .plan {
+            background: white;
+            width: 450px;
+            max-width: 100%;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
+            text-align: center;
+            border: 3px solid #16a34a;
         }
 
-        .price{
-            font-size:45px;
-            font-weight:bold;
-            color:#16a34a;
-            margin-bottom:10px;
+        .badge {
+            background: #16a34a;
+            color: white;
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
 
-        .period{
-            font-size:18px;
-            color:#666;
-            margin-bottom:25px;
+        .plan h2 {
+            color: #0b3d91;
+            margin-bottom: 20px;
         }
 
-        ul{
-            list-style:none;
-            text-align:right;
-            margin-bottom:30px;
+        .price {
+            font-size: 45px;
+            font-weight: bold;
+            color: #16a34a;
+            margin-bottom: 10px;
         }
 
-        li{
-            padding:12px 0;
-            border-bottom:1px solid #eee;
+        .period {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 25px;
         }
 
-        .btn{
-            display:block;
-            padding:15px;
-            background:#0b3d91;
-            color:white;
-            text-decoration:none;
-            border-radius:10px;
-            font-size:18px;
-            font-weight:bold;
+        ul {
+            list-style: none;
+            text-align: right;
+            margin-bottom: 30px;
         }
 
-        .btn:hover{
-            background:#082b66;
+        li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
         }
+
+        .btn {
+            display: block;
+            padding: 15px;
+            background: #0b3d91;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #082b66;
+        }
+
+        /* الهاتف */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 25px 15px;
+            }
+
+            .plan {
+                padding: 25px 20px;
+            }
+
+            .price {
+                font-size: 38px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+        }
+
     </style>
 
 </head>
 
+
 <body>
 
-<h1>💳 اشتراك Travora</h1>
 
-<p class="subtitle">
-🎁 استمتع بـ <strong>14 يوم مجانية</strong> لتجربة جميع ميزات Travora، ثم فعّل اشتراكك مرة واحدة فقط.
-</p>
+    <h1>💳 اشتراك Travora</h1>
 
-<div class="container">
 
-<div class="plan">
+    <p class="subtitle">
 
-<div class="badge">
-🔥 العرض الحالي
-</div>
+        🎁 استمتع بـ
+        <strong>14 يوم مجانية</strong>
+        لتجربة جميع ميزات Travora،
+        ثم فعّل اشتراكك مرة واحدة فقط.
 
-<h2>
-💎 اشتراك مدى الحياة
-</h2>
+    </p>
 
-<div class="price">
-8000 دج
-</div>
 
-<div class="period">
-دفعة واحدة فقط ♾️
-</div>
+    <!-- العودة إلى لوحة التحكم -->
 
-<ul>
-    <li>🎁 14 يوم مجانية للتجربة</li>
-    <li>♾️ اشتراك مدى الحياة</li>
-    <li>✅ جميع ميزات Travora</li>
-    <li>✅ إدارة الرحلات</li>
-    <li>✅ إدارة الزبائن</li>
-    <li>✅ لوحة تحكم احترافية</li>
-    <li>✅ الإدارة المالية</li>
-    <li>✅ إعدادات الوكالة</li>
-    <li>✅ تحديثات مجانية مدى الحياة</li>
-    <li>✅ دعم فني مجاني</li>
-</ul>
+    <a
+        href="{% url 'dashboard' %}"
+        class="dashboard-btn"
+    >
+        🏠 لوحة التحكم
+    </a>
 
-<a href="{% url 'subscription_chat' %}" class="btn">
-🚀 تفعيل الاشتراك مدى الحياة
-</a>
 
-</div>
+    <div class="container">
 
-</div>
+        <div class="plan">
+
+
+            <div class="badge">
+                🔥 العرض الحالي
+            </div>
+
+
+            <h2>
+                💎 اشتراك مدى الحياة
+            </h2>
+
+
+            <div class="price">
+                8000 دج
+            </div>
+
+
+            <div class="period">
+                دفعة واحدة فقط ♾️
+            </div>
+
+
+            <ul>
+
+                <li>
+                    🎁 14 يوم مجانية للتجربة
+                </li>
+
+                <li>
+                    ♾️ اشتراك مدى الحياة
+                </li>
+                <li>
+                    ✅ جميع ميزات Travora
+                </li>
+
+                <li>
+                    ✅ إدارة الرحلات
+                </li>
+
+                <li>
+                    ✅ إدارة الزبائن
+                </li>
+
+                <li>
+                    ✅ لوحة تحكم احترافية
+                </li>
+
+                <li>
+                    ✅ الإدارة المالية
+                </li>
+
+                <li>
+                    ✅ إعدادات الوكالة
+                </li>
+
+                <li>
+                    ✅ تحديثات مجانية مدى الحياة
+                </li>
+
+                <li>
+                    ✅ دعم فني مجاني
+                </li>
+
+            </ul>
+
+
+            <!-- تفعيل الاشتراك -->
+
+            <a
+                href="{% url 'subscription_chat' %}"
+                class="btn"
+            >
+                🚀 تفعيل الاشتراك مدى الحياة
+            </a>
+
+
+        </div>
+
+    </div>
+
 
 </body>
+
 </html>
