@@ -15,7 +15,6 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # =========================================================
 # SECURITY
 # =========================================================
@@ -25,34 +24,34 @@ SECRET_KEY = os.getenv(
     "django-development-only-secret-key"
 )
 
-DEBUG = (
-    os.getenv("DEBUG", "True").lower() == "true"
-)
-
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
         "ALLOWED_HOSTS",
-        "127.0.0.1,localhost"
+        "127.0.0.1,localhost,travora-06bt.onrender.com"
     ).split(",")
     if host.strip()
 ]
-
-import os
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CSRF_TRUSTED_ORIGINS",
-        "https://https://travora-06bt.onrender.coms"
+        "https://travora-06bt.onrender.com"
     ).split(",")
     if origin.strip()
 ]
 
+# Render يعمل خلف HTTPS Proxy
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https"
+)
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-
 
 # =========================================================
 # APPLICATIONS
