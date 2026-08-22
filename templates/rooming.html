@@ -2,193 +2,530 @@
 <html lang="ar" dir="rtl">
 
 <head>
-<meta charset="UTF-8">
-<title>التسكين</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <title>التسكين | Travora</title>
 
-body{
-font-family:Tahoma;
-background:#f5f7fb;
-padding:30px;
-}
+    <style>
 
-h1{
-color:#0b3d91;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Tahoma, Arial, sans-serif;
+        }
 
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-margin-top:20px;
-}
+        body {
+            background: #f5f7fb;
+            color: #1f2937;
+            padding: 25px;
+        }
 
-th,td{
-padding:12px;
-border:1px solid #ddd;
-text-align:center;
-}
+        .page {
+            max-width: 1200px;
+            margin: auto;
+        }
 
-th{
-background:#0b3d91;
-color:white;
-}
-.rooms-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-gap:20px;
-margin-top:25px;
-}
+        /* =========================
+           HEADER
+        ========================= */
 
-.room-card{
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-border-top:5px solid #0b3d91;
-}
+        .header {
+            background: white;
+            padding: 22px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.07);
+            margin-bottom: 25px;
 
-.room-card h3{
-margin-bottom:10px;
-color:#0b3d91;
-}
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
 
-.customer-box{
-background:#f8fafc;
-padding:10px;
-border-radius:10px;
-margin-bottom:10px;
-}
-</style>
+        .header h1 {
+            color: #0b3d91;
+            font-size: 25px;
+        }
 
+        .header p {
+            color: #6b7280;
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: .95;
+        }
+
+        .btn-back {
+            background: #374151;
+            color: white;
+        }
+
+        .btn-print {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-auto {
+            background: #0b3d91;
+            color: white;
+        }
+
+        /* =========================
+           AUTO ROOMING BOX
+        ========================= */
+
+        .control-box {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+            margin-bottom: 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-text h3 {
+            color: #0b3d91;
+            margin-bottom: 7px;
+        }
+
+        .control-text p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* =========================
+           ROOMS GRID
+        ========================= */
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(300px, 1fr)
+            );
+
+            gap: 20px;
+        }
+
+        /* =========================
+           ROOM CARD
+        ========================= */
+
+        .room-card {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,.07);
+
+            border-top: 5px solid #0b3d91;
+
+            transition: .2s;
+        }
+
+        .room-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.10);
+        }
+
+        .room-card h3 {
+            color: #0b3d91;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .room-type {
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .room-type b {
+            color: #111827;
+        }
+
+        .room-card hr {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 12px 0;
+        }
+
+        /* =========================
+           CUSTOMER
+        ========================= */
+        .customer-box {
+            background: #f8fafc;
+            padding: 13px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+
+            border: 1px solid #eef2f7;
+            line-height: 1.8;
+        }
+
+        .customer-name {
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .customer-phone {
+            color: #555;
+        }
+
+        .move-btn {
+            display: inline-block;
+            margin-top: 5px;
+
+            background: #e8f0ff;
+            color: #0b3d91;
+
+            padding: 5px 10px;
+            border-radius: 7px;
+
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .move-btn:hover {
+            background: #dbe8ff;
+        }
+
+        .empty-room {
+            color: #888;
+            text-align: center;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+
+        /* =========================
+           ROOM STATUS
+        ========================= */
+
+        .room-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .full {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .partial {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .actions {
+                width: 100%;
+            }
+
+            .actions .btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            .control-box {
+                align-items: stretch;
+            }
+
+            .control-box .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
 </head>
+
 
 <body>
 
-<h1>
-🏨 تسكين رحلة {{ trip.name }}
-</h1>
-<a
-href="{% url 'print_rooming' trip.id %}"
-target="_blank"
-style="
-background:#2563eb;
-color:white;
-padding:12px 20px;
-border-radius:10px;
-text-decoration:none;
-display:inline-block;
-margin-bottom:20px;
-">
-🖨️ طباعة كشف التسكين
-</a>
-<form method="post" style="margin:20px 0;">
-    {% csrf_token %}
-<button
-    type="submit"
-    name="auto_rooming"
-    value="1"
-    style="
-        background:#0b3d91;
-        color:white;
-        border:none;
-        padding:12px 25px;
-        border-radius:10px;
-        font-size:16px;
-        cursor:pointer;
-    ">
-    🚀 توزيع الغرف تلقائياً
-</button>
-</form>
-<table>
-<div class="rooms-grid">
+<div class="page">
 
-{% for room in rooms %}
+    <!-- =========================
+         HEADER
+    ========================= -->
 
-<div class="room-card">
+    <div class="header">
 
-<h3>
-🏨 غرفة {{ room.room_number }}
-</h3>
+        <div>
+            <h1>
+                🏨 تسكين رحلة {{ trip.name }}
+            </h1>
 
-<p>
-نوع الغرفة :
-<b>{{ room.room_type }}</b>
-</p>
+            <p>
+                إدارة الغرف وتوزيع الزبائن بسهولة
+            </p>
+        </div>
 
-<hr>
 
-{% for customer in room.customers.all %}
+        <div class="actions">
 
-<div class="customer-box">
+            <!-- زر الرجوع إلى لوحة التحكم -->
+            <a
+                href="/dashboard/"
+                class="btn btn-back"
+            >
+                🏠 الرجوع إلى لوحة التحكم
+            </a>
 
-👤 {{ customer.full_name }}
 
-<br>
+            <!-- زر طباعة كشف التسكين -->
+            <a
+                href="{% url 'print_rooming' trip.id %}"
+                target="_blank"
+                class="btn btn-print"
+            >
+                🖨️ طباعة كشف التسكين
+            </a>
 
-📞 {{ customer.phone }}
+        </div>
 
-<br>
+    </div>
 
-<a href="{% url 'move_customer' customer.id %}">
-🔄 نقل
-</a>
+
+    <!-- =========================
+         AUTO ROOMING
+    ========================= -->
+
+    <div class="control-box">
+
+        <div class="control-text">
+
+            <h3>
+                🚀 توزيع الغرف تلقائياً
+            </h3>
+
+            <p>
+                اضغط على الزر لتوزيع الزبائن على الغرف تلقائياً.
+            </p>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                name="auto_rooming"
+                value="1"
+                class="btn btn-auto"
+            >
+                🚀 توزيع الغرف تلقائياً
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         ROOMS
+    ========================= -->
+
+    <div class="rooms-grid">
+
+        {% for room in rooms %}
+
+        <div class="room-card">
+
+            <h3>
+                🏨 غرفة {{ room.room_number }}
+            </h3>
+            <p class="room-type">
+                نوع الغرفة :
+                <b>{{ room.room_type }}</b>
+            </p>
+
+
+            <hr>
+
+
+            <!-- =========================
+                 CUSTOMERS
+            ========================= -->
+
+            {% for customer in room.customers.all %}
+
+            <div class="customer-box">
+
+                <div class="customer-name">
+                    👤 {{ customer.full_name }}
+                </div>
+
+                <div class="customer-phone">
+                    📞 {{ customer.phone }}
+                </div>
+
+
+                <a
+                    href="{% url 'move_customer' customer.id %}"
+                    class="move-btn"
+                >
+                    🔄 نقل الزبون
+                </a>
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="empty-room">
+                الغرفة فارغة
+            </div>
+
+            {% endfor %}
+
+
+            <!-- =========================
+                 ROOM CAPACITY
+            ========================= -->
+
+            {% with room.customers.count as count %}
+
+
+                {% if room.room_type == "ثنائية" %}
+
+                    {% if count == 2 %}
+
+                    <div class="room-status full">
+                        🟢 ممتلئة
+                    </div>
+
+                    {% else %}
+
+                    <div class="room-status partial">
+                        🟡 {{ count }}/2
+                    </div>
+
+                    {% endif %}
+
+
+                {% elif room.room_type == "ثلاثية" %}
+
+                    {% if count == 3 %}
+
+                    <div class="room-status full">
+                        🟢 ممتلئة
+                    </div>
+
+                    {% else %}
+
+                    <div class="room-status partial">
+                        🟡 {{ count }}/3
+                    </div>
+
+                    {% endif %}
+
+
+                {% elif room.room_type == "رباعية" %}
+
+                    {% if count == 4 %}
+
+                    <div class="room-status full">
+                        🟢 ممتلئة
+                    </div>
+
+                    {% else %}
+
+                    <div class="room-status partial">
+                        🟡 {{ count }}/4
+                    </div>
+
+                    {% endif %}
+
+
+                {% elif room.room_type == "خماسية" %}
+
+                    {% if count == 5 %}
+
+                    <div class="room-status full">
+                        🟢 ممتلئة
+                    </div>
+
+                    {% else %}
+
+                    <div class="room-status partial">
+                        🟡 {{ count }}/5
+                    </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+            {% endwith %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
 
 </div>
-
-{% empty %}
-
-<p style="color:#888">
-الغرفة فارغة
-</p>
-
-{% endfor %}
-
-{% with room.customers.count as count %}
-
-{% if room.room_type == "ثنائية" %}
-
-{% if count == 2 %}
-<p style="color:green">🟢 ممتلئة</p>
-{% else %}
-<p style="color:orange">🟡 {{ count }}/2</p>
-{% endif %}
-
-{% elif room.room_type == "ثلاثية" %}
-
-{% if count == 3 %}
-<p style="color:green">🟢 ممتلئة</p>
-{% else %}
-<p style="color:orange">🟡 {{ count }}/3</p>
-{% endif %}
-
-{% elif room.room_type == "رباعية" %}
-
-{% if count == 4 %}
-<p style="color:green">🟢 ممتلئة</p>
-{% else %}
-<p style="color:orange">🟡 {{ count }}/4</p>
-{% endif %}
-
-{% elif room.room_type == "خماسية" %}
-
-{% if count == 5 %}
-<p style="color:green">🟢 ممتلئة</p>
-{% else %}
-<p style="color:orange">🟡 {{ count }}/5</p>
-{% endif %}
-
-{% endif %}
-
-{% endwith %}
-
-</div>
-
-{% endfor %}
-
-</div>
-</table>
 
 </body>
 
