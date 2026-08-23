@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:600px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    direction:rtl;
+">
+
+    <h2 style="
+        text-align:center;
+        color:#0b3d91;
+        margin-bottom:25px;
+    ">
+        💰 إضافة دفعة
+    </h2>
+
+    <!-- معلومات الزبون -->
+    <div style="
+        background:#f8fafc;
+        padding:20px;
+        border-radius:15px;
+        margin-bottom:25px;
+    ">
+
+        <p>
+            <strong>👤 الزبون:</strong>
+            {{ customer.full_name }}
+        </p>
+
+        <p>
+            <strong>✈️ الرحلة:</strong>
+            {{ customer.trip.name }}
+        </p>
+
+        <p>
+            <strong>💰 السعر الأصلي:</strong>
+            {{ customer.total_price }} دج
+        </p>
+
+        <p>
+            <strong>➖ العمولة / التخفيض:</strong>
+            {{ customer.commission }} دج
+        </p>
+
+        <p>
+            <strong>💵 السعر النهائي:</strong>
+            {{ customer.final_price }} دج
+        </p>
+
+        <p style="color:#16a34a;">
+            <strong>💳 مجموع الدفعات:</strong>
+            {{ customer.total_payments }} دج
+        </p>
+
+        <p style="color:#dc2626;">
+            <strong>📌 المبلغ المتبقي:</strong>
+            {{ customer.remaining_amount }} دج
+        </p>
+
+    </div>
+
+
+    <!-- نموذج الدفعة -->
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label style="
+            display:block;
+            margin-bottom:8px;
+            font-weight:bold;
+        ">
+            💰 مبلغ الدفعة
+        </label>
+
+        <input
+            type="number"
+            name="amount"
+            step="0.01"
+            min="0.01"
+            max="{{ customer.remaining_amount }}"
+            required
+            placeholder="مثال: 20000"
+            style="
+                width:100%;
+                padding:14px;
+                border:1px solid #ddd;
+                border-radius:10px;
+                margin-bottom:20px;
+                box-sizing:border-box;
+                font-size:16px;
+            "
+        >
+
+
+        <label style="
+            display:block;
+            margin-bottom:8px;
+            font-weight:bold;
+        ">
+            📝 ملاحظة
+        </label>
+
+        <textarea
+            name="note"
+            rows="3"
+            placeholder="مثال: الدفعة الأولى"
+            style="
+                width:100%;
+                padding:14px;
+                border:1px solid #ddd;
+                border-radius:10px;
+                margin-bottom:25px;
+                box-sizing:border-box;
+                resize:vertical;
+                font-size:15px;
+            "
+        ></textarea>
+
+
+        <button
+            type="submit"
+            style="
+                width:100%;
+                padding:15px;
+                border:none;
+                border-radius:12px;
+                background:#7c3aed;
+                color:white;
+                font-size:17px;
+                font-weight:bold;
+                cursor:pointer;
+            "
+        >
+            💰 تسجيل الدفعة
+        </button>
+
+    </form>
+
+
+    <!-- الرجوع -->
+    <div style="
+        text-align:center;
+        margin-top:20px;
+    ">
+
+        <a
+            href="{% url 'customers' %}"
+            style="
+                color:#64748b;
+                text-decoration:none;
+                font-weight:bold;
+            "
+        >
+            ← العودة إلى قائمة الزبائن
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

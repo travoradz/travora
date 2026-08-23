@@ -379,122 +379,191 @@ required>
 
 <tr>
 
-<td>{{ customer.full_name }}</td>
+    <!-- اسم الزبون -->
+    <td>
+        {{ customer.full_name }}
+    </td>
 
-<td>{{ customer.phone }}</td>
+    <!-- الهاتف -->
+    <td>
+        {{ customer.phone }}
+    </td>
 
-<td>{{ customer.trip.name }}</td>
+    <!-- الرحلة -->
+    <td>
+        {{ customer.trip.name }}
+    </td>
 
-<td>{{ customer.room_type }}</td>
+    <!-- نوع الغرفة -->
+    <td>
+        {{ customer.room_type }}
+    </td>
 
-<td>{{ customer.total_price }} دج</td>
+    <!-- السعر الأصلي -->
+    <td>
+        {{ customer.total_price }} دج
+    </td>
 
-<td>{{ customer.amount_paid }} دج</td>
+    <!-- العمولة / التخفيض -->
+    <td>
+        {% if customer.commission > 0 %}
+            <span style="
+                color:#16a34a;
+                font-weight:bold;
+            ">
+                - {{ customer.commission }} دج
+            </span>
+        {% else %}
+            <span style="color:#888;">
+                0 دج
+            </span>
+        {% endif %}
+    </td>
 
-<td>
+    <!-- السعر النهائي بعد العمولة -->
+    <td>
+        <strong>
+            {{ customer.final_price }} دج
+        </strong>
+    </td>
 
-<strong style="color:#dc2626;">
+    <!-- مجموع جميع الدفعات -->
+    <td>
+        <span style="
+            color:#16a34a;
+            font-weight:bold;
+        ">
+            {{ customer.total_payments }} دج
+        </span>
+    </td>
 
-{{ customer.remaining_amount }} دج
+    <!-- المبلغ المتبقي -->
+    <td>
+        <strong style="
+            color:#dc2626;
+        ">
+            {{ customer.remaining_amount }} دج
+        </strong>
+    </td>
 
-</strong>
+    <!-- حالة الدفع -->
+    <td>
 
-</td>
+        {% if customer.total_payments == 0 %}
 
-<td>
+            <span style="
+                background:#fee2e2;
+                color:#dc2626;
+                padding:6px 12px;
+                border-radius:20px;
+                font-weight:bold;
+            ">
+                🔴 غير مدفوع
+            </span>
 
-{% if customer.amount_paid == 0 %}
+        {% elif customer.remaining_amount <= 0 %}
 
-<span style="
-background:#fee2e2;
-color:#dc2626;
-padding:6px 12px;
-border-radius:20px;
-font-weight:bold;">
+            <span style="
+                background:#dcfce7;
+                color:#16a34a;
+                padding:6px 12px;
+                border-radius:20px;
+                font-weight:bold;
+            ">
+                🟢 مدفوع
+            </span>
 
-🔴 غير مدفوع
+        {% else %}
 
-</span>
+            <span style="
+                background:#fef3c7;
+                color:#d97706;
+                padding:6px 12px;
+                border-radius:20px;
+                font-weight:bold;
+            ">
+                🟡 دفع جزئي
+            </span>
 
-{% elif customer.remaining_amount == 0 %}
+        {% endif %}
 
-<span style="
-background:#dcfce7;
-color:#16a34a;
-padding:6px 12px;
-border-radius:20px;
-font-weight:bold;">
+    </td>
 
-🟢 مدفوع
+    <!-- الأزرار -->
+    <td style="white-space:nowrap;">
 
-</span>
+        <!-- تعديل -->
+        <a
+            class="edit"
+            href="{% url 'edit_customer' customer.id %}"
+        >
+            ✏️ تعديل
+        </a>
 
-{% else %}
+        |
 
-<span style="
-background:#fef3c7;
-color:#d97706;
-padding:6px 12px;
-border-radius:20px;
-font-weight:bold;">
+        <!-- حذف -->
+        <a
+            class="delete"
+            href="{% url 'delete_customer' customer.id %}"
+            onclick="return confirm('هل تريد حذف هذا الزبون؟');"
+        >
+            🗑 حذف
+        </a>
 
-🟡 دفع جزئي
+        |
 
-</span>
+        <!-- واتساب -->
+        <a
+            style="
+                color:#16a34a;
+                font-weight:bold;
+                text-decoration:none;
+            "
+            target="_blank"
+            href="https://wa.me/213{{ customer.phone|slice:'1:' }}?text=🌹%20السلام%20عليكم%20{{ customer.full_name }}%0A%0Aيسعدنا%20تذكيركم%20بتفاصيل%20رحلتكم%20مع%20*{{ settings.agency_name }}*%20✈️%0A%0A📍%20الرحلة:%20{{ customer.trip.name }}%0A🛫%20نوع%20الرحلة:%20{{ customer.trip.get_trip_type_display }}%0A👨‍✈️%20المرشد:%20{{ customer.trip.guide_name }}%0A🏨%20الفندق:%20{{ customer.trip.hotel }}%0A📅%20الانطلاق:%20{{ customer.trip.departure_date|date:'d/m/Y' }}%0A📅%20العودة:%20{{ customer.trip.return_date|date:'d/m/Y' }}%0A🛏%20نوع%20الغرفة:%20{{ customer.room_type }}%0A💰%20المبلغ%20المتبقي:%20{{ customer.remaining_amount }}%20دج%0A%0A📞%20لأي%20استفسار%20نحن%20في%20خدمتكم.%0Aنسأل%20الله%20لكم%20عمرة%20مباركة%20وتقبلًا%20صالحًا%20🤲"
+        >
+            💬 واتساب
+        </a>
 
-{% endif %}
+        |
 
-</td>
-<td>
+        <!-- إضافة دفعة -->
+        <a
+            href="{% url 'add_customer_payment' customer.id %}"
+            style="
+                color:#7c3aed;
+                font-weight:bold;
+                text-decoration:none;
+            "
+        >
+            💰 إضافة دفعة
+        </a>
 
-<a class="edit"
-href="{% url 'edit_customer' customer.id %}">
-✏️ تعديل
-</a>
+        |
+        <!-- طباعة -->
+        <a
+            href="{% url 'print_customer' customer.id %}"
+            target="_blank"
+            style="
+                color:#0b3d91;
+                font-weight:bold;
+                text-decoration:none;
+            "
+        >
+            🖨 طباعة
+        </a>
 
-|
+    </td>
 
-<a class="delete"
-href="{% url 'delete_customer' customer.id %}"
-onclick="return confirm('هل تريد حذف هذا الزبون؟');">
-🗑 حذف
-</a>
-
-|<a
-style="color:#16a34a;font-weight:bold;text-decoration:none;"
-target="_blank"
-href="https://wa.me/213{{ customer.phone|slice:'1:' }}?text=🌹 السلام عليكم {{ customer.full_name }}%0A%0Aيسعدنا تذكيركم بتفاصيل رحلتكم مع *{{ settings.agency_name }}* ✈️%0A%0A📍 الرحلة: {{ customer.trip.name }}%0A🛫 نوع الرحلة: {{ customer.trip.get_trip_type_display }}%0A👨‍✈️ المرشد: {{ customer.trip.guide_name }}%0A🏨 الفندق: {{ customer.trip.hotel }}%0A📅 الانطلاق: {{ customer.trip.departure_date|date:'d/m/Y' }}%0A📅 العودة: {{ customer.trip.return_date|date:'d/m/Y' }}%0A🛏️ نوع الغرفة: {{ customer.room_type }}%0A💰 المبلغ المتبقي: {{ customer.remaining_amount }} دج%0A%0A📞 لأي استفسار نحن في خدمتكم.%0Aنسأل الله لكم عمرة مباركة وتقبلًا صالحًا 🤲">
-💬 واتساب
-</a>
-|
-
-|
-
-<a
-href="{% url 'print_customer' customer.id %}"
-target="_blank"
-style="
-color:#0b3d91;
-font-weight:bold;
-text-decoration:none;">
-
-🖨️ طباعة
-
-</a>
-
-</td>
 </tr>
 
 {% empty %}
 
 <tr>
-
-<td colspan="9">
-
-لا يوجد زبائن حتى الآن.
-
-</td>
-
+    <td colspan="12">
+        لا يوجد زبائن حتى الآن.
+    </td>
 </tr>
 
 {% endfor %}

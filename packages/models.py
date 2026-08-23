@@ -165,6 +165,7 @@ class Booking(models.Model):
     def str(self):
         return self.full_name
 class Customer(models.Model):
+
     ROOM_TYPES = [
         ("ثنائية", "ثنائية"),
         ("ثلاثية", "ثلاثية"),
@@ -182,9 +183,13 @@ class Customer(models.Model):
         on_delete=models.CASCADE,
     )
 
-    full_name = models.CharField(max_length=200)
+    full_name = models.CharField(
+        max_length=200
+    )
 
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(
+        max_length=20
+    )
 
     room_type = models.CharField(
         max_length=20,
@@ -198,18 +203,30 @@ class Customer(models.Model):
         default="",
     )
 
+    # السعر الأصلي للزبون
     total_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
     )
 
+    # العمولة / التخفيض
+    commission = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
+
+    # المبلغ المدفوع الإجمالي
+    # نبقيه حتى لا نكسر النظام الحالي
     amount_paid = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0,
     )
 
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateField(
+        auto_now_add=True
+    )
 
     room = models.ForeignKey(
         Room,
@@ -219,6 +236,60 @@ class Customer(models.Model):
         related_name="customers",
     )
 
+    # =========================
+    # السعر بعد العمولة
+    # =========================
+    def final_price(self):
+        return self.total_price - self.commission
+
+    # =========================
+    # مجموع جميع الدفعات
+    # =========================
+    def total_payments(self):
+        return sum(
+            payment.amount
+            for payment in self.payments.all()
+        )
+
+    # =========================
+    # تحديث المبلغ المدفوع
+    # =========================
+    def update_amount_paid(self):
+        self.amount_paid = self.total_payments()
+        self.save(
+            update_fields=["amount_paid"]
+        )
+        return self.amount_paid
+
+    # =========================
+    # المبلغ المتبقي
+    # =========================
+    def remaining_amount(self):
+        return (
+            self.final_price()
+            - self.total_payments()
+        )
+
+    # =========================
+    # حالة الدفع
+    # =========================
+    def payment_status(self):
+
+        total = self.total_payments()
+        final = self.final_price()
+
+        if total <= 0:
+            return "غير مدفوع"
+
+        elif total < final:
+            return "دفع جزئي"
+
+        else:
+            return "مدفوع"
+
+    def str(self):
+        return self.full_name
+    
     def remaining_amount(self):
         return self.total_price - self.amount_paid
 
@@ -226,7 +297,38 @@ class Customer(models.Model):
         return self.full_name
     def str(self):
         return self.full_name
+class CustomerPayment(models.Model):
 
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name="payments",
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    payment_date = models.DateField(
+        auto_now_add=True
+    )
+
+    note = models.CharField(
+        max_length=255,
+        blank=True,
+        default="",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def str(self):
+        return (
+            f"{self.customer.full_name} - "
+            f"{self.amount} دج"
+        )
 class AgencySettings(models.Model):
 
     user = models.OneToOneField(

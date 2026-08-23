@@ -89,10 +89,13 @@ def delete_trip(request, trip_id):
     trip = Trip.objects.get(id=trip_id, user=request.user)
     trip.delete()
     return redirect("trips")
+
 @login_required
 @subscription_required
 def customers_list(request):
+
     if request.method == "POST":
+
         trip = Trip.objects.get(
             id=request.POST["trip"],
             user=request.user
@@ -102,12 +105,27 @@ def customers_list(request):
 
         if room_type == "ثنائية":
             total_price = trip.double_price
+
         elif room_type == "ثلاثية":
             total_price = trip.triple_price
+
         elif room_type == "رباعية":
             total_price = trip.quad_price
+
         else:
             total_price = trip.quint_price
+
+        # العمولة / التخفيض
+        commission = request.POST.get(
+            "commission",
+            0
+        ) or 0
+
+        # المبلغ المدفوع القديم
+        amount_paid = request.POST.get(
+            "amount_paid",
+            0
+        ) or 0
 
         Customer.objects.create(
             trip=trip,
@@ -116,8 +134,12 @@ def customers_list(request):
             phone=request.POST["phone"],
             room_type=room_type,
             total_price=total_price,
-            group_code=request.POST.get("group_code", ""),
-            amount_paid=request.POST["amount_paid"],
+            commission=commission,
+            group_code=request.POST.get(
+                "group_code",
+                ""
+            ),
+            amount_paid=amount_paid,
         )
 
         return redirect("customers")
@@ -133,7 +155,9 @@ def customers_list(request):
             full_name__icontains=search
         )
 
-    trips = Trip.objects.filter(user=request.user)
+    trips = Trip.objects.filter(
+        user=request.user
+    )
 
     return render(
         request,
@@ -144,7 +168,35 @@ def customers_list(request):
         },
     )
 
+@login_required
+@subscription_required
+def add_customer_payment(request, customer_id):
+    customer = Customer.objects.get(
+        id=customer_id,
+        user=request.user
+    )
 
+    if request.method == "POST":
+        amount = request.POST.get("amount", 0) or 0
+        note = request.POST.get("note", "")
+
+        Customer.Payment.objects.create(
+            customer=customer,
+            amount=amount,
+            note=note,
+        )
+
+        customer.update_amount_paid()
+
+        return redirect("customers")
+
+    return render(
+        request,
+        "customers/payment.html",
+        {
+            "customer": customer,
+        },
+    )
 @login_required
 @subscription_required
 def edit_customer(request, customer_id):
@@ -156,24 +208,55 @@ def edit_customer(request, customer_id):
 
     if request.method == "POST":
 
-        trip = Trip.objects.get(id=request.POST["trip"])
+        trip = Trip.objects.get(
+            id=request.POST["trip"],
+            user=request.user
+        )
+
         room_type = request.POST["room_type"]
 
         if room_type == "ثنائية":
             total_price = trip.double_price
+
         elif room_type == "ثلاثية":
             total_price = trip.triple_price
+
         elif room_type == "رباعية":
             total_price = trip.quad_price
+
         else:
             total_price = trip.quint_price
 
-        customer.full_name = request.POST["full_name"]
-        customer.phone = request.POST["phone"]
+        customer.full_name = request.POST[
+            "full_name"
+        ]
+
+        customer.phone = request.POST[
+            "phone"
+        ]
+
         customer.trip = trip
+
         customer.room_type = room_type
+
         customer.total_price = total_price
-        customer.amount_paid = request.POST["amount_paid"]
+
+        # العمولة / التخفيض
+        customer.commission = request.POST.get(
+            "commission",
+            customer.commission
+        ) or 0
+
+        # نحافظ على المبلغ المدفوع الحالي
+        customer.amount_paid = request.POST.get(
+            "amount_paid",
+            customer.amount_paid
+        ) or 0
+
+        customer.group_code = request.POST.get(
+            "group_code",
+            customer.group_code
+        )
 
         customer.save()
 
@@ -184,7 +267,9 @@ def edit_customer(request, customer_id):
         "customers/edit.html",
         {
             "customer": customer,
-            "trips": Trip.objects.all(),
+            "trips": Trip.objects.filter(
+                user=request.user
+            ),
         },
     )
 
@@ -201,7 +286,6 @@ def delete_customer(request, customer_id):
     customer.delete()
 
     return redirect("customers")
-
 
 from django.contrib.auth.decorators import login_required
 from accounts.decorators import subscription_required
