@@ -198,11 +198,9 @@ def customers_list(request):
         },
     )
 
-
 # =========================================================
 # إضافة دفعة
 # =========================================================
-
 @login_required
 @subscription_required
 def add_customer_payment(request, customer_id):
@@ -227,7 +225,6 @@ def add_customer_payment(request, customer_id):
         # =========================================
         # منع دفعة أكبر من المبلغ المتبقي
         # =========================================
-
         from decimal import Decimal
 
         try:
@@ -258,9 +255,8 @@ def add_customer_payment(request, customer_id):
             )
 
         # =========================================
-        # إنشاء الدفعة
+        # إنشاء الدفعة الجديدة
         # =========================================
-
         CustomerPayment.objects.create(
             customer=customer,
             amount=amount,
@@ -268,18 +264,19 @@ def add_customer_payment(request, customer_id):
         )
 
         # =========================================
-        # تحديث مجموع المبالغ المدفوعة
+        # إضافة الدفعة الجديدة إلى المبلغ المدفوع
         # =========================================
+        customer.amount_paid += amount
 
-        customer.update_amount_paid()
+        customer.save(
+            update_fields=["amount_paid"]
+        )
 
         return redirect("customers")
-
 
     # =========================================
     # عرض صفحة إضافة الدفعة
     # =========================================
-
     return render(
         request,
         "customers/payment.html",

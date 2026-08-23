@@ -280,68 +280,55 @@ class Customer(models.Model):
     # CustomerPayment نستعمل amount_paid
     # القديم حتى لا تضيع البيانات.
     # =========================
+# =========================
+# مجموع الدفعات
+# =========================
+def total_payments(self):
+    return self.amount_paid
 
-    def total_payments(self):
 
-        payments_total = sum(
-            payment.amount
-            for payment in self.payments.all()
-        )
+# =========================
+# تحديث amount_paid
+# =========================
+def update_amount_paid(self):
+    self.amount_paid = self.total_payments()
+    self.save(
+        update_fields=["amount_paid"]
+    )
+    return self.amount_paid
 
-        if payments_total > 0:
-            return payments_total
 
-        return self.amount_paid
+# =========================
+# المبلغ المتبقي
+# =========================
+def remaining_amount(self):
+    remaining = (
+        self.final_price()
+        - self.total_payments()
+    )
 
-    # =========================
-    # تحديث amount_paid
-    # =========================
+    # ما نخليش المتبقي يولي بالسالب
+    if remaining < 0:
+        return 0
 
-    def update_amount_paid(self):
+    return remaining
 
-        self.amount_paid = self.total_payments()
 
-        self.save(
-            update_fields=["amount_paid"]
-        )
+# =========================
+# حالة الدفع
+# =========================
+def payment_status(self):
+    total = self.total_payments()
+    final = self.final_price()
 
-        return self.amount_paid
+    if total <= 0:
+        return "غير مدفوع"
 
-    # =========================
-    # المبلغ المتبقي
-    # =========================
+    elif total < final:
+        return "دفع جزئي"
 
-    def remaining_amount(self):
-
-        remaining = (
-            self.final_price()
-            - self.total_payments()
-        )
-
-        # ما نخليش المتبقي يولي بالسالب
-        if remaining < 0:
-            return 0
-
-        return remaining
-
-    # =========================
-    # حالة الدفع
-    # =========================
-
-    def payment_status(self):
-
-        total = self.total_payments()
-        final = self.final_price()
-
-        if total <= 0:
-            return "غير مدفوع"
-
-        elif total < final:
-            return "دفع جزئي"
-
-        else:
-            return "مدفوع"
-
+    else:
+        return "مدفوع"
     # =========================
     # اسم الزبون
     # =========================
