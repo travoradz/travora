@@ -247,330 +247,430 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
 </div>
 <form method="POST">
+
     {% csrf_token %}
 
     <div class="grid">
 
+        <!-- اسم الزبون -->
         <div>
             <label>اسم الزبون</label>
+
             <input
                 type="text"
                 name="full_name"
                 placeholder="مثال: أحمد بن علي"
-                required>
+                required
+            >
         </div>
 
+
+        <!-- رقم الهاتف -->
         <div>
             <label>رقم الهاتف</label>
+
             <input
                 type="text"
                 name="phone"
                 placeholder="0550xxxxxx"
-                required>
+                required
+            >
         </div>
 
+
+        <!-- الرحلة -->
         <div>
-            <label>نوع الغرفة</label>
-            <select name="room_type" required>
-                <option value="ثنائية">ثنائية</option>
-                <option value="ثلاثية">ثلاثية</option>
-                <option value="رباعية">رباعية</option>
-                <option value="خماسية">خماسية</option>
+            <label>✈️ الرحلة</label>
+
+            <select name="trip" required>
+
+                {% for trip in trips %}
+
+                    <option value="{{ trip.id }}">
+                        {{ trip.name }}
+                    </option>
+
+                {% endfor %}
+
             </select>
         </div>
 
+
+        <!-- نوع الغرفة -->
+        <div>
+            <label>🛏 نوع الغرفة</label>
+
+            <select name="room_type" required>
+
+                <option value="ثنائية">
+                    🛏 ثنائية
+                </option>
+
+                <option value="ثلاثية">
+                    🛏 ثلاثية
+                </option>
+
+                <option value="رباعية">
+                    🛏 رباعية
+                </option>
+
+                <option value="خماسية">
+                    🛏 خماسية
+                </option>
+
+            </select>
+        </div>
+
+
+        <!-- رقم المجموعة -->
         <div>
             <label>👥 رقم المجموعة</label>
+
             <input
                 type="text"
                 name="group_code"
-                placeholder="مثال: A1 أو FAMILY1">
+                placeholder="مثال: A1 أو FAMILY1"
+            >
         </div>
-<label>الرحلة</label>
 
-<select name="trip">
 
-{% for trip in trips %}
+        <!-- العمولة -->
+        <div>
 
-<option value="{{ trip.id }}">
+            <label>💰 العمولة / التخفيض</label>
 
-{{ trip.name }}
+            <input
+                type="number"
+                name="commission"
+                placeholder="مثال: 10000"
+                min="0"
+                step="0.01"
+                value="0"
+            >
 
-</option>
+            <small style="
+                display:block;
+                margin-top:5px;
+                color:#777;
+            ">
+                المبلغ الذي يتم خصمه من سعر الزبون
+            </small>
 
-{% endfor %}
+        </div>
 
-</select>
 
-</div>
+        <!-- المبلغ المدفوع -->
+        <div>
 
-<div>
+            <label>💵 المبلغ المدفوع</label>
 
-<label>نوع الغرفة</label>
+            <input
+                type="number"
+                name="amount_paid"
+                placeholder="مثال: 50000"
+                min="0"
+                step="0.01"
+                value="0"
+                required
+            >
 
-<select name="room_type">
+        </div>
 
-<option value="ثنائية">🛏️ ثنائية</option>
 
-<option value="ثلاثية">🛏️ ثلاثية</option>
+        <!-- زر الإضافة -->
+        <div>
 
-<option value="رباعية">🛏️ رباعية</option>
+            <label>&nbsp;</label>
 
-<option value="خماسية">🛏️ خماسية</option>
+            <button type="submit">
+                ➕ إضافة الزبون
+            </button>
 
-</select>
+        </div>
 
-</div>
-
-<div>
-
-<label>المبلغ المدفوع</label>
-
-<input
-type="number"
-name="amount_paid"
-placeholder="مثال: 50000"
-required>
-
-</div>
-
-<div>
-
-<label>&nbsp;</label>
-
-<button type="submit">
-
-➕ إضافة الزبون
-
-</button>
-
-</div>
-
-</div>
+    </div>
 
 </form>
 
+
 </div>
+
+
+<!-- =====================================================
+     جدول الزبائن
+===================================================== -->
 
 <table id="customersTable">
 
-<tr>
+    <tr>
 
-<th>الاسم</th>
+        <th>الاسم</th>
 
-<th>الهاتف</th>
+        <th>الهاتف</th>
 
-<th>الرحلة</th>
+        <th>الرحلة</th>
 
-<th>الغرفة</th>
+        <th>الغرفة</th>
 
-<th>الإجمالي</th>
+        <th>السعر الأصلي</th>
 
-<th>المدفوع</th>
+        <th>العمولة</th>
 
-<th>المتبقي</th>
+        <th>السعر النهائي</th>
 
-<th>الحالة</th>
+        <th>المدفوع</th>
 
-<th>الإجراءات</th>
+        <th>المتبقي</th>
 
-</tr>
-{% for customer in customers %}
+        <th>الحالة</th>
 
-<tr>
+        <th>الإجراءات</th>
 
-    <!-- اسم الزبون -->
-    <td>
-        {{ customer.full_name }}
-    </td>
+    </tr>
 
-    <!-- الهاتف -->
-    <td>
-        {{ customer.phone }}
-    </td>
 
-    <!-- الرحلة -->
-    <td>
-        {{ customer.trip.name }}
-    </td>
+    {% for customer in customers %}
 
-    <!-- نوع الغرفة -->
-    <td>
-        {{ customer.room_type }}
-    </td>
+    <tr>
 
-    <!-- السعر الأصلي -->
-    <td>
-        {{ customer.total_price }} دج
-    </td>
+        <!-- الاسم -->
+        <td>
+            {{ customer.full_name }}
+        </td>
 
-    <!-- العمولة / التخفيض -->
-    <td>
-        {% if customer.commission > 0 %}
+
+        <!-- الهاتف -->
+        <td>
+            {{ customer.phone }}
+        </td>
+
+
+        <!-- الرحلة -->
+        <td>
+            {{ customer.trip.name }}
+        </td>
+
+
+        <!-- الغرفة -->
+        <td>
+            {{ customer.room_type }}
+        </td>
+
+
+        <!-- السعر الأصلي -->
+        <td>
+
+            <strong>
+                {{ customer.total_price }} دج
+            </strong>
+
+        </td>
+
+
+        <!-- العمولة -->
+        <td>
+
+            {% if customer.commission > 0 %}
             <span style="
-                color:#16a34a;
-                font-weight:bold;
-            ">
-                - {{ customer.commission }} دج
-            </span>
-        {% else %}
-            <span style="color:#888;">
-                0 دج
-            </span>
-        {% endif %}
-    </td>
+                    color:#dc2626;
+                    font-weight:bold;
+                ">
+                    - {{ customer.commission }} دج
+                </span>
 
-    <!-- السعر النهائي بعد العمولة -->
-    <td>
-        <strong>
-            {{ customer.final_price }} دج
-        </strong>
-    </td>
+            {% else %}
 
-    <!-- مجموع جميع الدفعات -->
-    <td>
-        <span style="
-            color:#16a34a;
-            font-weight:bold;
-        ">
-            {{ customer.total_payments }} دج
-        </span>
-    </td>
+                <span style="
+                    color:#888;
+                ">
+                    0 دج
+                </span>
 
-    <!-- المبلغ المتبقي -->
-    <td>
-        <strong style="
-            color:#dc2626;
-        ">
-            {{ customer.remaining_amount }} دج
-        </strong>
-    </td>
+            {% endif %}
 
-    <!-- حالة الدفع -->
-    <td>
+        </td>
 
-        {% if customer.total_payments == 0 %}
 
-            <span style="
-                background:#fee2e2;
-                color:#dc2626;
-                padding:6px 12px;
-                border-radius:20px;
-                font-weight:bold;
-            ">
-                🔴 غير مدفوع
-            </span>
+        <!-- السعر النهائي -->
+        <td>
 
-        {% elif customer.remaining_amount <= 0 %}
-
-            <span style="
-                background:#dcfce7;
-                color:#16a34a;
-                padding:6px 12px;
-                border-radius:20px;
-                font-weight:bold;
-            ">
-                🟢 مدفوع
-            </span>
-
-        {% else %}
-
-            <span style="
-                background:#fef3c7;
-                color:#d97706;
-                padding:6px 12px;
-                border-radius:20px;
-                font-weight:bold;
-            ">
-                🟡 دفع جزئي
-            </span>
-
-        {% endif %}
-
-    </td>
-
-    <!-- الأزرار -->
-    <td style="white-space:nowrap;">
-
-        <!-- تعديل -->
-        <a
-            class="edit"
-            href="{% url 'edit_customer' customer.id %}"
-        >
-            ✏️ تعديل
-        </a>
-
-        |
-
-        <!-- حذف -->
-        <a
-            class="delete"
-            href="{% url 'delete_customer' customer.id %}"
-            onclick="return confirm('هل تريد حذف هذا الزبون؟');"
-        >
-            🗑 حذف
-        </a>
-
-        |
-
-        <!-- واتساب -->
-        <a
-            style="
-                color:#16a34a;
-                font-weight:bold;
-                text-decoration:none;
-            "
-            target="_blank"
-            href="https://wa.me/213{{ customer.phone|slice:'1:' }}?text=🌹%20السلام%20عليكم%20{{ customer.full_name }}%0A%0Aيسعدنا%20تذكيركم%20بتفاصيل%20رحلتكم%20مع%20*{{ settings.agency_name }}*%20✈️%0A%0A📍%20الرحلة:%20{{ customer.trip.name }}%0A🛫%20نوع%20الرحلة:%20{{ customer.trip.get_trip_type_display }}%0A👨‍✈️%20المرشد:%20{{ customer.trip.guide_name }}%0A🏨%20الفندق:%20{{ customer.trip.hotel }}%0A📅%20الانطلاق:%20{{ customer.trip.departure_date|date:'d/m/Y' }}%0A📅%20العودة:%20{{ customer.trip.return_date|date:'d/m/Y' }}%0A🛏%20نوع%20الغرفة:%20{{ customer.room_type }}%0A💰%20المبلغ%20المتبقي:%20{{ customer.remaining_amount }}%20دج%0A%0A📞%20لأي%20استفسار%20نحن%20في%20خدمتكم.%0Aنسأل%20الله%20لكم%20عمرة%20مباركة%20وتقبلًا%20صالحًا%20🤲"
-        >
-            💬 واتساب
-        </a>
-
-        |
-
-        <!-- إضافة دفعة -->
-        <a
-            href="{% url 'add_customer_payment' customer.id %}"
-            style="
-                color:#7c3aed;
-                font-weight:bold;
-                text-decoration:none;
-            "
-        >
-            💰 إضافة دفعة
-        </a>
-
-        |
-        <!-- طباعة -->
-        <a
-            href="{% url 'print_customer' customer.id %}"
-            target="_blank"
-            style="
+            <strong style="
                 color:#0b3d91;
+            ">
+                {{ customer.final_price }} دج
+            </strong>
+
+        </td>
+
+
+        <!-- المدفوع -->
+        <td>
+
+            <span style="
+                color:#16a34a;
                 font-weight:bold;
-                text-decoration:none;
-            "
-        >
-            🖨 طباعة
-        </a>
+            ">
+                {{ customer.total_payments }} دج
+            </span>
 
-    </td>
+        </td>
 
-</tr>
 
-{% empty %}
+        <!-- المتبقي -->
+        <td>
 
-<tr>
-    <td colspan="12">
-        لا يوجد زبائن حتى الآن.
-    </td>
-</tr>
+            <strong style="
+                color:#dc2626;
+            ">
+                {{ customer.remaining_amount }} دج
+            </strong>
 
-{% endfor %}
+        </td>
+
+
+        <!-- حالة الدفع -->
+        <td>
+
+            {% if customer.total_payments == 0 %}
+
+                <span style="
+                    background:#fee2e2;
+                    color:#dc2626;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                ">
+                    🔴 غير مدفوع
+                </span>
+
+
+            {% elif customer.remaining_amount <= 0 %}
+
+                <span style="
+                    background:#dcfce7;
+                    color:#16a34a;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                ">
+                    🟢 مدفوع
+                </span>
+
+
+            {% else %}
+
+                <span style="
+                    background:#fef3c7;
+                    color:#d97706;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                ">
+                    🟡 دفع جزئي
+                </span>
+
+            {% endif %}
+
+        </td>
+
+
+        <!-- الإجراءات -->
+        <td style="
+            white-space:nowrap;
+        ">
+
+
+            <!-- تعديل -->
+            <a
+                class="edit"
+                href="{% url 'edit_customer' customer.id %}"
+            >
+                ✏️ تعديل
+            </a>
+
+            |
+
+
+            <!-- حذف -->
+            <a
+                class="delete"
+                href="{% url 'delete_customer' customer.id %}"
+                onclick="return confirm('هل تريد حذف هذا الزبون؟');"
+            >
+                🗑 حذف
+            </a>
+
+            |
+
+
+            <!-- واتساب -->
+            <a
+                style="
+                    color:#16a34a;
+                    font-weight:bold;
+                    text-decoration:none;
+                "
+                target="_blank"
+                href="https://wa.me/213{{ customer.phone|slice:'1:' }}?text=🌹%20السلام%20عليكم%20{{ customer.full_name }}%0A%0Aيسعدنا%20تذكيركم%20بتفاصيل%20رحلتكم%20مع%20*{{ settings.agency_name }}*%20✈️%0A%0A📍%20الرحلة:%20{{ customer.trip.name }}%0A🛫%20نوع%20الرحلة:%20{{ customer.trip.get_trip_type_display }}%0A👨‍✈️%20المرشد:%20{{ customer.trip.guide_name }}%0A🏨%20الفندق:%20{{ customer.trip.hotel }}%0A📅%20الانطلاق:%20{{ customer.trip.departure_date|date:'d/m/Y' }}%0A📅%20العودة:%20{{ customer.trip.return_date|date:'d/m/Y' }}%0A🛏%20نوع%20الغرفة:%20{{ customer.room_type }}%0A💰%20المبلغ%20المتبقي:%20{{ customer.remaining_amount }}%20دج%0A%0A📞%20لأي%20استفسار%20نحن%20في%20خدمتكم.%0Aنسأل%20الله%20لكم%20عمرة%20مباركة%20وتقبلًا%20صالحًا%20🤲"
+            >
+                💬 واتساب
+            </a>
+
+            |
+            <!-- إضافة دفعة -->
+            <a
+                href="{% url 'add_customer_payment' customer.id %}"
+                style="
+                    color:#7c3aed;
+                    font-weight:bold;
+                    text-decoration:none;
+                "
+            >
+                💰 إضافة دفعة
+            </a>
+
+            |
+
+
+            <!-- طباعة -->
+            <a
+                href="{% url 'print_customer' customer.id %}"
+                target="_blank"
+                style="
+                    color:#0b3d91;
+                    font-weight:bold;
+                    text-decoration:none;
+                "
+            >
+                🖨 طباعة
+            </a>
+
+
+        </td>
+
+    </tr>
+
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="11">
+
+            لا يوجد زبائن حتى الآن.
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
 </table>
 
 </div>
-
 <script>
 
 function searchCustomer(){

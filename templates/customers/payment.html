@@ -12,6 +12,7 @@
     direction:rtl;
 ">
 
+    <!-- العنوان -->
     <h2 style="
         text-align:center;
         color:#0b3d91;
@@ -19,6 +20,7 @@
     ">
         💰 إضافة دفعة
     </h2>
+
 
     <!-- معلومات الزبون -->
     <div style="
@@ -66,17 +68,19 @@
     </div>
 
 
-    <!-- نموذج الدفعة -->
+    <!-- إضافة دفعة جديدة -->
     <form method="POST">
 
         {% csrf_token %}
 
+
+        <!-- مبلغ الدفعة -->
         <label style="
             display:block;
             margin-bottom:8px;
             font-weight:bold;
         ">
-            💰 مبلغ الدفعة
+            💰 مبلغ الدفعة الجديدة
         </label>
 
         <input
@@ -99,6 +103,7 @@
         >
 
 
+        <!-- ملاحظة -->
         <label style="
             display:block;
             margin-bottom:8px;
@@ -110,7 +115,7 @@
         <textarea
             name="note"
             rows="3"
-            placeholder="مثال: الدفعة الأولى"
+            placeholder="مثال: دفع نقداً / الدفعة الثانية..."
             style="
                 width:100%;
                 padding:14px;
@@ -124,6 +129,7 @@
         ></textarea>
 
 
+        <!-- زر التسجيل -->
         <button
             type="submit"
             style="
@@ -142,6 +148,20 @@
         </button>
 
     </form>
+
+
+    <!-- تنبيه -->
+    <div style="
+        margin-top:20px;
+        padding:12px;
+        background:#f5f3ff;
+        color:#6d28d9;
+        border-radius:10px;
+        text-align:center;
+        font-size:14px;
+    ">
+        💡 يمكنك إضافة أي عدد من الدفعات للزبون.
+    </div>
 
 
     <!-- الرجوع -->

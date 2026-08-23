@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from .models import Trip, Customer, AgencySettings
+from .models import Trip, Customer, AgencySettings ,CustomerPayment
 from accounts.decorators import subscription_required
 from django.utils.formats import date_format
 
@@ -89,7 +89,6 @@ def delete_trip(request, trip_id):
     trip = Trip.objects.get(id=trip_id, user=request.user)
     trip.delete()
     return redirect("trips")
-
 @login_required
 @subscription_required
 def customers_list(request):
@@ -103,6 +102,10 @@ def customers_list(request):
 
         room_type = request.POST["room_type"]
 
+        # =========================
+        # تحديد سعر الرحلة حسب الغرفة
+        # =========================
+
         if room_type == "ثنائية":
             total_price = trip.double_price
 
@@ -115,34 +118,57 @@ def customers_list(request):
         else:
             total_price = trip.quint_price
 
+        # =========================
         # العمولة / التخفيض
+        # =========================
+
         commission = request.POST.get(
             "commission",
             0
         ) or 0
 
-        # المبلغ المدفوع القديم
+        # =========================
+        # المبلغ المدفوع الحالي
+        # =========================
+
         amount_paid = request.POST.get(
             "amount_paid",
             0
         ) or 0
 
+        # =========================
+        # إنشاء الزبون
+        # =========================
+
         Customer.objects.create(
+
             trip=trip,
+
             user=request.user,
+
             full_name=request.POST["full_name"],
+
             phone=request.POST["phone"],
+
             room_type=room_type,
+
             total_price=total_price,
+
             commission=commission,
+
             group_code=request.POST.get(
                 "group_code",
                 ""
             ),
+
             amount_paid=amount_paid,
         )
 
         return redirect("customers")
+
+    # =========================
+    # البحث
+    # =========================
 
     search = request.GET.get("q")
 
@@ -154,6 +180,10 @@ def customers_list(request):
         customers = customers.filter(
             full_name__icontains=search
         )
+
+    # =========================
+    # الرحلات الخاصة بالوكالة
+    # =========================
 
     trips = Trip.objects.filter(
         user=request.user
@@ -168,27 +198,87 @@ def customers_list(request):
         },
     )
 
+
+# =========================================================
+# إضافة دفعة
+# =========================================================
+
 @login_required
 @subscription_required
 def add_customer_payment(request, customer_id):
+
     customer = Customer.objects.get(
         id=customer_id,
         user=request.user
     )
 
     if request.method == "POST":
-        amount = request.POST.get("amount", 0) or 0
-        note = request.POST.get("note", "")
 
-        Customer.Payment.objects.create(
+        amount = request.POST.get(
+            "amount",
+            0
+        ) or 0
+
+        note = request.POST.get(
+            "note",
+            ""
+        )
+
+        # =========================================
+        # منع دفعة أكبر من المبلغ المتبقي
+        # =========================================
+
+        from decimal import Decimal
+
+        try:
+            amount = Decimal(str(amount))
+        except:
+            amount = Decimal("0")
+
+        remaining = customer.remaining_amount()
+
+        if amount <= 0:
+            return render(
+                request,
+                "customers/payment.html",
+                {
+                    "customer": customer,
+                    "error": "يرجى إدخال مبلغ صحيح."
+                }
+            )
+
+        if amount > remaining:
+            return render(
+                request,
+                "customers/payment.html",
+                {
+                    "customer": customer,
+                    "error": "مبلغ الدفعة أكبر من المبلغ المتبقي."
+                }
+            )
+
+        # =========================================
+        # إنشاء الدفعة
+        # =========================================
+
+        CustomerPayment.objects.create(
             customer=customer,
             amount=amount,
             note=note,
         )
 
+        # =========================================
+        # تحديث مجموع المبالغ المدفوعة
+        # =========================================
+
         customer.update_amount_paid()
 
         return redirect("customers")
+
+
+    # =========================================
+    # عرض صفحة إضافة الدفعة
+    # =========================================
 
     return render(
         request,
@@ -197,6 +287,10 @@ def add_customer_payment(request, customer_id):
             "customer": customer,
         },
     )
+# =========================================================
+# تعديل الزبون
+# =========================================================
+
 @login_required
 @subscription_required
 def edit_customer(request, customer_id):
@@ -215,6 +309,9 @@ def edit_customer(request, customer_id):
 
         room_type = request.POST["room_type"]
 
+        # =========================
+        # تحديد السعر حسب الغرفة
+        # =========================
         if room_type == "ثنائية":
             total_price = trip.double_price
 
@@ -226,6 +323,10 @@ def edit_customer(request, customer_id):
 
         else:
             total_price = trip.quint_price
+
+        # =========================
+        # تحديث بيانات الزبون
+        # =========================
 
         customer.full_name = request.POST[
             "full_name"
@@ -241,17 +342,27 @@ def edit_customer(request, customer_id):
 
         customer.total_price = total_price
 
-        # العمولة / التخفيض
+        # =========================
+        # العمولة
+        # =========================
+
         customer.commission = request.POST.get(
             "commission",
             customer.commission
         ) or 0
 
-        # نحافظ على المبلغ المدفوع الحالي
+        # =========================
+        # المبلغ المدفوع الحالي
+        # =========================
+
         customer.amount_paid = request.POST.get(
             "amount_paid",
             customer.amount_paid
         ) or 0
+
+        # =========================
+        # المجموعة
+        # =========================
 
         customer.group_code = request.POST.get(
             "group_code",
@@ -267,12 +378,17 @@ def edit_customer(request, customer_id):
         "customers/edit.html",
         {
             "customer": customer,
+
             "trips": Trip.objects.filter(
                 user=request.user
             ),
         },
     )
 
+
+# =========================================================
+# حذف الزبون
+# =========================================================
 
 @login_required
 @subscription_required

@@ -173,6 +173,10 @@ class Customer(models.Model):
         ("خماسية", "خماسية"),
     ]
 
+    # =========================
+    # الرحلة والوكالة
+    # =========================
+
     trip = models.ForeignKey(
         Trip,
         on_delete=models.CASCADE,
@@ -182,6 +186,10 @@ class Customer(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+
+    # =========================
+    # معلومات الزبون
+    # =========================
 
     full_name = models.CharField(
         max_length=200
@@ -203,30 +211,49 @@ class Customer(models.Model):
         default="",
     )
 
-    # السعر الأصلي للزبون
+    # =========================
+    # السعر الأصلي
+    # =========================
+
     total_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
     )
 
+    # =========================
     # العمولة / التخفيض
+    # =========================
+
     commission = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0,
     )
 
-    # المبلغ المدفوع الإجمالي
-    # نبقيه حتى لا نكسر النظام الحالي
+    # =========================
+    # المبلغ المدفوع القديم
+    #
+    # نخليه موجود باش ما نكسروش
+    # البيانات القديمة.
+    # =========================
+
     amount_paid = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0,
     )
 
+    # =========================
+    # تاريخ الإضافة
+    # =========================
+
     created_at = models.DateField(
         auto_now_add=True
     )
+
+    # =========================
+    # الغرفة
+    # =========================
 
     room = models.ForeignKey(
         Room,
@@ -237,42 +264,70 @@ class Customer(models.Model):
     )
 
     # =========================
-    # السعر بعد العمولة
+    # السعر النهائي بعد العمولة
     # =========================
+
     def final_price(self):
         return self.total_price - self.commission
 
     # =========================
-    # مجموع جميع الدفعات
+    # مجموع الدفعات
+    #
+    # إذا كانت هناك دفعات مسجلة
+    # نستعملها.
+    #
+    # وإذا كان الزبون قديمًا وما عندوش
+    # CustomerPayment نستعمل amount_paid
+    # القديم حتى لا تضيع البيانات.
     # =========================
+
     def total_payments(self):
-        return sum(
+
+        payments_total = sum(
             payment.amount
             for payment in self.payments.all()
         )
 
+        if payments_total > 0:
+            return payments_total
+
+        return self.amount_paid
+
     # =========================
-    # تحديث المبلغ المدفوع
+    # تحديث amount_paid
     # =========================
+
     def update_amount_paid(self):
+
         self.amount_paid = self.total_payments()
+
         self.save(
             update_fields=["amount_paid"]
         )
+
         return self.amount_paid
 
     # =========================
     # المبلغ المتبقي
     # =========================
+
     def remaining_amount(self):
-        return (
+
+        remaining = (
             self.final_price()
             - self.total_payments()
         )
 
+        # ما نخليش المتبقي يولي بالسالب
+        if remaining < 0:
+            return 0
+
+        return remaining
+
     # =========================
     # حالة الدفع
     # =========================
+
     def payment_status(self):
 
         total = self.total_payments()
@@ -287,16 +342,18 @@ class Customer(models.Model):
         else:
             return "مدفوع"
 
-    def str(self):
-        return self.full_name
-    
-    def remaining_amount(self):
-        return self.total_price - self.amount_paid
+    # =========================
+    # اسم الزبون
+    # =========================
 
     def str(self):
         return self.full_name
-    def str(self):
-        return self.full_name
+
+
+# =========================================================
+# دفعات الزبون
+# =========================================================
+
 class CustomerPayment(models.Model):
 
     customer = models.ForeignKey(
@@ -309,7 +366,6 @@ class CustomerPayment(models.Model):
         max_digits=10,
         decimal_places=2,
     )
-
     payment_date = models.DateField(
         auto_now_add=True
     )
@@ -325,6 +381,7 @@ class CustomerPayment(models.Model):
     )
 
     def str(self):
+
         return (
             f"{self.customer.full_name} - "
             f"{self.amount} دج"
