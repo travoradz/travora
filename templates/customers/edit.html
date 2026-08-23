@@ -2,160 +2,249 @@
 <html lang="ar" dir="rtl">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الزبون | Travora</title>
 
-<meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            font-family: Tahoma, sans-serif;
+            background: #f5f7fb;
+        }
 
-<title>تعديل الزبون | Travora</title>
+        .container {
+            width: 700px;
+            max-width: calc(100% - 30px);
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, .1);
+        }
 
-<style>
+        h2 {
+            text-align: center;
+            color: #0b3d91;
+            margin-bottom: 25px;
+        }
 
-body{
-    margin:0;
-    font-family:Tahoma,sans-serif;
-    background:#f5f7fb;
-}
+        label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-.container{
-    width:700px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    box-shadow:0 0 15px rgba(0,0,0,.1);
-}
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 15px;
+        }
 
-h2{
-    text-align:center;
-    color:#0b3d91;
-    margin-bottom:25px;
-}
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0b3d91;
+        }
 
-label{
-    display:block;
-    margin-top:12px;
-    margin-bottom:5px;
-    font-weight:bold;
-}
+        .commission-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
 
-input,
-select{
-    width:100%;
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    margin-bottom:10px;
-}
+        .commission-label {
+            color: #7c3aed;
+        }
 
-button{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:8px;
-    background:#0b3d91;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
+        .commission-help {
+            display: block;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            color: #64748b;
+            font-size: 13px;
+        }
 
-button:hover{
-    background:#082b66;
-}
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #0b3d91;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
 
-a{
-    display:block;
-    text-align:center;
-    margin-top:20px;
-    text-decoration:none;
-    color:#0b3d91;
-    font-weight:bold;
-}
+        button:hover {
+            background: #082b66;
+        }
 
-</style>
-
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #0b3d91;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>تعديل الزبون</h2>
+    <h2>تعديل الزبون</h2>
 
-<form method="POST">
+    <form method="POST">
 
-{% csrf_token %}
+        {% csrf_token %}
 
-<label>اسم الزبون</label>
+        <!-- اسم الزبون -->
+        <label>اسم الزبون</label>
+        <input
+            type="text"
+            name="full_name"
+            value="{{ customer.full_name }}"
+            required
+        >
 
-<input
-type="text"
-name="full_name"
-value="{{ customer.full_name }}"
-required>
+        <!-- رقم الهاتف -->
+        <label>رقم الهاتف</label>
+        <input
+            type="text"
+            name="phone"
+            value="{{ customer.phone }}"
+            required
+        >
 
-<label>رقم الهاتف</label>
+        <!-- الرحلة -->
+        <label>الرحلة</label>
+        <select name="trip">
 
-<input
-type="text"
-name="phone"
-value="{{ customer.phone }}"
-required>
+            {% for trip in trips %}
 
-<label>الرحلة</label>
+                <option
+                    value="{{ trip.id }}"
+                    {% if trip.id == customer.trip.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ trip.name }}
+                </option>
 
-<select name="trip">
+            {% endfor %}
 
-{% for trip in trips %}
+        </select>
 
-<option value="{{ trip.id }}"
-{% if trip.id == customer.trip.id %}selected{% endif %}>
-{{ trip.name }}
-</option>
+        <!-- نوع الغرفة -->
+        <label>نوع الغرفة</label>
 
-{% endfor %}
+        <select name="room_type">
 
-</select>
-<label>نوع الغرفة</label>
+            <option
+                value="ثنائية"
+                {% if customer.room_type == "ثنائية" %}
+                    selected
+                {% endif %}
+            >
+                ثنائية
+            </option>
 
-<select name="room_type">
+            <option
+                value="ثلاثية"
+                {% if customer.room_type == "ثلاثية" %}
+                    selected
+                {% endif %}
+            >
+                ثلاثية
+            </option>
 
-<option value="ثنائية" {% if customer.room_type == "ثنائية" %}selected{% endif %}>
-ثنائية
-</option>
+            <option
+                value="رباعية"
+                {% if customer.room_type == "رباعية" %}
+                    selected
+                {% endif %}
+            >
+                رباعية
+            </option>
+            <option
+                value="خماسية"
+                {% if customer.room_type == "خماسية" %}
+                    selected
+                {% endif %}
+            >
+                خماسية
+            </option>
 
-<option value="ثلاثية" {% if customer.room_type == "ثلاثية" %}selected{% endif %}>
-ثلاثية
-</option>
+        </select>
 
-<option value="رباعية" {% if customer.room_type == "رباعية" %}selected{% endif %}>
-رباعية
-</option>
+        <!-- العمولة -->
+        <div class="commission-box">
 
-<option value="خماسية" {% if customer.room_type == "خماسية" %}selected{% endif %}>
-خماسية
-</option>
+            <label class="commission-label">
+                💰 العمولة / التخفيض
+            </label>
 
-</select>
+            <span class="commission-help">
+                أدخلي قيمة العمولة بالدينار، أو اتركيها 0 إذا لم توجد.
+            </span>
 
-<label>المبلغ المدفوع</label>
+            <input
+                type="number"
+                name="commission"
+                value="{{ customer.commission }}"
+                min="0"
+                step="0.01"
+                placeholder="مثال: 5000"
+            >
 
-<input
-type="number"
-name="amount_paid"
-value="{{ customer.amount_paid }}"
-required>
+        </div>
 
-<button type="submit">
-💾 حفظ التعديلات
-</button>
+        <!-- المبلغ المدفوع -->
+        <label>المبلغ المدفوع</label>
 
-</form>
+        <input
+            type="number"
+            name="amount_paid"
+            value="{{ customer.amount_paid }}"
+            min="0"
+            step="0.01"
+            required
+        >
 
-<a href="{% url 'customers' %}">
-⬅️ الرجوع إلى صفحة الزبائن
-</a>
+        <!-- المجموعة -->
+        <label>رمز المجموعة</label>
+
+        <input
+            type="text"
+            name="group_code"
+            value="{{ customer.group_code }}"
+            placeholder="اختياري"
+        >
+
+        <!-- حفظ -->
+        <button type="submit">
+            💾 حفظ التعديلات
+        </button>
+
+    </form>
+
+    <a href="{% url 'customers' %}">
+        ⬅️ الرجوع إلى صفحة الزبائن
+    </a>
 
 </div>
 
 </body>
-
 </html>

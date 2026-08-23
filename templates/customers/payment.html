@@ -1,34 +1,168 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <title>إضافة دفعة | Travora</title>
 
-<div style="
-    max-width:600px;
-    margin:40px auto;
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    direction:rtl;
-">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            color: #1e293b;
+        }
+
+        .payment-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .title {
+            text-align: center;
+            color: #0b3d91;
+            margin-bottom: 25px;
+        }
+
+        .customer-info {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .customer-info p {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .payments-total {
+            color: #16a34a;
+        }
+
+        .remaining {
+            color: #dc2626;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #7c3aed;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: #7c3aed;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            opacity: 0.9;
+        }
+
+        .notice {
+            margin-top: 20px;
+            padding: 12px;
+            background: #f5f3ff;
+            color: #6d28d9;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            color: #7c3aed;
+        }
+
+        .error-message {
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .payment-container {
+                margin: 20px auto;
+                padding: 20px;
+                border-radius: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="payment-container">
 
     <!-- العنوان -->
-    <h2 style="
-        text-align:center;
-        color:#0b3d91;
-        margin-bottom:25px;
-    ">
+    <h2 class="title">
         💰 إضافة دفعة
     </h2>
 
+    <!-- رسالة الخطأ -->
+    {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+    {% endif %}
 
     <!-- معلومات الزبون -->
-    <div style="
-        background:#f8fafc;
-        padding:20px;
-        border-radius:15px;
-        margin-bottom:25px;
-    ">
+    <div class="customer-info">
 
         <p>
             <strong>👤 الزبون:</strong>
@@ -54,32 +188,25 @@
             <strong>💵 السعر النهائي:</strong>
             {{ customer.final_price }} دج
         </p>
-
-        <p style="color:#16a34a;">
+        <p class="payments-total">
             <strong>💳 مجموع الدفعات:</strong>
             {{ customer.total_payments }} دج
         </p>
 
-        <p style="color:#dc2626;">
+        <p class="remaining">
             <strong>📌 المبلغ المتبقي:</strong>
             {{ customer.remaining_amount }} دج
         </p>
 
     </div>
 
-
     <!-- إضافة دفعة جديدة -->
     <form method="POST">
 
         {% csrf_token %}
 
-
         <!-- مبلغ الدفعة -->
-        <label style="
-            display:block;
-            margin-bottom:8px;
-            font-weight:bold;
-        ">
+        <label>
             💰 مبلغ الدفعة الجديدة
         </label>
 
@@ -91,24 +218,10 @@
             max="{{ customer.remaining_amount }}"
             required
             placeholder="مثال: 20000"
-            style="
-                width:100%;
-                padding:14px;
-                border:1px solid #ddd;
-                border-radius:10px;
-                margin-bottom:20px;
-                box-sizing:border-box;
-                font-size:16px;
-            "
         >
 
-
         <!-- ملاحظة -->
-        <label style="
-            display:block;
-            margin-bottom:8px;
-            font-weight:bold;
-        ">
+        <label>
             📝 ملاحظة
         </label>
 
@@ -116,73 +229,32 @@
             name="note"
             rows="3"
             placeholder="مثال: دفع نقداً / الدفعة الثانية..."
-            style="
-                width:100%;
-                padding:14px;
-                border:1px solid #ddd;
-                border-radius:10px;
-                margin-bottom:25px;
-                box-sizing:border-box;
-                resize:vertical;
-                font-size:15px;
-            "
         ></textarea>
-
 
         <!-- زر التسجيل -->
         <button
             type="submit"
-            style="
-                width:100%;
-                padding:15px;
-                border:none;
-                border-radius:12px;
-                background:#7c3aed;
-                color:white;
-                font-size:17px;
-                font-weight:bold;
-                cursor:pointer;
-            "
+            class="submit-button"
         >
             💰 تسجيل الدفعة
         </button>
 
     </form>
 
-
     <!-- تنبيه -->
-    <div style="
-        margin-top:20px;
-        padding:12px;
-        background:#f5f3ff;
-        color:#6d28d9;
-        border-radius:10px;
-        text-align:center;
-        font-size:14px;
-    ">
+    <div class="notice">
         💡 يمكنك إضافة أي عدد من الدفعات للزبون.
     </div>
 
-
     <!-- الرجوع -->
-    <div style="
-        text-align:center;
-        margin-top:20px;
-    ">
-
-        <a
-            href="{% url 'customers' %}"
-            style="
-                color:#64748b;
-                text-decoration:none;
-                font-weight:bold;
-            "
-        >
-            ← العودة إلى قائمة الزبائن
-        </a>
-
-    </div>
+    <a
+        href="{% url 'customers' %}"
+        class="back-link"
+    >
+        ← العودة إلى قائمة الزبائن
+    </a>
 
 </div>
 
-{% endblock %}
+</body>
+</html>
