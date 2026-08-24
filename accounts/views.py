@@ -1450,14 +1450,9 @@ def profit_loss(request):
 
         first_this_month = today.replace(day=1)
 
-        end_date = (
-            first_this_month
-            - timedelta(days=1)
-        )
+        end_date = first_this_month - timedelta(days=1)
 
-        start_date = end_date.replace(
-            day=1
-        )
+        start_date = end_date.replace(day=1)
 
         start_date_str = start_date.isoformat()
         end_date_str = end_date.isoformat()
@@ -1478,7 +1473,6 @@ def profit_loss(request):
     else:
 
         if start_date_str:
-
             try:
                 start_date = date.fromisoformat(
                     start_date_str
@@ -1487,7 +1481,6 @@ def profit_loss(request):
                 start_date = None
 
         if end_date_str:
-
             try:
                 end_date = date.fromisoformat(
                     end_date_str
@@ -1498,6 +1491,7 @@ def profit_loss(request):
     # ---------------------------------
     # بيانات الوكالة الحالية فقط
     # ---------------------------------
+
     customers = Customer.objects.filter(
         user=request.user
     )
@@ -1513,6 +1507,7 @@ def profit_loss(request):
     # ---------------------------------
     # تطبيق الفترة
     # ---------------------------------
+
     if start_date:
 
         customers = customers.filter(
@@ -1536,6 +1531,7 @@ def profit_loss(request):
     # ---------------------------------
     # إضافة مصروف
     # ---------------------------------
+
     if request.method == "POST":
 
         trip_id = request.POST.get("trip")
@@ -1566,6 +1562,7 @@ def profit_loss(request):
     # ---------------------------------
     # الحسابات الرئيسية
     # ---------------------------------
+
     total_sales = (
         customers.aggregate(
             total=Sum("total_price")
@@ -1581,8 +1578,7 @@ def profit_loss(request):
     )
 
     total_remaining = (
-        total_sales
-        - total_received
+        total_sales - total_received
     )
 
     total_expenses = (
@@ -1593,17 +1589,16 @@ def profit_loss(request):
     )
 
     net_cash = (
-        total_received
-        - total_expenses
-    )
-    estimated_profit = (
-        total_sales
-        - total_expenses
+        total_received - total_expenses
     )
 
+    estimated_profit = (
+        total_sales - total_expenses
+    )
     # ---------------------------------
     # ربح كل رحلة
     # ---------------------------------
+
     trip_reports = []
 
     for trip in trips:
@@ -1638,13 +1633,11 @@ def profit_loss(request):
         )
 
         trip_remaining = (
-            trip_sales
-            - trip_received
+            trip_sales - trip_received
         )
 
         trip_profit = (
-            trip_sales
-            - trip_expenses_total
+            trip_sales - trip_expenses_total
         )
 
         trip_reports.append({
@@ -1659,6 +1652,7 @@ def profit_loss(request):
     # ---------------------------------
     # التقرير المالي الشهري
     # ---------------------------------
+
     monthly_sales = (
         customers
         .annotate(
@@ -1704,7 +1698,10 @@ def profit_loss(request):
         12: "ديسمبر",
     }
 
+    # ---------------------------------
     # المبيعات الشهرية
+    # ---------------------------------
+
     for item in monthly_sales:
 
         if item["month"]:
@@ -1721,9 +1718,11 @@ def profit_loss(request):
                 ),
                 "expenses": Decimal("0"),
             }
-# ---------------------------------
+
+    # ---------------------------------
     # المصاريف الشهرية
     # ---------------------------------
+
     for item in monthly_expenses:
 
         if item["month"]:
@@ -1748,13 +1747,13 @@ def profit_loss(request):
     # ---------------------------------
     # التقرير الشهري
     # ---------------------------------
+
     monthly_report = []
 
     for item in monthly_data.values():
 
         item["profit"] = (
-            item["sales"]
-            - item["expenses"]
+            item["sales"] - item["expenses"]
         )
 
         year, month_number = map(
@@ -1782,9 +1781,6 @@ def profit_loss(request):
     # ---------------------------------
     # الملخص المالي الذكي
     # ---------------------------------
-
-    # أفضل شهر نحسبوه فقط من الأشهر
-    # اللي فيها مبيعات فعلية
     months_with_sales = [
         item
         for item in monthly_report
@@ -1803,6 +1799,7 @@ def profit_loss(request):
     # ---------------------------------
     # أفضل رحلة
     # ---------------------------------
+
     best_trip = None
 
     if trip_reports:
@@ -1815,43 +1812,93 @@ def profit_loss(request):
     # ---------------------------------
     # عرض الصفحة
     # ---------------------------------
+
     return render(
         request,
         "profit_loss.html",
         {
             "expenses": expenses,
-
             "trips": trips,
-
             "trip_reports": trip_reports,
-
             "monthly_report": monthly_report,
-
             "total_sales": total_sales,
-
             "total_received": total_received,
-
             "total_remaining": total_remaining,
-
             "total_expenses": total_expenses,
-
             "net_cash": net_cash,
-
             "estimated_profit": estimated_profit,
-
             "best_month": best_month,
-
             "best_trip": best_trip,
-
             "start_date": start_date_str,
-
             "end_date": end_date_str,
-
             "today": today,
-
             "preset": preset,
         },
     )
+
+
+# =========================================================
+# تعديل مصروف
+# =========================================================
+
+@login_required
+@subscription_required
+def edit_expense(request, expense_id):
+    expense = Expense.objects.get(
+        id=expense_id,
+        user=request.user
+    )
+
+    if request.method == "POST":
+        trip_id = request.POST.get("trip")
+
+        trip = None
+
+        if trip_id:
+            trip = Trip.objects.get(
+                id=trip_id,
+                user=request.user
+            )
+
+        expense.title = request.POST.get("title", "")
+        expense.category = request.POST.get("category", "")
+        expense.amount = request.POST.get("amount", 0)
+        expense.trip = trip
+        expense.notes = request.POST.get("notes", "")
+
+        expense.save()
+
+        return redirect("profit_loss")
+
+    trips = Trip.objects.filter(
+        user=request.user
+    ).order_by("-id")
+
+    return render(
+        request,
+        "expense_edit.html",
+        {
+            "expense": expense,
+            "trips": trips,
+        }
+    )
+
+
+# =========================================================
+# حذف مصروف
+# =========================================================
+
+@login_required
+@subscription_required
+def delete_expense(request, expense_id):
+    expense = Expense.objects.get(
+        id=expense_id,
+        user=request.user
+    )
+
+    expense.delete()
+
+    return redirect("profit_loss")
 def logout_view(request):
     request.session.pop("admin_panel_access", None)
     logout(request)

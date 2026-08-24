@@ -86,6 +86,17 @@ urlpatterns = [
         name="profit_loss",
     ),
     path(
+    "expense/edit/<int:expense_id>/",
+    views.edit_expense,
+    name="edit_expense",
+),
+
+path(
+    "expense/delete/<int:expense_id>/",
+    views.delete_expense,
+    name="delete_expense",
+),
+    path(
     "financial/export/excel/",
     views.export_financial_excel,
     name="export_financial_excel",

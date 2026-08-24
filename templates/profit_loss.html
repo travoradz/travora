@@ -757,83 +757,136 @@
 
     </div>
 
+<!-- قائمة المصاريف -->
+<div class="section">
 
-    <!-- قائمة المصاريف -->
-    <div class="section">
+    <h2>📋 المصاريف المسجلة</h2>
 
-        <h2>📋 المصاريف المسجلة</h2>
+    <div class="table-wrapper">
 
-        <div class="table-wrapper">
+        {% if expenses %}
 
-            {% if expenses %}
+        <table>
 
-            <table>
+            <thead>
+                <tr>
+                    <th>المصروف</th>
+                    <th>الفئة</th>
+                    <th>الرحلة</th>
+                    <th>المبلغ</th>
+                    <th>التاريخ</th>
+                    <th>الملاحظات</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
 
-                <thead>
+            <tbody>
 
-                    <tr>
-                        <th>المصروف</th>
-                        <th>الفئة</th>
-                        <th>الرحلة</th>
-                        <th>المبلغ</th>
-                        <th>التاريخ</th>
-                        <th>الملاحظات</th>
-                    </tr>
+                {% for expense in expenses %}
 
-                </thead>
+                <tr>
 
+                    <!-- اسم المصروف -->
+                    <td>
+                        <strong>
+                            {{ expense.title }}
+                        </strong>
+                    </td>
 
-                <tbody>
+                    <!-- الفئة -->
+                    <td>
+                        <span class="badge">
+                            {{ expense.category }}
+                        </span>
+                    </td>
 
-                    {% for expense in expenses %}
+                    <!-- الرحلة -->
+                    <td>
+                        {% if expense.trip %}
+                            {{ expense.trip.name }}
+                        {% else %}
+                            مصروف عام
+                        {% endif %}
+                    </td>
 
-                    <tr>
+                    <!-- المبلغ -->
+                    <td>
+                        <strong>
+                            {{ expense.amount }} دج
+                        </strong>
+                    </td>
 
-                        <td>
-                            <strong>{{ expense.title }}</strong>
-                        </td>
+                    <!-- التاريخ -->
+                    <td>
+                        {{ expense.date }}
+                    </td>
 
-                        <td>
-                            <span class="badge">
-                                {{ expense.category }}
-                            </span>
-                        </td>
-                        <td>
-                            {% if expense.trip %}
-                                {{ expense.trip.name }}
-                            {% else %}
-                                مصروف عام
-                            {% endif %}
-                        </td>
+                    <!-- الملاحظات -->
+                    <td>
+                        {{ expense.notes|default:"-" }}
+                    </td>
 
-                        <td>
-                            <strong>{{ expense.amount }} دج</strong>
-                        </td>
+                    <!-- الإجراءات -->
+                    <td style="white-space:nowrap;">
 
-                        <td>
-                            {{ expense.date }}
-                        </td>
+                        <!-- تعديل -->
+                        <a
+                            href="{% url 'edit_expense' expense.id %}"
+                            style="
+                                color:#2563eb;
+                                font-weight:bold;
+                                text-decoration:none;
+                                margin-left:8px;
+                            "
+                        >
+                            ✏️ تعديل
+                        </a>
 
-                        <td>
-                            {{ expense.notes|default:"-" }}
-                        </td>
+                        <!-- حذف -->
+                        <a
+                            href="{% url 'delete_expense' expense.id %}"
+                            onclick="return confirm('هل أنت متأكد من حذف هذا المصروف؟');"
+                            style="
+                                color:#dc2626;
+                                font-weight:bold;
+                                text-decoration:none;
+                            "
+                        >
+                            🗑 حذف
+                        </a>
 
-                    </tr>
+                    </td>
 
-                    {% endfor %}
+                </tr>
 
-                </tbody>
+                {% endfor %}
 
-            </table>
+            </tbody>
 
-            {% else %}
+        </table>
 
-            <div class="empty">
-                لا توجد مصاريف مسجلة حاليًا.
-            </div>
+        {% else %}
 
-            {% endif %}
+        <div class="empty">
+            لا توجد مصاريف مسجلة حاليًا.
+        </div>
 
+        {% endif %}
+
+    </div>
+
+</div>
+</tbody>
+
+</table>
+
+{% else %}
+
+<div class="empty">
+    لا توجد مصاريف مسجلة حاليًا.
+</div>
+
+{% endif %}
         </div>
 
     </div>

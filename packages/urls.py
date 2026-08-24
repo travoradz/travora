@@ -61,6 +61,7 @@ urlpatterns = [
         name="print_customer",
     ),
 
+
     # =========================
     # 💰 إضافة دفعة للزبون
     # =========================
@@ -127,4 +128,7 @@ urlpatterns = [
         views.agency_settings,
         name="agency_settings",
     ),
+
+
+
 ]
