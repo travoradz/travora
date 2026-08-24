@@ -1047,114 +1047,104 @@
     </div>
 
 </div>
-                <!-- اسم الشهر -->
-                <div style="
-                    margin-top:12px;
-                    font-weight:bold;
-                    color:#1769aa;
-                    text-align:center;
-                    white-space:nowrap;
-                ">
-                    {{ month.month_ar }}
-                    {{ month.year }}
-                </div>
+{% for month in monthly_report %}
 
+    <!-- اسم الشهر -->
+    <div style="
+        margin-top:12px;
+        font-weight:bold;
+        color:#1769aa;
+        text-align:center;
+        white-space:nowrap;
+    ">
+        {{ month.month_ar }}
+        {{ month.year }}
+    </div>
 
-                <!-- أرقام الشهر -->
-                <div style="
-                    margin-top:8px;
-                    text-align:center;
-                    font-size:12px;
-                    line-height:1.8;
-                    color:#6b7280;
-                ">
-
-                    <div>
-                        💰 {{ month.sales }} دج
-                    </div>
-
-                    <div>
-                        💸 {{ month.expenses }} دج
-                    </div>
-                    <div
-                        class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}"
-                    >
-                        📈 {{ month.profit }} دج
-                    </div>
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
+    <!-- أرقام الشهر -->
+    <div style="
+        margin-top:8px;
+        text-align:center;
+        font-size:12px;
+        line-height:1.8;
+        color:#6b7280;
+    ">
+        <div>
+            💰 {{ month.sales }} دج
         </div>
 
+        <div>
+            💸 {{ month.expenses }} دج
+        </div>
+
+        <div
+            class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}"
+        >
+            📈 {{ month.profit }} دج
+        </div>
     </div>
-
-
-    <!-- مفتاح الرسم -->
-    <div style="
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:25px;
-        flex-wrap:wrap;
-        margin-top:20px;
-        font-size:14px;
-        color:#4b5563;
-    ">
-
-        <span>
-            <span style="
-                display:inline-block;
-                width:13px;
-                height:13px;
-                background:#1769aa;
-                border-radius:3px;
-                margin-left:5px;
-            "></span>
-            المبيعات
-        </span>
-
-        <span>
-            <span style="
-                display:inline-block;
-                width:13px;
-                height:13px;
-                background:#ef4444;
-                border-radius:3px;
-                margin-left:5px;
-            "></span>
-            المصاريف
-        </span>
-
-        <span>
-            <span style="
-                display:inline-block;
-                width:13px;
-                height:13px;
-                background:#10b981;
-                border-radius:3px;
-                margin-left:5px;
-            "></span>
-            الربح
-        </span>
-
-    </div>
-
-
-    {% else %}
-
-    <div class="empty">
-        لا توجد بيانات مالية كافية خلال الفترة المحددة.
-    </div>
-
-    {% endif %}
 
 </div>
 
+{% endfor %}
 
+<!-- مفتاح الرسم -->
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    flex-wrap:wrap;
+    margin-top:20px;
+    font-size:14px;
+    color:#4b5563;
+">
+    <span>
+        <span style="
+            display:inline-block;
+            width:13px;
+            height:13px;
+            background:#1769aa;
+            border-radius:3px;
+            margin-left:5px;
+        "></span>
+        المبيعات
+    </span>
+
+    <span>
+        <span style="
+            display:inline-block;
+            width:13px;
+            height:13px;
+            background:#ef4444;
+            border-radius:3px;
+            margin-left:5px;
+        "></span>
+        المصاريف
+    </span>
+
+    <span>
+        <span style="
+            display:inline-block;
+            width:13px;
+            height:13px;
+            background:#10b981;
+            border-radius:3px;
+            margin-left:5px;
+        "></span>
+        الربح
+    </span>
+</div>
+
+{% else %}
+
+<div class="empty">
+    لا توجد بيانات مالية كافية خلال الفترة المحددة.
+</div>
+
+{% endif %}
+
+</div>
 <!-- ========================================= -->
 <!-- JavaScript للرسم -->
 <!-- ========================================= -->
