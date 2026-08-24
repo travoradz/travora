@@ -915,67 +915,115 @@
     </div>
 
 </div>
-
+<!-- ========================================= -->
 <!-- الربح حسب الرحلة -->
+<!-- ========================================= -->
 
 <div class="section">
 
-    <!-- ========================================= -->
-    <!-- الربح حسب الرحلة -->
-    <!-- ========================================= -->
+    <h2>✈️ الربح حسب الرحلة</h2>
 
-    <div class="section">
+    <div class="table-wrapper">
 
-        <h2>✈️ الربح حسب الرحلة</h2>
+        {% if trip_reports %}
 
-        <div class="table-wrapper">
+        <table>
 
-            {% if trip_reports %}
+            <thead>
+                <tr>
 
-            <table>
+                    <th>الرحلة</th>
 
-                <thead>
-                    <tr>
-                        <th>الرحلة</th>
-                        <th>إجمالي المبيعات</th>
-                        <th>المحصل</th>
-                        <th>المتبقي</th>
-                        <th>المصاريف</th>
-                        <th>الربح التقديري</th>
-                    </tr>
-                </thead>
+                    <th>إجمالي المبيعات</th>
 
-                <tbody>
+                    <th>العمولة</th>
+
+                    <th>المحصل</th>
+
+                    <th>المتبقي</th>
+
+                    <th>المصاريف</th>
+
+                    <th>السيولة الصافية</th>
+
+                    <th>الربح التقديري</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
                 {% for report in trip_reports %}
 
                 <tr>
 
+                    <!-- الرحلة -->
                     <td>
-                        <strong>{{ report.trip.name }}</strong>
+                        <strong>
+                            {{ report.trip.name }}
+                        </strong>
                     </td>
 
+
+                    <!-- المبيعات بعد خصم العمولة -->
                     <td>
-                        {{ report.sales }} دج
+                        <strong>
+                            {{ report.sales }} دج
+                        </strong>
                     </td>
 
+
+                    <!-- العمولة -->
+                    <td>
+                        <span class="warning">
+                            {{ report.commission }} دج
+                        </span>
+                    </td>
+
+
+                    <!-- المبلغ المحصل فعليًا -->
                     <td class="positive">
                         {{ report.received }} دج
                     </td>
 
+
+                    <!-- المبلغ المتبقي بعد العمولة -->
                     <td class="warning">
                         {{ report.remaining }} دج
                     </td>
 
+
+                    <!-- المصاريف -->
                     <td class="negative">
                         {{ report.expenses }} دج
                     </td>
 
+
+                    <!-- السيولة الصافية -->
                     <td>
+
+                        <strong
+                            class="{% if report.net_cash >= 0 %}positive{% else %}negative{% endif %}"
+                        >
+
+                            {{ report.net_cash }} دج
+
+                        </strong>
+
+                    </td>
+
+
+                    <!-- الربح التقديري -->
+                    <td>
+
                         <strong
                             class="{% if report.profit >= 0 %}positive{% else %}negative{% endif %}"
                         >
+
                             {{ report.profit }} دج
+
                         </strong>
+
                     </td>
 
                 </tr>
@@ -989,7 +1037,9 @@
         {% else %}
 
         <div class="empty">
+
             لا توجد بيانات رحلات ضمن الفترة المحددة.
+
         </div>
 
         {% endif %}
@@ -997,116 +1047,6 @@
     </div>
 
 </div>
-
-
-<!-- ========================================= -->
-<!-- التطور المالي الشهري -->
-<!-- ========================================= -->
-<!-- ========================================= -->
-<!-- التطور المالي الشهري -->
-<!-- ========================================= -->
-
-<div class="section">
-
-    <h2>📊 التطور المالي الشهري</h2>
-
-    <p style="
-        color:#6b7280;
-        margin-bottom:25px;
-        line-height:1.7;
-    ">
-        مقارنة المبيعات والمصاريف والربح حسب الأشهر خلال الفترة المالية المختارة.
-    </p>
-
-    {% if monthly_report %}
-
-    <!-- الرسم -->
-    <div style="
-        width:100%;
-        overflow-x:auto;
-        padding:20px 10px 10px;
-    ">
-
-        <div style="
-            min-width:650px;
-            height:360px;
-            display:flex;
-            align-items:flex-end;
-            gap:25px;
-            padding:20px 15px 10px;
-            border-bottom:2px solid #e5e7eb;
-        ">
-
-            {% for month in monthly_report %}
-
-            <div
-                class="month-chart"
-                data-sales="{{ month.sales }}"
-                data-expenses="{{ month.expenses }}"
-                data-profit="{{ month.profit }}"
-                style="
-                    flex:1;
-                    min-width:95px;
-                    height:100%;
-                    display:flex;
-                    flex-direction:column;
-                    justify-content:flex-end;
-                    align-items:center;
-                "
-            >
-
-                <!-- الأعمدة -->
-                <div style="
-                    width:100%;
-                    height:280px;
-                    display:flex;
-                    align-items:flex-end;
-                    justify-content:center;
-                    gap:5px;
-                ">
-
-                    <!-- المبيعات -->
-                    <div
-                        class="chart-bar sales-bar"
-                        style="
-                            width:24px;
-                            height:0;
-                            background:#1769aa;
-                            border-radius:7px 7px 0 0;
-                            transition:height .6s ease;
-                        "
-                        title="المبيعات"
-                    ></div>
-
-                    <!-- المصاريف -->
-                    <div
-                        class="chart-bar expenses-bar"
-                        style="
-                            width:24px;
-                            height:0;
-                            background:#ef4444;
-                            border-radius:7px 7px 0 0;
-                            transition:height .6s ease;
-                        "
-                        title="المصاريف"
-                    ></div>
-
-                    <!-- الربح -->
-                    <div
-                        class="chart-bar profit-bar"
-                        style="
-                            width:24px;
-                            height:0;
-                            background:#10b981;
-                            border-radius:7px 7px 0 0;
-                            transition:height .6s ease;
-                        "
-                        title="الربح"
-                    ></div>
-
-                </div>
-
-
                 <!-- اسم الشهر -->
                 <div style="
                     margin-top:12px;

@@ -140,80 +140,170 @@ def signup_view(request):
 @login_required
 @subscription_required
 def dashboard_view(request):
+
     from decimal import Decimal
-    from django.db.models import Sum
+    from django.db.models import Sum, F
     from django.utils import timezone
 
+    # إعادة قفل الإدارة المالية عند الدخول للوحة التحكم
     request.session.pop("financial_access", None)
 
     subscription = Subscription.objects.get(user=request.user)
 
+    # =========================================
     # حساب الأيام المتبقية
+    # =========================================
     remaining_days = subscription.days_left
 
-    # إذا كان الاشتراك مدى الحياة
     if remaining_days != "مدى الحياة" and remaining_days < 0:
         remaining_days = 0
 
-    trips = Trip.objects.filter(user=request.user).order_by("-id")
-    customers = Customer.objects.filter(user=request.user)
+    # =========================================
+    # الرحلات والزبائن
+    # =========================================
+    trips = Trip.objects.filter(
+        user=request.user
+    ).order_by("-id")
+
+    customers = Customer.objects.filter(
+        user=request.user
+    )
 
     trips_count = trips.count()
     customers_count = customers.count()
 
-    total_received = customers.aggregate(
-        total=Sum("amount_paid")
-    )["total"] or Decimal("0")
+    # =========================================
+    # إجمالي المبالغ المحصلة
+    # =========================================
+    total_received = (
+        customers.aggregate(
+            total=Sum("amount_paid")
+        )["total"]
+        or Decimal("0")
+    )
 
+    # =========================================
+    # إجمالي المبالغ المتبقية
+    #
+    # remaining_amount() يستعمل:
+    # total_price - commission - amount_paid
+    #
+    # وبالتالي العمولة لا تدخل في المتبقي
+    # =========================================
     total_remaining = sum(
-        (customer.remaining_amount() for customer in customers),
+        (
+            customer.remaining_amount()
+            for customer in customers
+        ),
         Decimal("0"),
     )
 
+    # =========================================
+    # آخر الزبائن والرحلات
+    # =========================================
     latest_customers = customers.order_by("-id")[:5]
+
     latest_trips = trips.order_by("-id")[:5]
 
+    # =========================================
+    # المقاعد
+    # =========================================
     trip_seats = []
+
     total_available_seats = 0
+
     low_seats_trips = []
+
     full_trips = []
 
     for trip in trips:
-        booked_customers = customers.filter(trip=trip).count()
+
+        booked_customers = customers.filter(
+            trip=trip
+        ).count()
 
         available_seats = max(
             trip.seats - booked_customers,
             0,
         )
 
-        trip_seats.append({
-            "trip": trip,
-            "available_seats": available_seats,
-            "booked_customers": booked_customers,
-        })
+        trip_seats.append(
+            {
+                "trip": trip,
+                "available_seats": available_seats,
+                "booked_customers": booked_customers,
+            }
+        )
 
         total_available_seats += available_seats
 
         if available_seats == 0:
+
             full_trips.append(trip)
 
         elif available_seats <= 5:
+
             low_seats_trips.append(trip)
 
-    unpaid_customers = customers.exclude(
-        amount_paid__gte=F("total_price")
+    # =========================================
+    # 🔥 مهم جدًا
+    # حساب حالة الدفع بعد خصم العمولة
+    #
+    # السعر الحقيقي المطلوب دفعه:
+    #
+    # total_price - commission
+    # =========================================
+
+    unpaid_customers = customers.filter(
+        amount_paid__lt=(
+            F("total_price") - F("commission")
+        )
     )
 
-    double_rooms = customers.filter(room_type="ثنائية").count()
-    triple_rooms = customers.filter(room_type="ثلاثية").count()
-    quad_rooms = customers.filter(room_type="رباعية").count()
-    quint_rooms = customers.filter(room_type="خماسية").count()
+    paid_customers = customers.filter(
+        amount_paid__gte=(
+            F("total_price") - F("commission")
+        )
+    )
+
+    remaining_customers = customers.filter(
+        amount_paid__lt=(
+            F("total_price") - F("commission")
+        )
+    )
+
+    # =========================================
+    # أنواع الغرف
+    # =========================================
+
+    double_rooms = customers.filter(
+        room_type="ثنائية"
+    ).count()
+
+    triple_rooms = customers.filter(
+        room_type="ثلاثية"
+    ).count()
+
+    quad_rooms = customers.filter(
+        room_type="رباعية"
+    ).count()
+
+    quint_rooms = customers.filter(
+        room_type="خماسية"
+    ).count()
+
+    # =========================================
+    # رسائل الدعم غير المقروءة
+    # =========================================
 
     unread_support = SupportMessage.objects.filter(
         user=request.user,
         is_admin=True,
         is_read=False,
     ).count()
+    # =========================================
+    # التواريخ
+    # =========================================
 
     today = timezone.now().date()
 
@@ -226,92 +316,200 @@ def dashboard_view(request):
         created_at__month=today.month,
     ).count()
 
+    # =========================================
+    # الرحلات الممتلئة
+    # =========================================
+
     full_trips_count = len(full_trips)
 
-    paid_customers = customers.filter(
-        amount_paid__gte=F("total_price")
-    ).count()
+    # =========================================
+    # الطاقة الإجمالية
+    # =========================================
 
-    remaining_customers = customers.filter(
-        amount_paid__lt=F("total_price")
-    ).count()
+    total_capacity = (
+        trips.aggregate(
+            total=Sum("seats")
+        )["total"]
+        or 0
+    )
 
-    total_capacity = trips.aggregate(
-        total=Sum("seats")
-    )["total"] or 0
+    # =========================================
+    # عرض الصفحة
+    # =========================================
 
     return render(
         request,
         "dashboard.html",
         {
             "subscription": subscription,
+
             "remaining_days": remaining_days,
+
             "trips_count": trips_count,
+
             "customers_count": customers_count,
+
             "total_received": total_received,
+
             "total_remaining": total_remaining,
+
             "latest_customers": latest_customers,
+
             "latest_trips": latest_trips,
+
             "low_seats_trips": low_seats_trips,
+
             "full_trips": full_trips,
+
             "full_trips_count": full_trips_count,
+
             "unpaid_customers": unpaid_customers,
+
             "double_rooms": double_rooms,
+
             "triple_rooms": triple_rooms,
+
             "quad_rooms": quad_rooms,
+
             "quint_rooms": quint_rooms,
+
             "unread_support": unread_support,
+
             "today_bookings": today_bookings,
+
             "month_bookings": month_bookings,
+
             "total_seats": total_available_seats,
+
             "total_capacity": total_capacity,
+
             "paid_customers": paid_customers,
+
             "remaining_customers": remaining_customers,
+
             "trip_seats": trip_seats,
         },
     )
+
+
+# =========================================================
+# الفترة المالية
+# =========================================================
+
 def financial_period(request):
+
     today = date.today()
 
-    preset = request.GET.get("preset", "")
+    preset = request.GET.get(
+        "preset",
+        ""
+    )
 
-    start_date_str = request.GET.get("start_date", "")
-    end_date_str = request.GET.get("end_date", "")
+    start_date_str = request.GET.get(
+        "start_date",
+        ""
+    )
+
+    end_date_str = request.GET.get(
+        "end_date",
+        ""
+    )
 
     start_date = None
+
     end_date = None
 
+    # =========================================
+    # هذا الشهر
+    # =========================================
+
     if preset == "this_month":
-        start_date = today.replace(day=1)
+
+        start_date = today.replace(
+            day=1
+        )
+
         end_date = today
+
+    # =========================================
+    # الشهر الماضي
+    # =========================================
 
     elif preset == "last_month":
-        first_this_month = today.replace(day=1)
-        end_date = first_this_month - timedelta(days=1)
-        start_date = end_date.replace(day=1)
+
+        first_this_month = today.replace(
+            day=1
+        )
+
+        end_date = (
+            first_this_month
+            - timedelta(days=1)
+        )
+
+        start_date = end_date.replace(
+            day=1
+        )
+
+    # =========================================
+    # هذه السنة
+    # =========================================
 
     elif preset == "this_year":
-        start_date = date(today.year, 1, 1)
+
+        start_date = date(
+            today.year,
+            1,
+            1
+        )
+
         end_date = today
 
+    # =========================================
+    # تاريخ مخصص
+    # =========================================
+
     else:
+
         if start_date_str:
+
             try:
-                start_date = date.fromisoformat(start_date_str)
+
+                start_date = date.fromisoformat(
+                    start_date_str
+                )
+
             except ValueError:
+
                 start_date = None
 
         if end_date_str:
+
             try:
-                end_date = date.fromisoformat(end_date_str)
+
+                end_date = date.fromisoformat(
+                    end_date_str
+                )
+
             except ValueError:
+
                 end_date = None
 
     return start_date, end_date
+# =========================================================
+# معالجة النص العربي للـ PDF
+# =========================================================
+
 def pdf_ar(text):
+
     text = str(text)
-    reshaped = arabic_reshaper.reshape(text)
-    return get_display(reshaped)
+
+    reshaped = arabic_reshaper.reshape(
+        text
+    )
+
+    return get_display(
+        reshaped
+    )
 @login_required
 @subscription_required
 def export_financial_excel(request):
@@ -1473,18 +1671,22 @@ def profit_loss(request):
     else:
 
         if start_date_str:
+
             try:
                 start_date = date.fromisoformat(
                     start_date_str
                 )
+
             except ValueError:
                 start_date = None
 
         if end_date_str:
+
             try:
                 end_date = date.fromisoformat(
                     end_date_str
                 )
+
             except ValueError:
                 end_date = None
 
@@ -1559,16 +1761,39 @@ def profit_loss(request):
 
         return redirect("profit_loss")
 
-    # ---------------------------------
+    # =========================================================
     # الحسابات الرئيسية
+    # =========================================================
+
+    # ---------------------------------
+    # إجمالي العمولة
+    # ---------------------------------
+
+    total_commission = (
+        customers.aggregate(
+            total=Sum("commission")
+        )["total"]
+        or Decimal("0")
+    )
+
+    # ---------------------------------
+    # إجمالي المبيعات الحقيقي
+    #
+    # السعر الحقيقي للزبون =
+    # total_price - commission
     # ---------------------------------
 
     total_sales = (
         customers.aggregate(
-            total=Sum("total_price")
+            total=Sum(
+                F("total_price") - F("commission")
+            )
         )["total"]
         or Decimal("0")
     )
+    # ---------------------------------
+    # إجمالي المبلغ المحصل فعليًا
+    # ---------------------------------
 
     total_received = (
         customers.aggregate(
@@ -1577,9 +1802,30 @@ def profit_loss(request):
         or Decimal("0")
     )
 
-    total_remaining = (
-        total_sales - total_received
+    # ---------------------------------
+    # إجمالي المبلغ المتبقي
+    #
+    # نستعمل remaining_amount()
+    # لأنه يحسب:
+    #
+    # السعر النهائي
+    # - المدفوع
+    #
+    # والسعر النهائي أصلاً:
+    # total_price - commission
+    # ---------------------------------
+
+    total_remaining = sum(
+        (
+            customer.remaining_amount()
+            for customer in customers
+        ),
+        Decimal("0")
     )
+
+    # ---------------------------------
+    # إجمالي المصاريف
+    # ---------------------------------
 
     total_expenses = (
         expenses.aggregate(
@@ -1588,16 +1834,33 @@ def profit_loss(request):
         or Decimal("0")
     )
 
+    # ---------------------------------
+    # السيولة الصافية
+    #
+    # المال الموجود فعليًا
+    # = المحصل - المصاريف
+    # ---------------------------------
+
     net_cash = (
-        total_received - total_expenses
+        total_received
+        - total_expenses
     )
 
+    # ---------------------------------
+    # الربح التقديري
+    #
+    # المبيعات الحقيقية بعد العمولة
+    # - المصاريف
+    # ---------------------------------
+
     estimated_profit = (
-        total_sales - total_expenses
+        total_sales
+        - total_expenses
     )
-    # ---------------------------------
+
+    # =========================================================
     # ربح كل رحلة
-    # ---------------------------------
+    # =========================================================
 
     trip_reports = []
 
@@ -1611,12 +1874,36 @@ def profit_loss(request):
             trip=trip
         )
 
-        trip_sales = (
+        # ---------------------------------
+        # عمولة الرحلة
+        # ---------------------------------
+
+        trip_commission = (
             trip_customers.aggregate(
-                total=Sum("total_price")
+                total=Sum("commission")
             )["total"]
             or Decimal("0")
         )
+
+        # ---------------------------------
+        # مبيعات الرحلة الحقيقية
+        #
+        # total_price - commission
+        # ---------------------------------
+
+        trip_sales = (
+            trip_customers.aggregate(
+                total=Sum(
+                    F("total_price")
+                    - F("commission")
+                )
+            )["total"]
+            or Decimal("0")
+        )
+
+        # ---------------------------------
+        # المبلغ المحصل
+        # ---------------------------------
 
         trip_received = (
             trip_customers.aggregate(
@@ -1625,6 +1912,10 @@ def profit_loss(request):
             or Decimal("0")
         )
 
+        # ---------------------------------
+        # مصاريف الرحلة
+        # ---------------------------------
+
         trip_expenses_total = (
             trip_expenses.aggregate(
                 total=Sum("amount")
@@ -1632,26 +1923,64 @@ def profit_loss(request):
             or Decimal("0")
         )
 
-        trip_remaining = (
-            trip_sales - trip_received
+        # ---------------------------------
+        # المبلغ المتبقي للرحلة
+        # ---------------------------------
+
+        trip_remaining = sum(
+            (
+                customer.remaining_amount()
+                for customer in trip_customers
+            ),
+            Decimal("0")
         )
+
+        # ---------------------------------
+        # الربح التقديري للرحلة
+        #
+        # المبيعات بعد العمولة
+        # - المصاريف
+        # ---------------------------------
 
         trip_profit = (
-            trip_sales - trip_expenses_total
+            trip_sales
+            - trip_expenses_total
         )
 
-        trip_reports.append({
-            "trip": trip,
-            "sales": trip_sales,
-            "received": trip_received,
-            "remaining": trip_remaining,
-            "expenses": trip_expenses_total,
-            "profit": trip_profit,
-        })
+        # ---------------------------------
+        # السيولة الصافية للرحلة
+        #
+        # المحصل فعليًا
+        # - مصاريف الرحلة
+        # ---------------------------------
 
-    # ---------------------------------
+        trip_net_cash = (
+            trip_received
+            - trip_expenses_total
+        )
+
+        trip_reports.append(
+            {
+                "trip": trip,
+
+                "commission": trip_commission,
+
+                "sales": trip_sales,
+
+                "received": trip_received,
+
+                "remaining": trip_remaining,
+                "expenses": trip_expenses_total,
+
+                "profit": trip_profit,
+
+                "net_cash": trip_net_cash,
+            }
+        )
+
+    # =========================================================
     # التقرير المالي الشهري
-    # ---------------------------------
+    # =========================================================
 
     monthly_sales = (
         customers
@@ -1662,7 +1991,10 @@ def profit_loss(request):
         )
         .values("month")
         .annotate(
-            total=Sum("total_price")
+            total=Sum(
+                F("total_price")
+                - F("commission")
+            )
         )
         .order_by("month")
     )
@@ -1712,10 +2044,12 @@ def profit_loss(request):
 
             monthly_data[key] = {
                 "month": key,
+
                 "sales": (
                     item["total"]
                     or Decimal("0")
                 ),
+
                 "expenses": Decimal("0"),
             }
 
@@ -1735,7 +2069,9 @@ def profit_loss(request):
 
                 monthly_data[key] = {
                     "month": key,
+
                     "sales": Decimal("0"),
+
                     "expenses": Decimal("0"),
                 }
 
@@ -1744,16 +2080,21 @@ def profit_loss(request):
                 or Decimal("0")
             )
 
-    # ---------------------------------
+    # =========================================================
     # التقرير الشهري
-    # ---------------------------------
+    # =========================================================
 
     monthly_report = []
 
     for item in monthly_data.values():
 
+        # ---------------------------------
+        # الربح الشهري
+        # ---------------------------------
+
         item["profit"] = (
-            item["sales"] - item["expenses"]
+            item["sales"]
+            - item["expenses"]
         )
 
         year, month_number = map(
@@ -1772,15 +2113,18 @@ def profit_loss(request):
             )
         )
 
-        monthly_report.append(item)
+        monthly_report.append(
+            item
+        )
 
     monthly_report.sort(
         key=lambda item: item["month"]
     )
 
-    # ---------------------------------
+    # =========================================================
     # الملخص المالي الذكي
-    # ---------------------------------
+    # =========================================================
+
     months_with_sales = [
         item
         for item in monthly_report
@@ -1796,9 +2140,9 @@ def profit_loss(request):
             key=lambda item: item["profit"]
         )
 
-    # ---------------------------------
+    # =========================================================
     # أفضل رحلة
-    # ---------------------------------
+    # =========================================================
 
     best_trip = None
 
@@ -1809,34 +2153,51 @@ def profit_loss(request):
             key=lambda item: item["profit"]
         )
 
-    # ---------------------------------
+    # =========================================================
     # عرض الصفحة
-    # ---------------------------------
-
+    # =========================================================
     return render(
         request,
         "profit_loss.html",
         {
             "expenses": expenses,
+
             "trips": trips,
+
             "trip_reports": trip_reports,
+
             "monthly_report": monthly_report,
+
+            # الحسابات الرئيسية
+            "total_commission": total_commission,
+
             "total_sales": total_sales,
+
             "total_received": total_received,
+
             "total_remaining": total_remaining,
+
             "total_expenses": total_expenses,
+
             "net_cash": net_cash,
+
             "estimated_profit": estimated_profit,
+
+            # أفضل النتائج
             "best_month": best_month,
+
             "best_trip": best_trip,
+
+            # الفترات
             "start_date": start_date_str,
+
             "end_date": end_date_str,
+
             "today": today,
+
             "preset": preset,
         },
     )
-
-
 # =========================================================
 # تعديل مصروف
 # =========================================================
