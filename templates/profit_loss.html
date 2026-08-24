@@ -1047,6 +1047,8 @@
     </div>
 
 </div>
+{% if monthly_report %}
+
 {% for month in monthly_report %}
 
     <!-- اسم الشهر -->
@@ -1077,9 +1079,7 @@
             💸 {{ month.expenses }} دج
         </div>
 
-        <div
-            class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}"
-        >
+        <div class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}">
             📈 {{ month.profit }} دج
         </div>
     </div>
