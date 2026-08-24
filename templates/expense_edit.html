@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="section">
+
+    <h2>✏️ تعديل المصروف</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <!-- اسم المصروف -->
+            <div class="field">
+
+                <label>اسم المصروف</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    value="{{ expense.title }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- الفئة -->
+            <div class="field">
+
+                <label>فئة المصروف</label>
+
+                <select name="category" required>
+
+                    <option value="طيران"
+                        {% if expense.category == "طيران" %}selected{% endif %}>
+                        ✈️ طيران
+                    </option>
+
+                    <option value="فندق"
+                        {% if expense.category == "فندق" %}selected{% endif %}>
+                        🏨 فندق
+                    </option>
+
+                    <option value="نقل"
+                        {% if expense.category == "نقل" %}selected{% endif %}>
+                        🚌 نقل
+                    </option>
+
+                    <option value="فيزا"
+                        {% if expense.category == "فيزا" %}selected{% endif %}>
+                        🛂 فيزا
+                    </option>
+
+                    <option value="إشهار"
+                        {% if expense.category == "إشهار" %}selected{% endif %}>
+                        📢 إشهار
+                    </option>
+
+                    <option value="رواتب"
+                        {% if expense.category == "رواتب" %}selected{% endif %}>
+                        👥 رواتب
+                    </option>
+
+                    <option value="مكتب"
+                        {% if expense.category == "مكتب" %}selected{% endif %}>
+                        🏢 مكتب
+                    </option>
+
+                    <option value="أخرى"
+                        {% if expense.category == "أخرى" %}selected{% endif %}>
+                        📦 أخرى
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- الرحلة -->
+            <div class="field">
+
+                <label>الرحلة المرتبطة بالمصروف</label>
+
+                <select name="trip">
+
+                    <option value="">
+                        -- مصروف عام --
+                    </option>
+
+                    {% for trip in trips %}
+
+                        <option
+                            value="{{ trip.id }}"
+                            {% if expense.trip and expense.trip.id == trip.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ trip.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- المبلغ -->
+            <div class="field">
+
+                <label>المبلغ (دج)</label>
+
+                <input
+                    type="number"
+                    name="amount"
+                    value="{{ expense.amount }}"
+                    step="0.01"
+                    min="0"
+                    required
+                >
+
+            </div>
+
+
+            <!-- الملاحظات -->
+            <div class="field full">
+
+                <label>ملاحظات</label>
+
+                <textarea
+                    name="notes"
+                    placeholder="أدخل أي تفاصيل إضافية..."
+                >{{ expense.notes }}</textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- الأزرار -->
+
+        <div style="
+            display:flex;
+            gap:10px;
+            margin-top:20px;
+            flex-wrap:wrap;
+        ">
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+                💾 حفظ التعديلات
+            </button>
+            <a
+                href="{% url 'profit_loss' %}"
+                style="
+                    display:inline-flex;
+                    align-items:center;
+                    justify-content:center;
+                    padding:12px 20px;
+                    border-radius:10px;
+                    text-decoration:none;
+                    background:#e5e7eb;
+                    color:#111827;
+                    font-weight:bold;
+                "
+            >
+                ↩️ إلغاء
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
