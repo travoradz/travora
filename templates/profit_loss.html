@@ -1049,102 +1049,170 @@
 </div>
 {% if monthly_report %}
 
-{% for month in monthly_report %}
+    {% for month in monthly_report %}
 
-    <!-- اسم الشهر -->
+        <!-- الرسم البياني للشهر -->
+        <div
+            class="month-chart"
+            data-sales="{{ month.sales }}"
+            data-expenses="{{ month.expenses }}"
+            data-profit="{{ month.profit }}"
+            style="
+                margin-top:25px;
+                padding:20px;
+                border-radius:16px;
+                background:#ffffff;
+                box-shadow:0 4px 15px rgba(0,0,0,0.06);
+            "
+        >
+
+            <!-- الأعمدة -->
+            <div style="
+                height:250px;
+                display:flex;
+                align-items:flex-end;
+                justify-content:center;
+                gap:12px;
+                direction:ltr;
+                border-bottom:1px solid #e5e7eb;
+                padding:0 20px;
+            ">
+
+                <!-- المبيعات -->
+                <div
+                    class="sales-bar"
+                    style="
+                        width:35px;
+                        height:0;
+                        background:#1769aa;
+                        border-radius:6px 6px 0 0;
+                        transition:height .5s ease;
+                    "
+                ></div>
+
+                <!-- المصاريف -->
+                <div
+                    class="expenses-bar"
+                    style="
+                        width:35px;
+                        height:0;
+                        background:#ef4444;
+                        border-radius:6px 6px 0 0;
+                        transition:height .5s ease;
+                    "
+                ></div>
+
+                <!-- الربح -->
+                <div
+                    class="profit-bar"
+                    style="
+                        width:35px;
+                        height:0;
+                        background:#10b981;
+                        border-radius:6px 6px 0 0;
+                        transition:height .5s ease;
+                    "
+                ></div>
+
+            </div>
+
+            <!-- اسم الشهر -->
+            <div style="
+                margin-top:12px;
+                font-weight:bold;
+                color:#1769aa;
+                text-align:center;
+                white-space:nowrap;
+            ">
+                {{ month.month_ar }}
+                {{ month.year }}
+            </div>
+
+            <!-- أرقام الشهر -->
+            <div style="
+                margin-top:8px;
+                text-align:center;
+                font-size:12px;
+                line-height:1.8;
+                color:#6b7280;
+            ">
+
+                <div>
+                    💰 {{ month.sales }} دج
+                </div>
+
+                <div>
+                    💸 {{ month.expenses }} دج
+                </div>
+
+                <div class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}">
+                    📈 {{ month.profit }} دج
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+    <!-- مفتاح الرسم -->
     <div style="
-        margin-top:12px;
-        font-weight:bold;
-        color:#1769aa;
-        text-align:center;
-        white-space:nowrap;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:25px;
+        flex-wrap:wrap;
+        margin-top:20px;
+        font-size:14px;
+        color:#4b5563;
     ">
-        {{ month.month_ar }}
-        {{ month.year }}
+
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#1769aa;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            المبيعات
+        </span>
+
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#ef4444;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            المصاريف
+        </span>
+        <span>
+            <span style="
+                display:inline-block;
+                width:13px;
+                height:13px;
+                background:#10b981;
+                border-radius:3px;
+                margin-left:5px;
+            "></span>
+            الربح
+        </span>
+
     </div>
-
-    <!-- أرقام الشهر -->
-    <div style="
-        margin-top:8px;
-        text-align:center;
-        font-size:12px;
-        line-height:1.8;
-        color:#6b7280;
-    ">
-        <div>
-            💰 {{ month.sales }} دج
-        </div>
-
-        <div>
-            💸 {{ month.expenses }} دج
-        </div>
-
-        <div class="{% if month.profit >= 0 %}positive{% else %}negative{% endif %}">
-            📈 {{ month.profit }} دج
-        </div>
-    </div>
-
-</div>
-
-{% endfor %}
-
-<!-- مفتاح الرسم -->
-<div style="
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:25px;
-    flex-wrap:wrap;
-    margin-top:20px;
-    font-size:14px;
-    color:#4b5563;
-">
-    <span>
-        <span style="
-            display:inline-block;
-            width:13px;
-            height:13px;
-            background:#1769aa;
-            border-radius:3px;
-            margin-left:5px;
-        "></span>
-        المبيعات
-    </span>
-
-    <span>
-        <span style="
-            display:inline-block;
-            width:13px;
-            height:13px;
-            background:#ef4444;
-            border-radius:3px;
-            margin-left:5px;
-        "></span>
-        المصاريف
-    </span>
-
-    <span>
-        <span style="
-            display:inline-block;
-            width:13px;
-            height:13px;
-            background:#10b981;
-            border-radius:3px;
-            margin-left:5px;
-        "></span>
-        الربح
-    </span>
-</div>
 
 {% else %}
 
-<div class="empty">
-    لا توجد بيانات مالية كافية خلال الفترة المحددة.
-</div>
+    <div class="empty">
+        لا توجد بيانات مالية كافية خلال الفترة المحددة.
+    </div>
 
 {% endif %}
 
-</div>
+
 <!-- ========================================= -->
 <!-- JavaScript للرسم -->
 <!-- ========================================= -->
@@ -1180,15 +1248,12 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     });
 
-
     /* إذا كل القيم صفر */
     if (maxValue === 0) {
         return;
     }
 
-
     const maxHeight = 250;
-
 
     /* ضبط ارتفاع الأعمدة */
     charts.forEach(function (chart) {
@@ -1202,7 +1267,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const profit =
             Math.abs(parseFloat(chart.dataset.profit) || 0);
 
-
         const salesBar =
             chart.querySelector(".sales-bar");
 
@@ -1212,6 +1276,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const profitBar =
             chart.querySelector(".profit-bar");
 
+        if (!salesBar ||  !expensesBar || !profitBar) {
+            return;
+        }
 
         const salesHeight =
             (sales / maxValue) * maxHeight;
@@ -1221,7 +1288,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const profitHeight =
             (profit / maxValue) * maxHeight;
-
 
         salesBar.style.height =
             (sales > 0 ? Math.max(salesHeight, 4) : 0) + "px";
@@ -1236,9 +1302,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-
-
 </div>
-
 </body>
 </html>
