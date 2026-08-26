@@ -9,178 +9,146 @@
 
     <title>Travora | كشف التسكين</title>
 
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-    <style>
+    body {
+        font-family: Tahoma, Arial, sans-serif;
+        margin: 0;
+        padding: 25px;
+        background: #f4f8fc;
+        color: #1f2937;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    /* =========================
+       زر الطباعة
+    ========================= */
 
+    .print-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #0b3d91;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
 
-        body {
+    .print-button:hover {
+        background: #082d69;
+    }
 
-            font-family: Tahoma, Arial, sans-serif;
+    /* =========================
+       رأس الصفحة
+    ========================= */
 
-            margin: 0;
+    .header {
+        background: linear-gradient(
+            135deg,
+            #06306f,
+            #087ea4
+        );
 
-            padding: 25px;
+        color: #ffffff;
 
-            background: #f4f8fc;
+        border: 2px solid #0b3d91;
+        border-radius: 18px;
 
-            color: #1f2937;
+        padding: 20px 25px;
+        margin-bottom: 18px;
 
-        }
+        box-shadow: 0 6px 18px rgba(11,61,145,.20);
+    }
 
+    .brand {
+        text-align: center;
 
-        /* =========================
-           زر الطباعة
-        ========================= */
+        font-size: 30px;
+        font-weight: bold;
 
-        .print-button {
+        color: #ffffff;
 
-            position: fixed;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
 
-            top: 20px;
+        text-shadow: 0 2px 4px rgba(0,0,0,.25);
+    }
 
-            left: 20px;
+    .title {
+        text-align: center;
 
-            background: #0b3d91;
+        font-size: 19px;
+        font-weight: bold;
 
-            color: white;
+        color: #ffffff;
 
-            border: none;
+        margin-bottom: 16px;
 
-            border-radius: 10px;
+        text-shadow: 0 1px 3px rgba(0,0,0,.25);
+    }
 
-            padding: 10px 18px;
+    /* =========================
+       معلومات الرحلة
+    ========================= */
 
-            font-size: 15px;
+    .trip-info {
+        display: grid;
 
-            font-weight: bold;
+        grid-template-columns:
+            repeat(3, 1fr);
 
-            cursor: pointer;
+        gap: 9px;
 
-            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        font-size: 13px;
+    }
 
-        }
+    .info-box {
+        background: rgba(255,255,255,.18);
 
+        border: 1px solid rgba(255,255,255,.55);
 
-        .print-button:hover {
+        border-radius: 10px;
 
-            background: #082d69;
+        padding: 9px 11px;
 
-        }
+        color: #ffffff;
 
+        box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.12);
+    }
 
-        /* =========================
-           رأس الصفحة
-        ========================= */
+    .info-box strong {
+        display: block;
 
-        .header {
+        font-size: 11px;
 
-            background: linear-gradient(
-                135deg,
-                #0b3d91,
-                #16c5d8
-            );
+        color: #eaf8ff;
 
-            color: white;
+        margin-bottom: 4px;
 
-            border-radius: 18px;
+        font-weight: bold;
+    }
 
-            padding: 18px 25px;
+    /* =========================
+       شبكة الغرف
+    ========================= */
 
-            margin-bottom: 18px;
+    .rooms-grid {
+        display: grid;
 
-            box-shadow: 0 6px 18px rgba(11,61,145,.18);
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        }
+        gap: 12px;
+    }
 
-
-        .brand {
-
-            text-align: center;
-
-            font-size: 30px;
-
-            font-weight: bold;
-
-            letter-spacing: 1px;
-
-            margin-bottom: 4px;
-
-        }
-
-
-        .title {
-
-            text-align: center;
-
-            font-size: 18px;
-
-            font-weight: bold;
-
-            margin-bottom: 15px;
-
-        }
-
-
-        /* =========================
-           معلومات الرحلة
-        ========================= */
-
-        .trip-info {
-
-            display: grid;
-
-            grid-template-columns: repeat(3, 1fr);
-
-            gap: 8px;
-
-            font-size: 13px;
-
-        }
-
-
-        .info-box {
-
-            background: rgba(255,255,255,.16);
-
-            border: 1px solid rgba(255,255,255,.28);
-
-            border-radius: 9px;
-
-            padding: 8px 10px;
-
-        }
-
-
-        .info-box strong {
-
-            display: block;
-
-            font-size: 11px;
-
-            opacity: .85;
-
-            margin-bottom: 3px;
-
-        }
-
-
-        /* =========================
-           شبكة الغرف
-        ========================= */
-
-        .rooms-grid {
-
-            display: grid;
-
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-
-            gap: 12px;
-
-        }
 
 
         /* =========================
@@ -684,85 +652,55 @@
         🖨️ طباعة
     </button>
 
+<!-- =========================
+     رأس الكشف
+========================= -->
 
+<div class="header">
 
-    <!-- =========================
-         رأس الكشف
-    ========================= -->
+    <div class="brand">
+        {{ settings.agency_name }} ✈️
+    </div>
 
-    <div class="header">
+    <div class="title">
+        كشف تسكين الرحلة
+    </div>
 
-        <div class="brand">
-            Travora ✈️
+    <div class="trip-info">
+
+        <div class="info-box">
+            <strong>✈️ الرحلة</strong>
+            {{ trip.name }}
         </div>
 
-        <div class="title">
-            كشف تسكين الرحلة
+        <div class="info-box">
+            <strong>📍 الوجهة</strong>
+            {{ trip.destination }}
         </div>
 
+        <div class="info-box">
+            <strong>🏨 الفندق</strong>
+            {{ trip.hotel }}
+        </div>
 
-        <div class="trip-info">
+        <div class="info-box">
+            <strong>🛫 تاريخ الانطلاق</strong>
+            {{ trip.departure_date }}
+        </div>
 
+        <div class="info-box">
+            <strong>🛬 تاريخ العودة</strong>
+            {{ trip.return_date }}
+        </div>
 
-            <div class="info-box">
-
-                <strong>✈️ الرحلة</strong>
-
-                {{ trip.name }}
-
-            </div>
-
-
-            <div class="info-box">
-
-                <strong>📍 الوجهة</strong>
-
-                {{ trip.destination }}
-
-            </div>
-
-
-            <div class="info-box">
-
-                <strong>🏨 الفندق</strong>
-
-                {{ trip.hotel }}
-
-            </div>
-
-
-            <div class="info-box">
-
-                <strong>🛫 تاريخ الانطلاق</strong>
-
-                {{ trip.departure_date }}
-
-            </div>
-
-
-            <div class="info-box">
-
-                <strong>🛬 تاريخ العودة</strong>
-
-                {{ trip.return_date }}
-
-            </div>
-
-
-            <div class="info-box">
-
-                <strong>🏢 Travora</strong>
-
-                كشف رسمي للتسكين
-
-            </div>
-
-
+        <div class="info-box">
+            <strong>🏢 الوكالة</strong>
+            {{ settings.agency_name }}
         </div>
 
     </div>
 
-
+</div>
 
     <!-- =========================
          الغرف
