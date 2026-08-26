@@ -3,192 +3,892 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<title>كشف التسكين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <title>Travora | كشف التسكين</title>
 
-body{
-font-family:Tahoma;
-padding:30px;
-background:white;
-}
 
-h1,h2{
-text-align:center;
-margin:0;
-}
+    <style>
 
-.info{
-margin:25px 0;
-font-size:18px;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-.room{
-border:2px solid #000;
-padding:15px;
-margin-bottom:20px;
-border-radius:10px;
-}
 
-.room h3{
-margin:0 0 10px 0;
-}
+        body {
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
+            font-family: Tahoma, Arial, sans-serif;
 
-table th,
-table td{
-border:1px solid #000;
-padding:10px;
-text-align:center;
-}
+            margin: 0;
 
-.footer{
-margin-top:40px;
-text-align:center;
-font-size:15px;
-}
+            padding: 25px;
 
-@media print{
+            background: #f4f8fc;
 
-button{
-display:none;
-}
+            color: #1f2937;
 
-}
+        }
 
-</style>
+
+        /* =========================
+           زر الطباعة
+        ========================= */
+
+        .print-button {
+
+            position: fixed;
+
+            top: 20px;
+
+            left: 20px;
+
+            background: #0b3d91;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 10px 18px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+
+        }
+
+
+        .print-button:hover {
+
+            background: #082d69;
+
+        }
+
+
+        /* =========================
+           رأس الصفحة
+        ========================= */
+
+        .header {
+
+            background: linear-gradient(
+                135deg,
+                #0b3d91,
+                #16c5d8
+            );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 18px 25px;
+
+            margin-bottom: 18px;
+
+            box-shadow: 0 6px 18px rgba(11,61,145,.18);
+
+        }
+
+
+        .brand {
+
+            text-align: center;
+
+            font-size: 30px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        .title {
+
+            text-align: center;
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        /* =========================
+           معلومات الرحلة
+        ========================= */
+
+        .trip-info {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 8px;
+
+            font-size: 13px;
+
+        }
+
+
+        .info-box {
+
+            background: rgba(255,255,255,.16);
+
+            border: 1px solid rgba(255,255,255,.28);
+
+            border-radius: 9px;
+
+            padding: 8px 10px;
+
+        }
+
+
+        .info-box strong {
+
+            display: block;
+
+            font-size: 11px;
+
+            opacity: .85;
+
+            margin-bottom: 3px;
+
+        }
+
+
+        /* =========================
+           شبكة الغرف
+        ========================= */
+
+        .rooms-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 12px;
+
+        }
+
+
+        /* =========================
+           بطاقة الغرفة
+        ========================= */
+
+        .room {
+
+            border-radius: 14px;
+
+            padding: 10px;
+
+            border: 2px solid #dbeafe;
+
+            box-shadow: 0 3px 10px rgba(0,0,0,.07);
+
+            break-inside: avoid;
+
+            page-break-inside: avoid;
+
+        }
+
+
+        /* ألوان الغرف */
+
+        .room:nth-child(6n + 1) {
+
+            background: #eff6ff;
+
+            border-color: #60a5fa;
+
+        }
+
+
+        .room:nth-child(6n + 2) {
+
+            background: #ecfeff;
+
+            border-color: #22d3ee;
+
+        }
+
+
+        .room:nth-child(6n + 3) {
+
+            background: #f5f3ff;
+
+            border-color: #a78bfa;
+
+        }
+
+
+        .room:nth-child(6n + 4) {
+
+            background: #fff7ed;
+
+            border-color: #fb923c;
+
+        }
+
+
+        .room:nth-child(6n + 5) {
+
+            background: #f0fdf4;
+
+            border-color: #4ade80;
+
+        }
+
+
+        .room:nth-child(6n + 6) {
+
+            background: #fdf2f8;
+
+            border-color: #f472b6;
+
+        }
+
+
+        /* =========================
+           عنوان الغرفة
+        ========================= */
+
+        .room-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 8px;
+            margin-bottom: 8px;
+
+            padding-bottom: 7px;
+
+            border-bottom: 1px dashed rgba(0,0,0,.18);
+
+        }
+
+
+        .room-number {
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            color: #0b3d91;
+
+        }
+
+
+        .room-type {
+
+            background: white;
+
+            padding: 4px 9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            color: #374151;
+
+            border: 1px solid rgba(0,0,0,.08);
+
+        }
+
+
+        /* =========================
+           الزبائن داخل الغرفة
+        ========================= */
+
+        .customers {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 6px;
+
+        }
+
+
+        .customer-card {
+
+            background: rgba(255,255,255,.88);
+
+            border: 1px solid rgba(0,0,0,.08);
+
+            border-radius: 9px;
+
+            padding: 7px 8px;
+
+            min-width: 0;
+
+        }
+
+
+        .customer-top {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        .customer-number {
+
+            width: 22px;
+
+            height: 22px;
+
+            min-width: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #0b3d91;
+
+            color: white;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+        }
+
+
+        .customer-name {
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            color: #111827;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .customer-phone {
+
+            font-size: 10px;
+
+            color: #4b5563;
+
+            padding-right: 28px;
+
+            direction: ltr;
+
+            text-align: right;
+
+        }
+
+
+        /* =========================
+           لا يوجد زبائن
+        ========================= */
+
+        .empty {
+
+            text-align: center;
+
+            padding: 8px;
+
+            color: #6b7280;
+
+            font-size: 11px;
+
+        }
+
+
+        /* =========================
+           Footer
+        ========================= */
+
+        .footer {
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            padding-top: 8px;
+
+            border-top: 1px solid #dbe3ec;
+
+            color: #6b7280;
+
+            font-size: 11px;
+
+        }
+
+
+        .footer strong {
+
+            color: #0b3d91;
+
+        }
+
+
+        /* =========================
+           الطباعة
+        ========================= */
+
+        @media print {
+
+            @page {
+
+                size: A4 portrait;
+
+                margin: 8mm;
+
+            }
+
+
+            body {
+
+                background: white;
+
+                padding: 0;
+
+            }
+
+
+            .print-button {
+
+                display: none !important;
+
+            }
+
+
+            .header {
+
+                box-shadow: none;
+
+                margin-bottom: 10px;
+
+                padding: 12px 15px;
+
+                border-radius: 10px;
+
+            }
+
+
+            .brand {
+
+                font-size: 23px;
+
+            }
+
+
+            .title {
+
+                font-size: 15px;
+
+                margin-bottom: 9px;
+
+            }
+
+
+            .trip-info {
+
+                gap: 5px;
+
+                font-size: 10px;
+
+            }
+
+
+            .info-box {
+
+                padding: 5px 7px;
+
+            }
+
+
+            .info-box strong {
+
+                font-size: 9px;
+
+            }
+
+
+            .rooms-grid {
+
+                gap: 7px;
+
+            }
+
+
+            .room {
+
+                padding: 7px;
+
+                border-radius: 9px;
+
+                box-shadow: none;
+
+            }
+
+
+            .room-header {
+
+                margin-bottom: 5px;
+
+                padding-bottom: 4px;
+
+            }
+
+
+            .room-number {
+
+                font-size: 12px;
+
+            }
+
+
+            .room-type {
+
+                font-size: 9px;
+
+                padding: 3px 6px;
+                }
+
+
+            .customers {
+
+                gap: 4px;
+
+            }
+
+
+            .customer-card {
+
+                padding: 5px;
+
+                border-radius: 6px;
+
+            }
+
+
+            .customer-number {
+
+                width: 18px;
+
+                height: 18px;
+
+                min-width: 18px;
+
+                font-size: 9px;
+
+            }
+
+
+            .customer-name {
+
+                font-size: 9px;
+
+            }
+
+
+            .customer-phone {
+
+                font-size: 8px;
+
+                padding-right: 24px;
+
+            }
+
+
+            .footer {
+
+                margin-top: 8px;
+
+                padding-top: 5px;
+
+                font-size: 8px;
+
+            }
+
+        }
+
+
+        /* =========================
+           الهاتف
+        ========================= */
+
+        @media screen and (max-width: 700px) {
+
+            body {
+
+                padding: 12px;
+
+            }
+
+
+            .trip-info {
+
+                grid-template-columns: 1fr 1fr;
+
+            }
+
+
+            .rooms-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+    </style>
 
 </head>
 
+
 <body>
 
-<button onclick="window.print()">
 
-🖨️ طباعة
+    <!-- زر الطباعة -->
 
-</button>
+    <button
+        class="print-button"
+        onclick="window.print()"
+    >
+        🖨️ طباعة
+    </button>
 
-<h1>
 
-Travora
 
-</h1>
+    <!-- =========================
+         رأس الكشف
+    ========================= -->
 
-<h2>
+    <div class="header">
 
-كشف تسكين الرحلة
+        <div class="brand">
+            Travora ✈️
+        </div>
 
-</h2>
+        <div class="title">
+            كشف تسكين الرحلة
+        </div>
 
-<div class="info">
 
-<b>الرحلة :</b>
-{{ trip.name }}
+        <div class="trip-info">
 
-<br><br>
 
-<b>الوجهة :</b>
-{{ trip.destination }}
+            <div class="info-box">
 
-<br><br>
+                <strong>✈️ الرحلة</strong>
 
-<b>الفندق :</b>
-{{ trip.hotel }}
+                {{ trip.name }}
 
-<br><br>
+            </div>
 
-<b>تاريخ الانطلاق :</b>
-{{ trip.departure_date }}
 
-<br>
+            <div class="info-box">
 
-<b>تاريخ العودة :</b>
-{{ trip.return_date }}
+                <strong>📍 الوجهة</strong>
 
-</div>
+                {{ trip.destination }}
 
-{% for room in rooms %}
+            </div>
 
-<div class="room">
 
-<h3>
+            <div class="info-box">
 
-🏨 غرفة {{ room.room_number }}
+                <strong>🏨 الفندق</strong>
 
-({{ room.room_type }})
+                {{ trip.hotel }}
 
-</h3>
+            </div>
 
-<table>
 
-<tr>
+            <div class="info-box">
 
-<th>#</th>
+                <strong>🛫 تاريخ الانطلاق</strong>
 
-<th>الاسم</th>
+                {{ trip.departure_date }}
 
-<th>الهاتف</th>
+            </div>
 
-</tr>
 
-{% for customer in room.customers.all %}
+            <div class="info-box">
 
-<tr>
+                <strong>🛬 تاريخ العودة</strong>
 
-<td>
+                {{ trip.return_date }}
 
-{{ forloop.counter }}
+            </div>
 
-</td>
 
-<td>
+            <div class="info-box">
 
-{{ customer.full_name }}
+                <strong>🏢 Travora</strong>
 
-</td>
+                كشف رسمي للتسكين
 
-<td>
+            </div>
 
-{{ customer.phone }}
 
-</td>
+        </div>
 
-</tr>
+    </div>
 
-{% empty %}
 
-<tr>
 
-<td colspan="3">
+    <!-- =========================
+         الغرف
+    ========================= -->
 
-لا يوجد زبائن
+    <div class="rooms-grid">
 
-</td>
 
-</tr>
+        {% for room in rooms %}
 
-{% endfor %}
 
-</table>
+        <div class="room">
 
-</div>
 
-{% endfor %}
+            <!-- عنوان الغرفة -->
 
-<div class="footer">
+            <div class="room-header">
 
-تم إنشاء هذا الكشف بواسطة
+                <div class="room-number">
 
-<b>Travora</b>
+                    🏨 غرفة {{ room.room_number }}
 
-</div>
+                </div>
+
+
+                <div class="room-type">
+
+                    {{ room.room_type }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- الزبائن -->
+
+            {% if room.customers.all %}
+
+                <div class="customers">
+
+
+                    {% for customer in room.customers.all %}
+
+
+                    <div class="customer-card">
+
+
+                        <div class="customer-top">
+
+
+                            <div class="customer-number">
+
+                                {{ forloop.counter }}
+
+                            </div>
+
+
+                            <div class="customer-name">
+
+                                {{ customer.full_name }}
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="customer-phone">
+
+                            📱 {{ customer.phone }}
+
+                        </div>
+
+
+                    </div>
+
+
+                    {% empty %}
+
+
+                    <div class="empty">
+
+                        لا يوجد زبائن
+
+                    </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+            {% else %}
+
+                <div class="empty">
+
+                    لا يوجد زبائن
+
+                </div>
+
+            {% endif %}
+            </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+
+    <!-- =========================
+         Footer
+    ========================= -->
+
+    <div class="footer">
+
+        تم إنشاء هذا الكشف بواسطة
+
+        <strong>Travora</strong>
+
+        ✈️
+
+    </div>
+
 
 </body>
 
