@@ -635,11 +635,14 @@ def print_rooming(request, trip_id):
     trip = get_object_or_404(
         Trip,
         id=trip_id,
+        user=request.user
     )
 
     rooms = Room.objects.filter(
         trip=trip
     ).prefetch_related("customers")
+
+    agency_name = request.user.first_name
 
     return render(
         request,
@@ -647,9 +650,9 @@ def print_rooming(request, trip_id):
         {
             "trip": trip,
             "rooms": rooms,
+            "agency_name": agency_name,
         },
     )
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 
