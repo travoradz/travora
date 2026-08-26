@@ -394,6 +394,81 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
 
 </div>
+<!-- =====================================================
+     فلترة الزبائن حسب الرحلة
+===================================================== -->
+
+<div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+">
+
+    <form method="GET" style="
+        display:flex;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
+    ">
+
+        <!-- الحفاظ على البحث إذا كان موجودًا -->
+        {% if search %}
+            <input
+                type="hidden"
+                name="q"
+                value="{{ search }}"
+            >
+        {% endif %}
+
+        <label style="
+            font-weight:bold;
+            color:#0b3d91;
+        ">
+            ✈️ الرحلة:
+        </label>
+
+        <select
+            name="trip"
+            onchange="this.form.submit()"
+            style="
+                padding:10px 14px;
+                border:1px solid #d1d5db;
+                border-radius:10px;
+                background:white;
+                color:#374151;
+                font-size:14px;
+                min-width:220px;
+                cursor:pointer;
+            "
+        >
+
+            <!-- جميع الرحلات -->
+            <option value="">
+                📋 جميع الرحلات
+            </option>
+
+            <!-- رحلات الوكالة -->
+            {% for trip in trips %}
+
+                <option
+                    value="{{ trip.id }}"
+                    {% if selected_trip|stringformat:"s" == trip.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ trip.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+</div>
 
 
 <!-- =====================================================
@@ -404,26 +479,17 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
     <tr>
 
+        <th>رقم</th>
         <th>الاسم</th>
-
         <th>الهاتف</th>
-
         <th>الرحلة</th>
-
         <th>الغرفة</th>
-
         <th>السعر الأصلي</th>
-
         <th>العمولة</th>
-
         <th>السعر النهائي</th>
-
         <th>المدفوع</th>
-
         <th>المتبقي</th>
-
         <th>الحالة</th>
-
         <th>الإجراءات</th>
 
     </tr>
@@ -432,6 +498,17 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
     {% for customer in customers %}
 
     <tr>
+
+        <!-- الترقيم -->
+        <td>
+            <strong style="
+                color:#0b3d91;
+                font-size:16px;
+            ">
+                {{ forloop.counter }}
+            </strong>
+        </td>
+
 
         <!-- الاسم -->
         <td>
@@ -459,11 +536,9 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
         <!-- السعر الأصلي -->
         <td>
-
             <strong>
                 {{ customer.total_price }} دج
             </strong>
-
         </td>
 
 
@@ -471,7 +546,8 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
         <td>
 
             {% if customer.commission > 0 %}
-            <span style="
+
+                <span style="
                     color:#dc2626;
                     font-weight:bold;
                 ">
@@ -493,13 +569,11 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
         <!-- السعر النهائي -->
         <td>
-
             <strong style="
                 color:#0b3d91;
             ">
                 {{ customer.final_price }} دج
             </strong>
-
         </td>
 
 
@@ -524,8 +598,7 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
             ">
                 {{ customer.remaining_amount }} دج
             </strong>
-
-        </td>
+            </td>
 
 
         <!-- حالة الدفع -->
@@ -620,6 +693,8 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
             </a>
 
             |
+
+
             <!-- إضافة دفعة -->
             <a
                 href="{% url 'add_customer_payment' customer.id %}"
@@ -658,10 +733,12 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
 
     <tr>
 
-        <td colspan="11">
-
+        <td colspan="12" style="
+            text-align:center;
+            padding:20px;
+            color:#6b7280;
+        ">
             لا يوجد زبائن حتى الآن.
-
         </td>
 
     </tr>
@@ -669,7 +746,6 @@ placeholder="🔍 ابحث باسم الزبون أو الهاتف...">
     {% endfor %}
 
 </table>
-
 </div>
 <script>
 

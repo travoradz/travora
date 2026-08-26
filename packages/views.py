@@ -93,6 +93,9 @@ def delete_trip(request, trip_id):
 @subscription_required
 def customers_list(request):
 
+    # =========================
+    # إضافة زبون جديد
+    # =========================
     if request.method == "POST":
 
         trip = Trip.objects.get(
@@ -105,7 +108,6 @@ def customers_list(request):
         # =========================
         # تحديد سعر الرحلة حسب الغرفة
         # =========================
-
         if room_type == "ثنائية":
             total_price = trip.double_price
 
@@ -121,7 +123,6 @@ def customers_list(request):
         # =========================
         # العمولة / التخفيض
         # =========================
-
         commission = request.POST.get(
             "commission",
             0
@@ -130,7 +131,6 @@ def customers_list(request):
         # =========================
         # المبلغ المدفوع الحالي
         # =========================
-
         amount_paid = request.POST.get(
             "amount_paid",
             0
@@ -139,65 +139,76 @@ def customers_list(request):
         # =========================
         # إنشاء الزبون
         # =========================
-
         Customer.objects.create(
-
             trip=trip,
-
             user=request.user,
-
             full_name=request.POST["full_name"],
-
             phone=request.POST["phone"],
-
             room_type=room_type,
-
             total_price=total_price,
-
             commission=commission,
-
             group_code=request.POST.get(
                 "group_code",
                 ""
             ),
-
             amount_paid=amount_paid,
         )
 
         return redirect("customers")
 
     # =========================
-    # البحث
+    # البحث عن زبون
     # =========================
-
     search = request.GET.get("q")
 
+    # =========================
+    # فلتر حسب الرحلة
+    # =========================
+    trip_filter = request.GET.get("trip")
+
+    # =========================
+    # جميع زبائن الوكالة
+    # =========================
     customers = Customer.objects.filter(
         user=request.user
     ).select_related("trip")
 
+    # =========================
+    # تطبيق البحث
+    # =========================
     if search:
         customers = customers.filter(
             full_name__icontains=search
         )
 
     # =========================
+    # تطبيق فلتر الرحلة
+    # =========================
+    if trip_filter:
+        customers = customers.filter(
+            trip_id=trip_filter
+        )
+
+    # =========================
     # الرحلات الخاصة بالوكالة
     # =========================
-
     trips = Trip.objects.filter(
         user=request.user
     )
 
+    # =========================
+    # إرسال البيانات للصفحة
+    # =========================
     return render(
         request,
         "customers/list.html",
         {
             "customers": customers,
             "trips": trips,
+            "selected_trip": trip_filter,
+            "search": search,
         },
     )
-
 # =========================================================
 # إضافة دفعة
 # =========================================================
