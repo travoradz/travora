@@ -3,49 +3,52 @@ from django.contrib.auth.models import User
 
 
 from django.contrib.auth.models import User
-
 class Trip(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    DESTINATIONS = [
-        ("مكة", "مكة"),
-        ("المدينة", "المدينة"),
-        ("مكة والمدينة", "مكة والمدينة"),
-    ]
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
 
     TRIP_TYPES = [
         ("مباشرة", "مباشرة"),
         ("غير مباشرة", "غير مباشرة"),
     ]
 
-    name = models.CharField(max_length=200)
-
-    destination = models.CharField(
-        max_length=30,
-        choices=DESTINATIONS,
+    name = models.CharField(
+        max_length=200
     )
 
-    duration = models.CharField(max_length=50)
+    destination = models.CharField(
+        max_length=150
+    )
 
-    airline = models.CharField(max_length=100)
+    duration = models.CharField(
+        max_length=50
+    )
+
+    airline = models.CharField(
+        max_length=100
+    )
 
     trip_type = models.CharField(
         max_length=20,
         choices=TRIP_TYPES,
-        default="مباشرة",
+        default="مباشرة"
     )
 
     guide_name = models.CharField(
         max_length=150,
-        blank=True,
+        blank=True
     )
 
     stop_city = models.CharField(
         max_length=150,
-        blank=True,
+        blank=True
     )
 
-    hotel = models.CharField(max_length=200)
+    hotel = models.CharField(
+        max_length=200
+    )
 
     departure_date = models.DateField()
 
@@ -55,25 +58,27 @@ class Trip(models.Model):
 
     double_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2
     )
 
     triple_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2
     )
 
     quad_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2
     )
 
     quint_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=2
     )
 
-    notes = models.TextField(blank=True)
+    notes = models.TextField(
+        blank=True
+    )
 
     def str(self):
         return self.name

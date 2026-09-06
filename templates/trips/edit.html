@@ -105,24 +105,17 @@ type="text"
 name="name"
 value="{{ trip.name }}"
 required>
+<div class="input-group">
+    <label>الوجهة</label>
 
-<label>الوجهة</label>
-
-<select name="destination">
-
-<option value="مكة" {% if trip.destination == "مكة" %}selected{% endif %}>
-مكة
-</option>
-
-<option value="المدينة" {% if trip.destination == "المدينة" %}selected{% endif %}>
-المدينة
-</option>
-
-<option value="مكة والمدينة" {% if trip.destination == "مكة والمدينة" %}selected{% endif %}>
-مكة والمدينة
-</option>
-
-</select>
+    <input
+        type="text"
+        name="destination"
+        value="{{ trip.destination }}"
+        placeholder="مثال: مكة، تركيا، إسبانيا، تونس..."
+        required
+    >
+</div>
 
 <label>مدة الرحلة</label>
 

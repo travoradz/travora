@@ -222,16 +222,16 @@ align-items:flex-start;
     <label>اسم الرحلة</label>
     <input type="text" name="name" required>
 </div>
-
 <div class="input-group">
     <label>الوجهة</label>
-    <select name="destination">
-        <option value="مكة">مكة</option>
-        <option value="المدينة">المدينة</option>
-        <option value="مكة والمدينة">مكة والمدينة</option>
-    </select>
-</div>
 
+    <input
+        type="text"
+        name="destination"
+        placeholder="مثال: مكة، تركيا، إسبانيا، تونس..."
+        required
+    >
+</div>
 <div class="input-group">
     <label>مدة الرحلة</label>
     <input type="text" name="duration" placeholder="مثال: 15 يوم">
